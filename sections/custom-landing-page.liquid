@@ -8,7 +8,7 @@
   <div class="kahnke-container">
     
     {%- comment -%} HEADER IMAGE CARD {%- endcomment -%}
-    <div class="kahnke-header-card">
+    <div class="kahnke-header-card" style="border: {{ section.settings.card_border_thickness | default: 0 }}px solid {{ section.settings.card_border_color | default: '#000000' }};">
       {%- comment -%} Image at top {%- endcomment -%}
       {% if section.settings.header_image != blank %}
         <div class="kahnke-header-image" style="max-width: {{ section.settings.header_image_size | default: 100 }}%;">
@@ -80,7 +80,7 @@
     </div>
 
     {%- comment -%} PRODUCT CARD {%- endcomment -%}
-    <div class="kahnke-product-card">
+    <div class="kahnke-product-card" style="border: {{ section.settings.card_border_thickness | default: 0 }}px solid {{ section.settings.card_border_color | default: '#000000' }};">
       <div class="kahnke-product-grid">
         <div class="kahnke-product-images">
           {% if section.settings.product_grid_image != blank %}
@@ -106,7 +106,7 @@
     </div>
 
     {%- comment -%} NEWSLETTER SIGNUP - SHOPIFY CUSTOMER INTEGRATION {%- endcomment -%}
-    <div class="kahnke-newsletter-card">
+    <div class="kahnke-newsletter-card" style="border: {{ section.settings.card_border_thickness | default: 0 }}px solid {{ section.settings.card_border_color | default: '#000000' }};">
       <h2>Subscribe to {{ section.settings.social_handle | default: "@cookingwithkahnke" }}</h2>
       <p class="kahnke-newsletter-subtitle">
         {{ section.settings.newsletter_description | default: "Sign up to get exclusive updates & deals updates directly from me." }}
@@ -191,6 +191,28 @@
       "label": "Gradient Bottom Color",
       "default": "#02891e",
       "info": "Bottom color of the background gradient"
+    },
+    {
+      "type": "header",
+      "content": "Card Border Settings"
+    },
+    {
+      "type": "range",
+      "id": "card_border_thickness",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "label": "Border Thickness",
+      "default": 0,
+      "info": "Set to 0 for no border, or increase for visible border"
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Border Color",
+      "default": "#000000",
+      "info": "Color of the card borders"
     },
     {
       "type": "header",

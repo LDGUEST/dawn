@@ -57,6 +57,7 @@ body:has(.kahnke-landing-wrapper) .shopify-section-footer-group {
   overflow: hidden;
   box-shadow: 0 4px 20px var(--kahnke-shadow);
   margin-bottom: 30px;
+  box-sizing: border-box;
 }
 
 .kahnke-header-image {
@@ -164,6 +165,7 @@ body:has(.kahnke-landing-wrapper) .shopify-section-footer-group {
   border-radius: 20px;
   padding: 30px;
   box-shadow: 0 4px 20px var(--kahnke-shadow);
+  box-sizing: border-box;
 }
 
 .kahnke-product-grid {
@@ -269,6 +271,7 @@ body:has(.kahnke-landing-wrapper) .shopify-section-footer-group {
   padding: 40px 35px;
   box-shadow: 0 4px 20px var(--kahnke-shadow);
   text-align: center;
+  box-sizing: border-box;
 }
 
 .kahnke-newsletter-card h2 {
