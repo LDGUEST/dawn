@@ -4,7 +4,7 @@
   Integrated with Brevo for email marketing
 {% endcomment %}
 
-<div class="kahnke-landing-wrapper">
+<div class="kahnke-landing-wrapper" style="{% if section.settings.gradient_color_1 != blank and section.settings.gradient_color_2 != blank %}background: linear-gradient(180deg, {{ section.settings.gradient_color_1 }} 0%, {{ section.settings.gradient_color_2 }} 100%);{% endif %}">
   <div class="kahnke-container">
     
     {%- comment -%} HEADER CARD {%- endcomment -%}
@@ -154,6 +154,24 @@
 {
   "name": "Cooking Landing Page",
   "settings": [
+    {
+      "type": "header",
+      "content": "Background Gradient"
+    },
+    {
+      "type": "color",
+      "id": "gradient_color_1",
+      "label": "Gradient Top Color",
+      "default": "#A8E6CF",
+      "info": "Top color of the background gradient"
+    },
+    {
+      "type": "color",
+      "id": "gradient_color_2",
+      "label": "Gradient Bottom Color",
+      "default": "#7FD9B3",
+      "info": "Bottom color of the background gradient"
+    },
     {
       "type": "header",
       "content": "Header Settings"

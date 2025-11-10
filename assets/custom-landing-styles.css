@@ -17,6 +17,19 @@
   --kahnke-border: #E5E5E5;
 }
 
+/* Hide Dawn theme header when on landing page */
+body:has(.kahnke-landing-wrapper) #shopify-section-header-group,
+body:has(.kahnke-landing-wrapper) .shopify-section-header-group,
+body:has(.kahnke-landing-wrapper) header {
+  display: none !important;
+}
+
+/* Hide Dawn theme footer when on landing page (optional) */
+body:has(.kahnke-landing-wrapper) #shopify-section-footer-group,
+body:has(.kahnke-landing-wrapper) .shopify-section-footer-group {
+  display: none !important;
+}
+
 /* Main wrapper with gradient background */
 .kahnke-landing-wrapper {
   background: linear-gradient(180deg, var(--kahnke-gradient-start) 0%, var(--kahnke-gradient-end) 100%);
