@@ -11,8 +11,8 @@
     <div class="kahnke-header-card">
       {%- comment -%} Image at top {%- endcomment -%}
       {% if section.settings.header_image != blank %}
-        <div class="kahnke-header-image">
-          {{ section.settings.header_image | image_url: width: 800 | image_tag: loading: 'eager', alt: section.settings.brand_name }}
+        <div class="kahnke-header-image" style="max-width: {{ section.settings.header_image_size | default: 100 }}%;">
+          {{ section.settings.header_image | image_url: width: 1200 | image_tag: loading: 'eager', alt: section.settings.brand_name }}
         </div>
       {% else %}
         <div class="kahnke-header-image-placeholder">
@@ -196,6 +196,17 @@
       "id": "header_image",
       "label": "Header Image",
       "info": "Upload your custom header/banner image. Recommended size: 800x400px or similar"
+    },
+    {
+      "type": "range",
+      "id": "header_image_size",
+      "min": 30,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Header Image Size",
+      "default": 100,
+      "info": "Control how wide the header image appears (100% = full width)"
     },
     {
       "type": "text",
