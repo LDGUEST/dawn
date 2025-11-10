@@ -296,6 +296,9 @@
         document.documentElement.classList.add('shopify-design-mode');
       }
     </script>
+
+    {%- comment -%} Custom Landing Page Styles {%- endcomment -%}
+    {{ 'custom-landing-styles.css' | asset_url | stylesheet_tag }}
   </head>
 
   <body class="gradient{% if settings.animations_hover_elements != 'none' %} animate--hover-{{ settings.animations_hover_elements }}{% endif %}">
@@ -372,5 +375,8 @@
     {%- if settings.cart_type == 'drawer' -%}
       <script src="{{ 'cart-drawer.js' | asset_url }}" defer="defer"></script>
     {%- endif -%}
+
+    {%- comment -%} Custom Landing Page Newsletter Script {%- endcomment -%}
+    <script src="{{ 'kahnke-newsletter.js' | asset_url }}" defer="defer"></script>
   </body>
 </html>

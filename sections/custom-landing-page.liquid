@@ -1,0 +1,365 @@
+{% comment %}
+  Custom Landing Page Section - Cooking with Kahnke Style
+  This section recreates the exact design from the screenshot
+  Integrated with Brevo for email marketing
+{% endcomment %}
+
+<div class="kahnke-landing-wrapper">
+  <div class="kahnke-container">
+    
+    {%- comment -%} HEADER CARD {%- endcomment -%}
+    <div class="kahnke-header-card">
+      <div class="kahnke-logo-section">
+        <div class="kahnke-logo-icon">
+          <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+            {%- comment -%} Cloche/Dome Icon {%- endcomment -%}
+            <path d="M30 15C30 15 18 15 18 25H42C42 15 30 15 30 15Z" stroke="#2D5F5D" stroke-width="2.5" fill="none"/>
+            <ellipse cx="30" cy="12" rx="3" ry="4" fill="#2D5F5D"/>
+            <line x1="18" y1="25" x2="42" y2="25" stroke="#2D5F5D" stroke-width="3" stroke-linecap="round"/>
+            <path d="M15 25C15 25 15 28 18 28H42C45 28 45 25 45 25" stroke="#2D5F5D" stroke-width="2.5" stroke-linecap="round"/>
+            {%- comment -%} Steam lines {%- endcomment -%}
+            <path d="M26 8C26 8 26 5 28 5" stroke="#2D5F5D" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+            <path d="M30 6C30 6 30 3 32 3" stroke="#2D5F5D" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+            <path d="M34 8C34 8 34 5 36 5" stroke="#2D5F5D" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+          </svg>
+        </div>
+        <div class="kahnke-brand-text">
+          <h1>{{ section.settings.brand_name | default: "COOKING WITH KAHNKE" }}</h1>
+        </div>
+      </div>
+      
+      <p class="kahnke-author">BY {{ section.settings.author_name | default: "RYAN KAHNKE" }}</p>
+      
+      <p class="kahnke-location">
+        <svg width="14" height="18" viewBox="0 0 14 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7 0C3.13 0 0 3.13 0 7C0 12.25 7 18 7 18C7 18 14 12.25 14 7C14 3.13 10.87 0 7 0ZM7 9.5C5.62 9.5 4.5 8.38 4.5 7C4.5 5.62 5.62 4.5 7 4.5C8.38 4.5 9.5 5.62 9.5 7C9.5 8.38 8.38 9.5 7 9.5Z" fill="#2D5F5D"/>
+        </svg>
+        {{ section.settings.location | default: "LETTUCE WRAP PARADISE" }}
+      </p>
+      
+      <p class="kahnke-tagline">{{ section.settings.tagline | default: "A HEALTHIER YOU, ONE RECIPE AT A TIME" }}</p>
+      
+      <div class="kahnke-social-icons">
+        {% if section.settings.tiktok_url != blank %}
+          <a href="{{ section.settings.tiktok_url }}" target="_blank" rel="noopener" aria-label="TikTok">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="#2D5F5D">
+              <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+            </svg>
+          </a>
+        {% endif %}
+        
+        {% if section.settings.instagram_url != blank %}
+          <a href="{{ section.settings.instagram_url }}" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="#2D5F5D">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+            </svg>
+          </a>
+        {% endif %}
+        
+        {% if section.settings.youtube_url != blank %}
+          <a href="{{ section.settings.youtube_url }}" target="_blank" rel="noopener" aria-label="YouTube">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="#2D5F5D">
+              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+            </svg>
+          </a>
+        {% endif %}
+        
+        {% if section.settings.facebook_url != blank %}
+          <a href="{{ section.settings.facebook_url }}" target="_blank" rel="noopener" aria-label="Facebook">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="#2D5F5D">
+              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+            </svg>
+          </a>
+        {% endif %}
+      </div>
+    </div>
+
+    {%- comment -%} PRODUCT CARD {%- endcomment -%}
+    <div class="kahnke-product-card">
+      <div class="kahnke-product-grid">
+        <div class="kahnke-product-images">
+          {% for i in (1..16) %}
+            {% assign image_setting = 'product_image_' | append: i %}
+            {% if section.settings[image_setting] != blank %}
+              <div class="kahnke-grid-item">
+                {{ section.settings[image_setting] | image_url: width: 200 | image_tag: loading: 'lazy', alt: section.settings.product_title }}
+              </div>
+            {% else %}
+              <div class="kahnke-grid-item kahnke-placeholder">
+                <span>{{ i }}</span>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+        
+        <div class="kahnke-product-details">
+          <h2>{{ section.settings.product_title | default: "30 Lettuce Wrap Recipes Book PDF" }}</h2>
+          <p class="kahnke-product-description">{{ section.settings.product_description | default: "30 inspirational lettuce wrap recipes to try!" }}</p>
+          <p class="kahnke-product-price">{{ section.settings.product_price | default: "$9.99" }}</p>
+          <a href="{{ section.settings.buy_button_url | default: '#' }}" class="kahnke-buy-button">
+            {{ section.settings.buy_button_text | default: "Buy now" }}
+          </a>
+        </div>
+      </div>
+    </div>
+
+    {%- comment -%} NEWSLETTER SIGNUP - SHOPIFY CUSTOMER INTEGRATION {%- endcomment -%}
+    <div class="kahnke-newsletter-card">
+      <h2>Subscribe to {{ section.settings.social_handle | default: "@cookingwithkahnke" }}</h2>
+      <p class="kahnke-newsletter-subtitle">
+        {{ section.settings.newsletter_description | default: "Sign up to get exclusive updates & deals updates directly from me." }}
+      </p>
+      
+      {% form 'customer', class: 'kahnke-newsletter-form' %}
+        {% if form.posted_successfully? %}
+          <div class="kahnke-form-success show">
+            <p>Thanks for subscribing! Check your email to confirm.</p>
+          </div>
+        {% endif %}
+        
+        {% if form.errors %}
+          <div class="kahnke-form-error show">
+            {{ form.errors | default_errors }}
+          </div>
+        {% endif %}
+        
+        <input 
+          type="text" 
+          name="contact[first_name]" 
+          placeholder="First Name"
+          class="kahnke-input"
+          required
+        >
+        
+        <input 
+          type="email" 
+          name="contact[email]" 
+          placeholder="Email"
+          class="kahnke-input"
+          required
+        >
+        
+        <input type="hidden" name="contact[tags]" value="newsletter">
+        
+        <button type="submit" class="kahnke-subscribe-button">
+          {{ section.settings.subscribe_button_text | default: "Subscribe" }}
+        </button>
+      {% endform %}
+    </div>
+    
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Cooking Landing Page",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Header Settings"
+    },
+    {
+      "type": "text",
+      "id": "brand_name",
+      "label": "Brand Name",
+      "default": "COOKING WITH KAHNKE"
+    },
+    {
+      "type": "text",
+      "id": "author_name",
+      "label": "Author Name",
+      "default": "RYAN KAHNKE"
+    },
+    {
+      "type": "text",
+      "id": "location",
+      "label": "Location Text",
+      "default": "LETTUCE WRAP PARADISE"
+    },
+    {
+      "type": "text",
+      "id": "tagline",
+      "label": "Tagline",
+      "default": "A HEALTHIER YOU, ONE RECIPE AT A TIME"
+    },
+    {
+      "type": "header",
+      "content": "Social Media Links"
+    },
+    {
+      "type": "url",
+      "id": "tiktok_url",
+      "label": "TikTok URL"
+    },
+    {
+      "type": "url",
+      "id": "instagram_url",
+      "label": "Instagram URL"
+    },
+    {
+      "type": "url",
+      "id": "youtube_url",
+      "label": "YouTube URL"
+    },
+    {
+      "type": "url",
+      "id": "facebook_url",
+      "label": "Facebook URL"
+    },
+    {
+      "type": "header",
+      "content": "Product Settings"
+    },
+    {
+      "type": "text",
+      "id": "product_title",
+      "label": "Product Title",
+      "default": "30 Lettuce Wrap Recipes Book PDF"
+    },
+    {
+      "type": "textarea",
+      "id": "product_description",
+      "label": "Product Description",
+      "default": "30 inspirational lettuce wrap recipes to try!"
+    },
+    {
+      "type": "text",
+      "id": "product_price",
+      "label": "Product Price",
+      "default": "$9.99"
+    },
+    {
+      "type": "url",
+      "id": "buy_button_url",
+      "label": "Buy Button URL",
+      "info": "Link to your Digital Downloads product page"
+    },
+    {
+      "type": "text",
+      "id": "buy_button_text",
+      "label": "Buy Button Text",
+      "default": "Buy now"
+    },
+    {
+      "type": "header",
+      "content": "Product Images (4x4 Grid)"
+    },
+    {
+      "type": "image_picker",
+      "id": "product_image_1",
+      "label": "Image 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "product_image_2",
+      "label": "Image 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "product_image_3",
+      "label": "Image 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "product_image_4",
+      "label": "Image 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "product_image_5",
+      "label": "Image 5"
+    },
+    {
+      "type": "image_picker",
+      "id": "product_image_6",
+      "label": "Image 6"
+    },
+    {
+      "type": "image_picker",
+      "id": "product_image_7",
+      "label": "Image 7"
+    },
+    {
+      "type": "image_picker",
+      "id": "product_image_8",
+      "label": "Image 8"
+    },
+    {
+      "type": "image_picker",
+      "id": "product_image_9",
+      "label": "Image 9"
+    },
+    {
+      "type": "image_picker",
+      "id": "product_image_10",
+      "label": "Image 10"
+    },
+    {
+      "type": "image_picker",
+      "id": "product_image_11",
+      "label": "Image 11"
+    },
+    {
+      "type": "image_picker",
+      "id": "product_image_12",
+      "label": "Image 12"
+    },
+    {
+      "type": "image_picker",
+      "id": "product_image_13",
+      "label": "Image 13"
+    },
+    {
+      "type": "image_picker",
+      "id": "product_image_14",
+      "label": "Image 14"
+    },
+    {
+      "type": "image_picker",
+      "id": "product_image_15",
+      "label": "Image 15"
+    },
+    {
+      "type": "image_picker",
+      "id": "product_image_16",
+      "label": "Image 16"
+    },
+    {
+      "type": "header",
+      "content": "Newsletter Settings"
+    },
+    {
+      "type": "text",
+      "id": "social_handle",
+      "label": "Social Handle",
+      "default": "@cookingwithkahnke"
+    },
+    {
+      "type": "textarea",
+      "id": "newsletter_description",
+      "label": "Newsletter Description",
+      "default": "Sign up to get exclusive updates & deals updates directly from me."
+    },
+    {
+      "type": "text",
+      "id": "subscribe_button_text",
+      "label": "Subscribe Button Text",
+      "default": "Subscribe"
+    },
+    {
+      "type": "header",
+      "content": "Newsletter Info"
+    },
+    {
+      "type": "paragraph",
+      "content": "Newsletter signups will be saved to your Shopify Customers list with the 'newsletter' tag. You can view them in Customers section and export for your email marketing tool."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Cooking Landing Page"
+    }
+  ]
+}
+{% endschema %}
+

@@ -1,0 +1,429 @@
+/* ============================================
+   COOKING WITH KAHNKE - CUSTOM LANDING PAGE
+   Matches the exact design from screenshot
+   ============================================ */
+
+/* CSS Variables for easy customization */
+:root {
+  --kahnke-teal: #2D5F5D;
+  --kahnke-teal-hover: #234846;
+  --kahnke-gradient-start: #A8E6CF;
+  --kahnke-gradient-end: #7FD9B3;
+  --kahnke-white: #FFFFFF;
+  --kahnke-text-dark: #333333;
+  --kahnke-text-gray: #666666;
+  --kahnke-text-light: #999999;
+  --kahnke-shadow: rgba(0, 0, 0, 0.1);
+  --kahnke-border: #E5E5E5;
+}
+
+/* Main wrapper with gradient background */
+.kahnke-landing-wrapper {
+  background: linear-gradient(180deg, var(--kahnke-gradient-start) 0%, var(--kahnke-gradient-end) 100%);
+  min-height: 100vh;
+  padding: 40px 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Container for all content */
+.kahnke-container {
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* ============================================
+   HEADER CARD STYLES
+   ============================================ */
+
+.kahnke-header-card {
+  background: var(--kahnke-white);
+  border-radius: 20px;
+  padding: 40px 30px;
+  box-shadow: 0 4px 20px var(--kahnke-shadow);
+  text-align: center;
+}
+
+.kahnke-logo-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.kahnke-logo-icon {
+  flex-shrink: 0;
+}
+
+.kahnke-brand-text h1 {
+  color: var(--kahnke-teal);
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  margin: 0;
+  line-height: 1.2;
+  text-align: left;
+}
+
+.kahnke-author {
+  color: var(--kahnke-text-gray);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  margin: 15px 0 10px;
+}
+
+.kahnke-location {
+  color: var(--kahnke-text-gray);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  margin: 8px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.kahnke-tagline {
+  color: var(--kahnke-text-gray);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  margin: 15px 0 25px;
+  text-transform: uppercase;
+}
+
+.kahnke-social-icons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 25px;
+}
+
+.kahnke-social-icons a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.kahnke-social-icons a:hover {
+  transform: scale(1.1);
+  opacity: 0.7;
+}
+
+.kahnke-social-icons svg {
+  width: 28px;
+  height: 28px;
+}
+
+/* ============================================
+   PRODUCT CARD STYLES
+   ============================================ */
+
+.kahnke-product-card {
+  background: var(--kahnke-white);
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 4px 20px var(--kahnke-shadow);
+}
+
+.kahnke-product-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+  align-items: center;
+}
+
+.kahnke-product-images {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.kahnke-grid-item {
+  aspect-ratio: 1;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f5f5f5;
+}
+
+.kahnke-grid-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.kahnke-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #e0e0e0 0%, #f5f5f5 100%);
+  color: var(--kahnke-text-light);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.kahnke-product-details {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.kahnke-product-details h2 {
+  color: var(--kahnke-text-dark);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0;
+}
+
+.kahnke-product-description {
+  color: var(--kahnke-text-gray);
+  font-size: 15px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.kahnke-product-price {
+  color: var(--kahnke-text-dark);
+  font-size: 28px;
+  font-weight: 800;
+  margin: 10px 0;
+}
+
+.kahnke-buy-button {
+  background: var(--kahnke-teal);
+  color: var(--kahnke-white);
+  border: none;
+  border-radius: 12px;
+  padding: 16px 32px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  width: 100%;
+}
+
+.kahnke-buy-button:hover {
+  background: var(--kahnke-teal-hover);
+  transform: translateY(-2px);
+}
+
+.kahnke-buy-button:active {
+  transform: translateY(0);
+}
+
+/* ============================================
+   NEWSLETTER CARD STYLES
+   ============================================ */
+
+.kahnke-newsletter-card {
+  background: var(--kahnke-white);
+  border-radius: 20px;
+  padding: 40px 35px;
+  box-shadow: 0 4px 20px var(--kahnke-shadow);
+  text-align: center;
+}
+
+.kahnke-newsletter-card h2 {
+  color: var(--kahnke-text-dark);
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 15px 0;
+}
+
+.kahnke-newsletter-subtitle {
+  color: var(--kahnke-text-gray);
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 0 0 30px 0;
+}
+
+.kahnke-newsletter-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.kahnke-input {
+  width: 100%;
+  padding: 16px 20px;
+  border: 2px solid var(--kahnke-border);
+  border-radius: 12px;
+  font-size: 15px;
+  font-family: inherit;
+  transition: border-color 0.3s ease;
+  box-sizing: border-box;
+}
+
+.kahnke-input:focus {
+  outline: none;
+  border-color: var(--kahnke-teal);
+}
+
+.kahnke-input::placeholder {
+  color: var(--kahnke-text-light);
+}
+
+.kahnke-subscribe-button {
+  background: var(--kahnke-teal);
+  color: var(--kahnke-white);
+  border: none;
+  border-radius: 12px;
+  padding: 16px 32px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.kahnke-subscribe-button:hover {
+  background: var(--kahnke-teal-hover);
+  transform: translateY(-2px);
+}
+
+.kahnke-subscribe-button:active {
+  transform: translateY(0);
+}
+
+.kahnke-subscribe-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.kahnke-form-success {
+  background: #d4edda;
+  color: #155724;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+
+.kahnke-form-error {
+  background: #f8d7da;
+  color: #721c24;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+
+.kahnke-form-message {
+  display: none;
+}
+
+.kahnke-form-message.show {
+  display: block;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+/* Tablet and smaller */
+@media (max-width: 768px) {
+  .kahnke-landing-wrapper {
+    padding: 30px 15px;
+  }
+  
+  .kahnke-container {
+    gap: 25px;
+  }
+  
+  .kahnke-header-card {
+    padding: 30px 20px;
+  }
+  
+  .kahnke-brand-text h1 {
+    font-size: 26px;
+  }
+  
+  .kahnke-product-grid {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+  
+  .kahnke-product-images {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
+  
+  .kahnke-product-details h2 {
+    font-size: 20px;
+  }
+  
+  .kahnke-newsletter-card h2 {
+    font-size: 20px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .kahnke-landing-wrapper {
+    padding: 20px 12px;
+  }
+  
+  .kahnke-logo-section {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .kahnke-brand-text h1 {
+    font-size: 22px;
+    text-align: center;
+  }
+  
+  .kahnke-product-card {
+    padding: 20px;
+  }
+  
+  .kahnke-product-images {
+    gap: 5px;
+  }
+  
+  .kahnke-product-details h2 {
+    font-size: 18px;
+  }
+  
+  .kahnke-product-price {
+    font-size: 24px;
+  }
+  
+  .kahnke-newsletter-card {
+    padding: 30px 20px;
+  }
+  
+  .kahnke-social-icons {
+    gap: 15px;
+  }
+  
+  .kahnke-social-icons svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+/* Extra small mobile */
+@media (max-width: 360px) {
+  .kahnke-brand-text h1 {
+    font-size: 20px;
+  }
+  
+  .kahnke-product-images {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
