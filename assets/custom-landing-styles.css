@@ -61,9 +61,8 @@ body:has(.kahnke-landing-wrapper) .shopify-section-footer-group {
 
 .kahnke-header-image {
   width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: block;
+  margin: 0 auto;
 }
 
 .kahnke-header-image img {
@@ -71,6 +70,7 @@ body:has(.kahnke-landing-wrapper) .shopify-section-footer-group {
   height: auto;
   display: block;
   object-fit: cover;
+  margin: 0 auto;
 }
 
 .kahnke-header-image-placeholder {
