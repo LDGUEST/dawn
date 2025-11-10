@@ -56,7 +56,6 @@ body:has(.kahnke-landing-wrapper) .shopify-section-footer-group {
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 4px 20px var(--kahnke-shadow);
-  margin-bottom: 30px;
   box-sizing: border-box;
 }
 
