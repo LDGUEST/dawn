@@ -16,6 +16,8 @@
         "gradient_color_middle": "#ffffff",
         "gradient_middle_position": 85,
         "gradient_color_2": "#ffffff",
+        "card_border_thickness": 3,
+        "card_border_color": "#145b24",
         "header_image": "shopify://shop_images/Cooking_With_Kahnke_-_Green.png",
         "header_image_size": 70,
         "brand_name": "",
