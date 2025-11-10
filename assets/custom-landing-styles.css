@@ -34,8 +34,8 @@ body:has(.kahnke-landing-wrapper) .shopify-section-footer-group {
 .kahnke-landing-wrapper {
   background: linear-gradient(180deg, var(--kahnke-gradient-start) 0%, var(--kahnke-gradient-end) 100%);
   min-height: 100vh;
-  padding: 40px 20px;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  /* padding controlled via section settings */
 }
 
 /* Container for all content */
@@ -45,6 +45,7 @@ body:has(.kahnke-landing-wrapper) .shopify-section-footer-group {
   display: flex;
   flex-direction: column;
   gap: 30px;
+  padding: 0 20px;
 }
 
 /* ============================================
