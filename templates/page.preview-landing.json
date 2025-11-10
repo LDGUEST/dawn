@@ -11,10 +11,14 @@
         "product_description": "30 inspirational lettuce wrap recipes to try!",
         "product_price": "$9.99",
         "buy_button_text": "Buy now",
-        "buy_button_url": "",
+        "buy_button_url": "#",
         "social_handle": "@cookingwithkahnke",
         "newsletter_description": "Sign up to get exclusive updates & deals updates directly from me.",
-        "subscribe_button_text": "Subscribe"
+        "subscribe_button_text": "Subscribe",
+        "tiktok_url": "https://tiktok.com",
+        "instagram_url": "https://instagram.com",
+        "youtube_url": "https://youtube.com",
+        "facebook_url": "https://facebook.com"
       }
     }
   },
@@ -22,3 +26,4 @@
     "custom_landing"
   ]
 }
+
