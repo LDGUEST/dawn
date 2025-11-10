@@ -11,11 +11,12 @@
   "current": {
     "logo": "shopify://shop_images/Cooking_With_Kahnke_-_Green.png",
     "logo_width": 140,
+    "favicon": "shopify://shop_images/Cooking_With_Kahnke_-_Green.png",
     "type_header_font": "assistant_n4",
     "heading_scale": 100,
     "type_body_font": "assistant_n4",
     "body_scale": 100,
-    "page_width": 1200,
+    "page_width": 1300,
     "spacing_sections": 0,
     "spacing_grid_horizontal": 8,
     "spacing_grid_vertical": 8,
@@ -40,10 +41,10 @@
     "inputs_shadow_horizontal_offset": 0,
     "inputs_shadow_vertical_offset": 4,
     "inputs_shadow_blur": 5,
-    "card_style": "standard",
+    "card_style": "card",
     "card_image_padding": 0,
     "card_text_alignment": "left",
-    "card_color_scheme": "scheme-2",
+    "card_color_scheme": "scheme-1",
     "card_border_thickness": 0,
     "card_border_opacity": 10,
     "card_corner_radius": 0,
@@ -136,6 +137,22 @@
       }
     },
     "content_for_index": [],
+    "blocks": {
+      "15683396631634586217": {
+        "type": "shopify://apps/inbox/blocks/chat/841fc607-4181-4ad1-842d-e24d7f8bad6b",
+        "disabled": false,
+        "settings": {
+          "button_color": "#000000",
+          "secondary_color": "#FFFFFF",
+          "ternary_color": "#6A6A6A",
+          "button_icon": "chat_bubble",
+          "button_text": "chat_with_us",
+          "button_horizontal_position": "bottom_right",
+          "button_vertical_position": "lowest",
+          "greeting_message": ""
+        }
+      }
+    },
     "color_schemes": {
       "scheme-1": {
         "settings": {
