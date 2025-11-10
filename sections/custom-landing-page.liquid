@@ -83,17 +83,15 @@
     <div class="kahnke-product-card">
       <div class="kahnke-product-grid">
         <div class="kahnke-product-images">
-          {% for i in (1..16) %}
-            {% if section.settings.product_grid_image != blank %}
-              <div class="kahnke-grid-item">
-                {{ section.settings.product_grid_image | image_url: width: 200 | image_tag: loading: 'lazy', alt: section.settings.product_title }}
-              </div>
-            {% else %}
-              <div class="kahnke-grid-item kahnke-placeholder">
-                <span>{{ i }}</span>
-              </div>
-            {% endif %}
-          {% endfor %}
+          {% if section.settings.product_grid_image != blank %}
+            <div class="kahnke-single-product-image">
+              {{ section.settings.product_grid_image | image_url: width: 600 | image_tag: loading: 'lazy', alt: section.settings.product_title }}
+            </div>
+          {% else %}
+            <div class="kahnke-single-product-image kahnke-placeholder">
+              <p>Upload product image</p>
+            </div>
+          {% endif %}
         </div>
         
         <div class="kahnke-product-details">

@@ -174,33 +174,36 @@ body:has(.kahnke-landing-wrapper) .shopify-section-footer-group {
 }
 
 .kahnke-product-images {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
+  display: block;
 }
 
-.kahnke-grid-item {
-  aspect-ratio: 1;
+.kahnke-single-product-image {
+  width: 100%;
   border-radius: 12px;
   overflow: hidden;
   background: #f5f5f5;
 }
 
-.kahnke-grid-item img {
+.kahnke-single-product-image img {
   width: 100%;
-  height: 100%;
+  height: auto;
   object-fit: cover;
   display: block;
 }
 
-.kahnke-placeholder {
+.kahnke-single-product-image.kahnke-placeholder {
   display: flex;
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #e0e0e0 0%, #f5f5f5 100%);
-  color: var(--kahnke-text-light);
-  font-size: 14px;
+  color: var(--kahnke-text-gray);
+  min-height: 300px;
+}
+
+.kahnke-single-product-image.kahnke-placeholder p {
+  font-size: 16px;
   font-weight: 600;
+  margin: 0;
 }
 
 .kahnke-product-details {
@@ -390,11 +393,6 @@ body:has(.kahnke-landing-wrapper) .shopify-section-footer-group {
     gap: 25px;
   }
   
-  .kahnke-product-images {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 6px;
-  }
-  
   .kahnke-product-details h2 {
     font-size: 20px;
   }
@@ -424,10 +422,6 @@ body:has(.kahnke-landing-wrapper) .shopify-section-footer-group {
     padding: 20px;
   }
   
-  .kahnke-product-images {
-    gap: 5px;
-  }
-  
   .kahnke-product-details h2 {
     font-size: 18px;
   }
@@ -454,10 +448,6 @@ body:has(.kahnke-landing-wrapper) .shopify-section-footer-group {
 @media (max-width: 360px) {
   .kahnke-brand-text h1 {
     font-size: 20px;
-  }
-  
-  .kahnke-product-images {
-    grid-template-columns: repeat(3, 1fr);
   }
 }
 
