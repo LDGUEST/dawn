@@ -84,10 +84,9 @@
       <div class="kahnke-product-grid">
         <div class="kahnke-product-images">
           {% for i in (1..16) %}
-            {% assign image_setting = 'product_image_' | append: i %}
-            {% if section.settings[image_setting] != blank %}
+            {% if section.settings.product_grid_image != blank %}
               <div class="kahnke-grid-item">
-                {{ section.settings[image_setting] | image_url: width: 200 | image_tag: loading: 'lazy', alt: section.settings.product_title }}
+                {{ section.settings.product_grid_image | image_url: width: 200 | image_tag: loading: 'lazy', alt: section.settings.product_title }}
               </div>
             {% else %}
               <div class="kahnke-grid-item kahnke-placeholder">
@@ -300,87 +299,13 @@
     },
     {
       "type": "header",
-      "content": "Product Images (4x4 Grid)"
+      "content": "Product Grid Image"
     },
     {
       "type": "image_picker",
-      "id": "product_image_1",
-      "label": "Image 1"
-    },
-    {
-      "type": "image_picker",
-      "id": "product_image_2",
-      "label": "Image 2"
-    },
-    {
-      "type": "image_picker",
-      "id": "product_image_3",
-      "label": "Image 3"
-    },
-    {
-      "type": "image_picker",
-      "id": "product_image_4",
-      "label": "Image 4"
-    },
-    {
-      "type": "image_picker",
-      "id": "product_image_5",
-      "label": "Image 5"
-    },
-    {
-      "type": "image_picker",
-      "id": "product_image_6",
-      "label": "Image 6"
-    },
-    {
-      "type": "image_picker",
-      "id": "product_image_7",
-      "label": "Image 7"
-    },
-    {
-      "type": "image_picker",
-      "id": "product_image_8",
-      "label": "Image 8"
-    },
-    {
-      "type": "image_picker",
-      "id": "product_image_9",
-      "label": "Image 9"
-    },
-    {
-      "type": "image_picker",
-      "id": "product_image_10",
-      "label": "Image 10"
-    },
-    {
-      "type": "image_picker",
-      "id": "product_image_11",
-      "label": "Image 11"
-    },
-    {
-      "type": "image_picker",
-      "id": "product_image_12",
-      "label": "Image 12"
-    },
-    {
-      "type": "image_picker",
-      "id": "product_image_13",
-      "label": "Image 13"
-    },
-    {
-      "type": "image_picker",
-      "id": "product_image_14",
-      "label": "Image 14"
-    },
-    {
-      "type": "image_picker",
-      "id": "product_image_15",
-      "label": "Image 15"
-    },
-    {
-      "type": "image_picker",
-      "id": "product_image_16",
-      "label": "Image 16"
+      "id": "product_grid_image",
+      "label": "Grid Image",
+      "info": "This image will be repeated 16 times in the 4x4 grid"
     },
     {
       "type": "header",
