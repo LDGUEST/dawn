@@ -25,6 +25,7 @@
       "block_order": [
         "footer-2"
       ],
+      "disabled": true,
       "settings": {
         "color_scheme": "scheme-1",
         "newsletter_enable": false,
@@ -35,8 +36,8 @@
         "enable_language_selector": false,
         "payment_enable": true,
         "show_policy": false,
-        "margin_top": 28,
-        "padding_top": 0,
+        "margin_top": 12,
+        "padding_top": 28,
         "padding_bottom": 0
       }
     }
