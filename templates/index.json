@@ -1,17 +1,32 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "custom_landing": {
       "type": "custom-landing-page",
       "settings": {
+        "gradient_color_1": "#02891e",
+        "gradient_color_2": "#ffffff",
         "brand_name": "COOKING WITH KAHNKE",
         "author_name": "RYAN KAHNKE",
         "location": "LETTUCE WRAP PARADISE",
         "tagline": "A HEALTHIER YOU, ONE RECIPE AT A TIME",
+        "tiktok_url": "",
+        "instagram_url": "",
+        "youtube_url": "",
+        "facebook_url": "",
         "product_title": "30 Lettuce Wrap Recipes Book PDF",
         "product_description": "30 inspirational lettuce wrap recipes to try!",
         "product_price": "$9.99",
-        "buy_button_text": "Buy now",
         "buy_button_url": "",
+        "buy_button_text": "Buy now",
         "social_handle": "@cookingwithkahnke",
         "newsletter_description": "Sign up to get exclusive updates & deals updates directly from me.",
         "subscribe_button_text": "Subscribe"
