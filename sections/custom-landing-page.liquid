@@ -4,7 +4,7 @@
   Integrated with Brevo for email marketing
 {% endcomment %}
 
-<div class="kahnke-landing-wrapper" style="{% if section.settings.gradient_color_1 != blank and section.settings.gradient_color_2 != blank %}background: linear-gradient(180deg, {{ section.settings.gradient_color_1 }} 0%, {{ section.settings.gradient_color_2 }} 100%);{% endif %}">
+<div class="kahnke-landing-wrapper" style="{% if section.settings.gradient_color_1 != blank %}background: linear-gradient(180deg, {{ section.settings.gradient_color_1 }} 0%, {% if section.settings.gradient_color_middle != blank %}{{ section.settings.gradient_color_middle }} {{ section.settings.gradient_middle_position | default: 50 }}%, {% endif %}{{ section.settings.gradient_color_2 }} 100%);{% endif %}">
   <div class="kahnke-container">
     
     {%- comment -%} HEADER IMAGE CARD {%- endcomment -%}
@@ -159,14 +159,32 @@
       "type": "color",
       "id": "gradient_color_1",
       "label": "Gradient Top Color",
-      "default": "#A8E6CF",
+      "default": "#02891e",
       "info": "Top color of the background gradient"
+    },
+    {
+      "type": "color",
+      "id": "gradient_color_middle",
+      "label": "Gradient Middle Color (Optional)",
+      "default": "#FFFFFF",
+      "info": "Middle color - leave blank to use only top and bottom colors"
+    },
+    {
+      "type": "range",
+      "id": "gradient_middle_position",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Middle Color Position",
+      "default": 50,
+      "info": "Where the middle color appears (0% = top, 100% = bottom)"
     },
     {
       "type": "color",
       "id": "gradient_color_2",
       "label": "Gradient Bottom Color",
-      "default": "#7FD9B3",
+      "default": "#02891e",
       "info": "Bottom color of the background gradient"
     },
     {
