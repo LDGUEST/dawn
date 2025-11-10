@@ -5,74 +5,91 @@
 {% endcomment %}
 
 <div class="kahnke-landing-wrapper">
-  <div class="kahnke-container">
-    
-    {%- comment -%} HEADER CARD {%- endcomment -%}
-    <div class="kahnke-header-card">
-      <div class="kahnke-logo-section">
-        <div class="kahnke-logo-icon">
-          <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-            {%- comment -%} Cloche/Dome Icon {%- endcomment -%}
-            <path d="M30 15C30 15 18 15 18 25H42C42 15 30 15 30 15Z" stroke="#2D5F5D" stroke-width="2.5" fill="none"/>
-            <ellipse cx="30" cy="12" rx="3" ry="4" fill="#2D5F5D"/>
-            <line x1="18" y1="25" x2="42" y2="25" stroke="#2D5F5D" stroke-width="3" stroke-linecap="round"/>
-            <path d="M15 25C15 25 15 28 18 28H42C45 28 45 25 45 25" stroke="#2D5F5D" stroke-width="2.5" stroke-linecap="round"/>
-            {%- comment -%} Steam lines {%- endcomment -%}
-            <path d="M26 8C26 8 26 5 28 5" stroke="#2D5F5D" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-            <path d="M30 6C30 6 30 3 32 3" stroke="#2D5F5D" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-            <path d="M34 8C34 8 34 5 36 5" stroke="#2D5F5D" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+  {%- comment -%} TOP BANNER SECTION {%- endcomment -%}
+  <div class="kahnke-top-banner">
+    <div class="kahnke-banner-container">
+      
+      {%- comment -%} White Card Container {%- endcomment -%}
+      <div class="kahnke-banner-card">
+        
+        {%- comment -%} Logo and Brand Name {%- endcomment -%}
+        <div class="kahnke-banner-logo-section">
+          <div class="kahnke-banner-icon">
+            <svg width="70" height="70" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+              {%- comment -%} Cloche/Dome Icon {%- endcomment -%}
+              <path d="M35 18C35 18 21 18 21 30H49C49 18 35 18 35 18Z" stroke="#2D5F5D" stroke-width="2.5" fill="none"/>
+              <ellipse cx="35" cy="14.5" rx="3.5" ry="4.5" fill="#2D5F5D"/>
+              <line x1="21" y1="30" x2="49" y2="30" stroke="#2D5F5D" stroke-width="3.5" stroke-linecap="round"/>
+              <path d="M17 30C17 30 17 33.5 21 33.5H49C53 33.5 53 30 53 30" stroke="#2D5F5D" stroke-width="2.5" stroke-linecap="round"/>
+              {%- comment -%} Steam lines {%- endcomment -%}
+              <path d="M30 10C30 10 30 6 32.5 6" stroke="#2D5F5D" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+              <path d="M35 7.5C35 7.5 35 3.5 37.5 3.5" stroke="#2D5F5D" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+              <path d="M40 10C40 10 40 6 42.5 6" stroke="#2D5F5D" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+            </svg>
+          </div>
+          
+          <div class="kahnke-banner-text">
+            <h1 class="kahnke-banner-title">{{ section.settings.brand_name | default: "COOKING WITH KAHNKE" }}</h1>
+          </div>
+        </div>
+        
+      </div>
+      
+      {%- comment -%} Info Section Below Card {%- endcomment -%}
+      <div class="kahnke-banner-info">
+        <p class="kahnke-banner-author">BY {{ section.settings.author_name | default: "RYAN KAHNKE" }}</p>
+        
+        <p class="kahnke-banner-location">
+          <svg width="12" height="16" viewBox="0 0 12 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 0C2.69 0 0 2.69 0 6C0 10.5 6 16 6 16C6 16 12 10.5 12 6C12 2.69 9.31 0 6 0ZM6 8C4.9 8 4 7.1 4 6C4 4.9 4.9 4 6 4C7.1 4 8 4.9 8 6C8 7.1 7.1 8 6 8Z" fill="#2D5F5D"/>
           </svg>
+          {{ section.settings.location | default: "LETTUCE WRAP PARADISE" }}
+        </p>
+        
+        <p class="kahnke-banner-tagline">{{ section.settings.tagline | default: "A HEALTHIER YOU, ONE RECIPE AT A TIME" }}</p>
+        
+        {%- comment -%} Social Media Icons Row {%- endcomment -%}
+        <div class="kahnke-banner-socials">
+          {% if section.settings.tiktok_url != blank %}
+            <a href="{{ section.settings.tiktok_url }}" target="_blank" rel="noopener noreferrer" aria-label="Visit our TikTok" class="kahnke-social-link">
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M26.12 8.92a6.44 6.44 0 0 1-5.03-5.67V2.67h-4.6v18.22a3.85 3.85 0 0 1-6.93 2.32 3.85 3.85 0 0 1 3.08-6.19c.39 0 .77.05 1.17.17v-4.52a9.12 9.12 0 0 0-1.33-.07A8.44 8.44 0 0 0 6.67 26.8a8.45 8.45 0 0 0 14.48-5.91V11.2a10.88 10.88 0 0 0 6.36 2.03v-4.53c-.46.01-.93-.03-1.39-.13z" fill="#2D5F5D"/>
+              </svg>
+            </a>
+          {% endif %}
+          
+          {% if section.settings.instagram_url != blank %}
+            <a href="{{ section.settings.instagram_url }}" target="_blank" rel="noopener noreferrer" aria-label="Visit our Instagram" class="kahnke-social-link">
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M16 2.88c4.27 0 4.78.02 6.47.09 4.34.2 6.36 2.25 6.56 6.56.08 1.69.09 2.2.09 6.47s-.01 4.78-.09 6.47c-.2 4.3-2.22 6.36-6.56 6.56-1.69.08-2.19.09-6.47.09s-4.78-.01-6.47-.09c-4.35-.2-6.36-2.27-6.56-6.56-.08-1.69-.09-2.19-.09-6.47s.01-4.78.09-6.47c.2-4.3 2.22-6.36 6.56-6.56 1.69-.07 2.2-.09 6.47-.09zM16 0c-4.34 0-4.89.02-6.6.1-5.81.26-9.03 3.48-9.3 9.3C.02 11.1 0 11.66 0 16c0 4.34.02 4.89.1 6.6.26 5.81 3.48 9.03 9.3 9.3 1.71.08 2.26.1 6.6.1 4.34 0 4.89-.02 6.6-.1 5.81-.26 9.04-3.48 9.3-9.3.08-1.71.1-2.26.1-6.6 0-4.34-.02-4.89-.1-6.6-.26-5.81-3.49-9.03-9.3-9.3C20.9.02 20.34 0 16 0zm0 7.78a8.22 8.22 0 1 0 0 16.44 8.22 8.22 0 0 0 0-16.44zm0 13.55a5.33 5.33 0 1 1 0-10.66 5.33 5.33 0 0 1 0 10.66zm8.54-15.8a1.92 1.92 0 1 0 0 3.84 1.92 1.92 0 0 0 0-3.84z" fill="#2D5F5D"/>
+              </svg>
+            </a>
+          {% endif %}
+          
+          {% if section.settings.youtube_url != blank %}
+            <a href="{{ section.settings.youtube_url }}" target="_blank" rel="noopener noreferrer" aria-label="Visit our YouTube" class="kahnke-social-link">
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M31.33 8.25a4.02 4.02 0 0 0-2.83-2.85C26 4.73 16 4.73 16 4.73s-10 0-12.5.67a4.02 4.02 0 0 0-2.83 2.85C0 10.76 0 16 0 16s0 5.24.67 7.75a4.02 4.02 0 0 0 2.83 2.85C6 27.27 16 27.27 16 27.27s10 0 12.5-.67a4.02 4.02 0 0 0 2.83-2.85C32 21.24 32 16 32 16s0-5.24-.67-7.75zM12.73 20.76V11.24L21.09 16l-8.36 4.76z" fill="#2D5F5D"/>
+              </svg>
+            </a>
+          {% endif %}
+          
+          {% if section.settings.facebook_url != blank %}
+            <a href="{{ section.settings.facebook_url }}" target="_blank" rel="noopener noreferrer" aria-label="Visit our Facebook" class="kahnke-social-link">
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M32 16.1c0-8.84-7.16-16-16-16S0 7.26 0 16.1c0 7.99 5.85 14.6 13.5 15.8v-11.18H9.44v-4.63h4.06V12.6c0-4.01 2.39-6.23 6.04-6.23 1.75 0 3.58.31 3.58.31v3.94h-2.02c-1.99 0-2.61 1.23-2.61 2.5v3c0 0 4.44 0 4.44 0l-.71 4.63h-3.73V31.9C26.15 30.7 32 24.09 32 16.1z" fill="#2D5F5D"/>
+              </svg>
+            </a>
+          {% endif %}
         </div>
-        <div class="kahnke-brand-text">
-          <h1>{{ section.settings.brand_name | default: "COOKING WITH KAHNKE" }}</h1>
-        </div>
+        
       </div>
       
-      <p class="kahnke-author">BY {{ section.settings.author_name | default: "RYAN KAHNKE" }}</p>
-      
-      <p class="kahnke-location">
-        <svg width="14" height="18" viewBox="0 0 14 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M7 0C3.13 0 0 3.13 0 7C0 12.25 7 18 7 18C7 18 14 12.25 14 7C14 3.13 10.87 0 7 0ZM7 9.5C5.62 9.5 4.5 8.38 4.5 7C4.5 5.62 5.62 4.5 7 4.5C8.38 4.5 9.5 5.62 9.5 7C9.5 8.38 8.38 9.5 7 9.5Z" fill="#2D5F5D"/>
-        </svg>
-        {{ section.settings.location | default: "LETTUCE WRAP PARADISE" }}
-      </p>
-      
-      <p class="kahnke-tagline">{{ section.settings.tagline | default: "A HEALTHIER YOU, ONE RECIPE AT A TIME" }}</p>
-      
-      <div class="kahnke-social-icons">
-        {% if section.settings.tiktok_url != blank %}
-          <a href="{{ section.settings.tiktok_url }}" target="_blank" rel="noopener" aria-label="TikTok">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="#2D5F5D">
-              <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
-            </svg>
-          </a>
-        {% endif %}
-        
-        {% if section.settings.instagram_url != blank %}
-          <a href="{{ section.settings.instagram_url }}" target="_blank" rel="noopener" aria-label="Instagram">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="#2D5F5D">
-              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-            </svg>
-          </a>
-        {% endif %}
-        
-        {% if section.settings.youtube_url != blank %}
-          <a href="{{ section.settings.youtube_url }}" target="_blank" rel="noopener" aria-label="YouTube">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="#2D5F5D">
-              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-            </svg>
-          </a>
-        {% endif %}
-        
-        {% if section.settings.facebook_url != blank %}
-          <a href="{{ section.settings.facebook_url }}" target="_blank" rel="noopener" aria-label="Facebook">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="#2D5F5D">
-              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-            </svg>
-          </a>
-        {% endif %}
-      </div>
     </div>
+  </div>
+
+  {%- comment -%} PRODUCT AND NEWSLETTER SECTIONS {%- endcomment -%}
+  <div class="kahnke-container">
 
     {%- comment -%} PRODUCT CARD {%- endcomment -%}
     <div class="kahnke-product-card">
