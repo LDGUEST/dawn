@@ -102,9 +102,32 @@
     });
   });
   
-  // Close modal
-  if (closeBtn) closeBtn.addEventListener('click', closeModal);
-  if (overlay) overlay.addEventListener('click', closeModal);
+  // Close modal - X button click
+  if (closeBtn) {
+    closeBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      closeModal();
+    });
+  }
+  
+  // Close modal - Click outside (on overlay only, not modal content)
+  if (overlay) {
+    overlay.addEventListener('click', function(e) {
+      // Only close if clicking directly on the overlay, not on modal content
+      if (e.target === overlay) {
+        closeModal();
+      }
+    });
+  }
+  
+  // Prevent modal content clicks from closing
+  const modalContent = document.querySelector('.email-popup-content');
+  if (modalContent) {
+    modalContent.addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+  }
   
   // Close on Escape key
   document.addEventListener('keydown', function(e) {

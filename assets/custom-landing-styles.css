@@ -424,25 +424,39 @@ body.modal-open .email-popup-modal {
 
 .email-popup-close {
   position: absolute;
-  top: -40px;
-  right: 0;
-  background: rgba(255, 255, 255, 0.9);
-  border: none;
+  top: 10px;
+  right: 10px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid rgba(0, 0, 0, 0.1);
   border-radius: 50%;
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   z-index: 10001;
-  transition: background 0.3s ease, transform 0.2s ease;
+  transition: background 0.3s ease, transform 0.2s ease, border-color 0.3s ease;
   color: #333;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .email-popup-close:hover {
   background: #FFFFFF;
-  transform: rotate(90deg);
+  border-color: rgba(0, 0, 0, 0.2);
+  transform: rotate(90deg) scale(1.1);
+}
+
+.email-popup-close:active {
+  transform: rotate(90deg) scale(0.95);
+}
+
+.email-popup-close svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2.5;
 }
 
 .email-popup-card {
@@ -495,9 +509,17 @@ body.modal-open .email-popup-modal {
   }
   
   .email-popup-close {
-    top: -35px;
-    width: 32px;
-    height: 32px;
+    top: 10px;
+    right: 10px;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+  }
+  
+  .email-popup-close svg {
+    width: 20px;
+    height: 20px;
   }
   
   .email-popup-card {
