@@ -250,7 +250,7 @@ product-info {
 
 .product__description.rte p {
   line-height: 1.7;
-  margin: 0;
+  margin: 0 0 1em 0;
   padding: 0;
   color: #234846;
   font-weight: 500;
