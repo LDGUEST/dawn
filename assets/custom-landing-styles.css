@@ -543,6 +543,10 @@ body.modal-open .email-popup-modal {
   .email-popup-close {
     top: 10px;
     right: 10px;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
     background: rgba(0, 0, 0, 0.5);
     color: #FFFFFF;
   }
