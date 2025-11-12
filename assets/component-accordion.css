@@ -51,6 +51,16 @@
   word-break: break-word;
   overflow-x: auto;
   padding: 0 0.6rem;
+  color: #234846;
+  font-weight: 500;
+  font-size: 1.7rem;
+  line-height: 1.7;
+}
+
+.accordion__content p {
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+  color: #234846;
 }
 
 .accordion__content img {
