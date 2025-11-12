@@ -392,7 +392,18 @@ details-modal.header__search {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.9);
+}
+
+/* Blur background content when modal is open */
+body.modal-open > *:not(.email-popup-modal) {
+  filter: blur(5px);
+  -webkit-filter: blur(5px);
+  pointer-events: none;
+}
+
+body.modal-open .email-popup-modal {
+  pointer-events: all;
 }
 
 .email-popup-content {
