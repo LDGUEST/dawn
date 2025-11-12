@@ -62,7 +62,8 @@ if (!customElements.get('product-form')) {
               this.error = true;
               return;
             } else if (!this.cart) {
-              window.location = window.routes.cart_url;
+              // Direct to checkout - skip cart page
+              window.location = '/checkout';
               return;
             }
 
@@ -94,6 +95,10 @@ if (!customElements.get('product-form')) {
               CartPerformance.measure("add:paint-updated-sections", () => {
                 this.cart.renderContents(response);
               });
+              // Redirect to checkout after cart updates
+              setTimeout(() => {
+                window.location.href = '/checkout';
+              }, 500);
             }
           })
           .catch((e) => {
