@@ -241,6 +241,16 @@ product-info {
   margin: 2.5rem 0;
 }
 
+.product__description.rte {
+  line-height: 1.7;
+  font-size: 1.6rem;
+}
+
+.product__description.rte p {
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+}
+
 .product__text {
   margin-bottom: 0;
 }
