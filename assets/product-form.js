@@ -92,13 +92,9 @@ if (!customElements.get('product-form')) {
               );
               quickAddModal.hide(true);
             } else {
-              CartPerformance.measure("add:paint-updated-sections", () => {
-                this.cart.renderContents(response);
-              });
-              // Redirect to checkout after cart updates
-              setTimeout(() => {
-                window.location.href = '/checkout';
-              }, 500);
+              // Redirect to checkout immediately - skip cart notification
+              window.location.href = '/checkout';
+              return;
             }
           })
           .catch((e) => {
