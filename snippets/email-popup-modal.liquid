@@ -1,0 +1,128 @@
+{%- comment -%}
+  Email Popup Modal
+  Matches the existing newsletter subscribe box styling exactly
+{%- endcomment -%}
+
+<div id="email-popup-modal" class="email-popup-modal" style="display: none;">
+  <div class="email-popup-overlay" id="email-popup-overlay"></div>
+  <div class="email-popup-content">
+    <button class="email-popup-close" id="email-popup-close" aria-label="Close modal">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </button>
+    
+    <div class="kahnke-newsletter-card email-popup-card" style="border: 2px solid #000000;">
+      <h2>Subscribe to @cookingwithkahnke</h2>
+      <p class="kahnke-newsletter-subtitle">
+        Sign up to get exclusive updates on new free resources & deals updates directly from me.
+      </p>
+      
+      {% form 'customer', class: 'kahnke-newsletter-form', id: 'email-popup-form' %}
+        {% if form.posted_successfully? %}
+          <div class="kahnke-form-success show">
+            <p>Thanks for subscribing! Check your email to confirm.</p>
+          </div>
+        {% endif %}
+        
+        {% if form.errors %}
+          <div class="kahnke-form-error show">
+            {{ form.errors | default_errors }}
+          </div>
+        {% endif %}
+        
+        <input 
+          type="text" 
+          name="contact[first_name]" 
+          placeholder="First Name"
+          class="kahnke-input"
+          required
+        >
+        
+        <input 
+          type="text" 
+          name="contact[last_name]" 
+          placeholder="Last Name"
+          class="kahnke-input"
+          required
+        >
+        
+        <input 
+          type="email" 
+          name="contact[email]" 
+          placeholder="Email"
+          class="kahnke-input"
+          required
+        >
+        
+        <input type="hidden" name="contact[tags]" value="newsletter">
+        
+        <button type="submit" class="kahnke-subscribe-button">
+          Subscribe
+        </button>
+      {% endform %}
+      
+      <div class="kahnke-newsletter-footer-text" style="font-size: 14px; font-style: italic;">
+        Subscribe today to get the Ultimate Lettuce Wrapping Guide for FREE directly to your email inbox!
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const modal = document.getElementById('email-popup-modal');
+  const overlay = document.getElementById('email-popup-overlay');
+  const closeBtn = document.getElementById('email-popup-close');
+  const openButtons = document.querySelectorAll('.open-email-popup');
+  
+  function openModal() {
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => {
+      modal.classList.add('active');
+    }, 10);
+  }
+  
+  function closeModal() {
+    modal.classList.remove('active');
+    setTimeout(() => {
+      modal.style.display = 'none';
+      document.body.style.overflow = '';
+    }, 300);
+  }
+  
+  // Open modal when button is clicked
+  openButtons.forEach(button => {
+    button.addEventListener('click', function(e) {
+      e.preventDefault();
+      openModal();
+    });
+  });
+  
+  // Close modal
+  if (closeBtn) closeBtn.addEventListener('click', closeModal);
+  if (overlay) overlay.addEventListener('click', closeModal);
+  
+  // Close on Escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && modal.classList.contains('active')) {
+      closeModal();
+    }
+  });
+  
+  // Handle form submission success
+  const form = document.getElementById('email-popup-form');
+  if (form) {
+    form.addEventListener('submit', function(e) {
+      // Form will submit normally, but we can close modal after a delay if needed
+      setTimeout(function() {
+        if (form.querySelector('.kahnke-form-success')) {
+          setTimeout(closeModal, 2000);
+        }
+      }, 100);
+    });
+  }
+})();
+</script>
+
