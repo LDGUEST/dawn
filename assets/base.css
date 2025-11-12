@@ -6,16 +6,26 @@
   --focused-base-outline: 0.2rem solid rgba(var(--color-foreground), 0.5);
   --focused-base-outline-offset: 0.3rem;
   --focused-base-box-shadow: 0 0 0 0.3rem rgb(var(--color-background)), 0 0 0.5rem 0.4rem rgba(var(--color-foreground), 0.3);
-  color-scheme: light only;
+  color-scheme: light only !important;
 }
 
-/* Force light mode globally - prevent dark mode */
+/* Force light mode globally - prevent dark mode on ALL devices */
 html {
-  color-scheme: light;
+  color-scheme: light !important;
+  -webkit-color-scheme: light !important;
 }
 
 body {
-  color-scheme: light;
+  color-scheme: light !important;
+  -webkit-color-scheme: light !important;
+}
+
+/* Override any dark mode media queries */
+@media (prefers-color-scheme: dark) {
+  :root, html, body {
+    color-scheme: light !important;
+    -webkit-color-scheme: light !important;
+  }
 }
 
 .product-card-wrapper .card,
