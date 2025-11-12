@@ -37,8 +37,10 @@
         "buy_button_text": "Buy Now",
         "product_grid_image": "shopify://shop_images/30_Lettuce_Wraps_by_CookingwithKahnke_-_Cover_3b65e661-f729-429c-9936-c3dbfa8020dd.jpg",
         "social_handle": "@cookingwithkahnke",
-        "newsletter_description": "Sign up to get exclusive updates & deals updates directly from me.",
-        "subscribe_button_text": "Subscribe"
+        "newsletter_description": "Sign up to get exclusive updates on new free resources & deals updates directly from me.",
+        "subscribe_button_text": "Subscribe",
+        "subscribe_footer_text": "<p><em>Subscribe today to get the Ultimate Lettuce Wrapping Guide for FREE directly to your email inbox!</em></p>",
+        "subscribe_footer_text_size": 15
       }
     }
   },
