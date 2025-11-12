@@ -111,17 +111,20 @@
     });
   }
   
-  // Close modal - Click outside (on overlay only, not modal content)
-  if (overlay) {
-    overlay.addEventListener('click', function(e) {
-      // Only close if clicking directly on the overlay, not on modal content
-      if (e.target === overlay) {
+  // Close modal - Click outside (on overlay/modal background, not modal content)
+  // Listen on the modal container itself
+  if (modal) {
+    modal.addEventListener('click', function(e) {
+      // Close if clicking on the modal container or overlay, but NOT on the content
+      const modalContent = document.querySelector('.email-popup-content');
+      if (modalContent && !modalContent.contains(e.target)) {
+        // Clicked outside the content (on overlay/background)
         closeModal();
       }
     });
   }
   
-  // Prevent modal content clicks from closing
+  // Prevent modal content clicks from closing the modal
   const modalContent = document.querySelector('.email-popup-content');
   if (modalContent) {
     modalContent.addEventListener('click', function(e) {
