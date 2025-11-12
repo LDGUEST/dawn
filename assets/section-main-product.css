@@ -191,6 +191,16 @@ product-info {
 
 .product-form__submit {
   margin-bottom: 1rem;
+  background-color: #234846 !important;
+  color: #FFFFFF !important;
+}
+
+.product-form__submit:hover:not([disabled]) {
+  background-color: #1a3634 !important;
+}
+
+.product-form__submit:active:not([disabled]) {
+  background-color: #0f2421 !important;
 }
 
 .product-form__submit[aria-disabled='true'] + .shopify-payment-button .shopify-payment-button__button[disabled],
