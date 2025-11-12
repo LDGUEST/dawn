@@ -5,8 +5,8 @@
 
 /* CSS Variables for easy customization */
 :root {
-  --kahnke-teal: #2D5F5D;
-  --kahnke-teal-hover: #234846;
+  --kahnke-teal: #005633;
+  --kahnke-teal-hover: #004428;
   --kahnke-gradient-start: #A8E6CF;
   --kahnke-gradient-end: #7FD9B3;
   --kahnke-white: #FFFFFF;
@@ -470,7 +470,7 @@ body.modal-open .email-popup-modal {
 
 /* Button to open popup */
 .open-email-popup {
-  background: #234846;
+  background: #005633;
   color: #FFFFFF;
   border: none;
   border-radius: 12px;
@@ -486,7 +486,7 @@ body.modal-open .email-popup-modal {
 }
 
 .open-email-popup:hover {
-  background: #1a3634;
+  background: #004428;
   transform: translateY(-2px);
 }
 
@@ -555,6 +555,39 @@ body.modal-open .email-popup-modal {
 }
 
 /* ============================================
+   GLOBAL BUTTON COLOR OVERRIDE
+   All buttons site-wide use #005633
+   ============================================ */
+
+.button:not(.button--secondary):not(.button--tertiary),
+.shopify-challenge__button,
+.customer button:not(.button--secondary):not(.button--tertiary),
+.product-form__submit,
+.cart__checkout-button,
+.shopify-payment-button__button--unbranded {
+  background-color: #005633 !important;
+  color: #FFFFFF !important;
+}
+
+.button:not(.button--secondary):not(.button--tertiary):not([disabled]):hover,
+.shopify-challenge__button:hover,
+.customer button:not(.button--secondary):not(.button--tertiary):not([disabled]):hover,
+.product-form__submit:hover:not([disabled]),
+.cart__checkout-button:hover:not([disabled]),
+.shopify-payment-button__button--unbranded:hover:not([disabled]) {
+  background-color: #004428 !important;
+}
+
+.button:not(.button--secondary):not(.button--tertiary):not([disabled]):active,
+.shopify-challenge__button:active,
+.customer button:not(.button--secondary):not(.button--tertiary):not([disabled]):active,
+.product-form__submit:active:not([disabled]),
+.cart__checkout-button:active:not([disabled]),
+.shopify-payment-button__button--unbranded:active:not([disabled]) {
+  background-color: #00331f !important;
+}
+
+/* ============================================
    FLOATING CART BUTTON
    ============================================ */
 
@@ -565,7 +598,7 @@ body.modal-open .email-popup-modal {
   z-index: 1000;
   width: 56px;
   height: 56px;
-  background: #234846;
+  background: #005633;
   border-radius: 50%;
   display: flex;
   align-items: center;
