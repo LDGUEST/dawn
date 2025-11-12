@@ -1,0 +1,25 @@
+{%- comment -%}
+  Floating Cart Button
+  Persistent button in top-right corner that appears when cart has items
+{%- endcomment -%}
+
+{%- if cart.item_count > 0 -%}
+  <a href="{{ routes.cart_url }}" class="floating-cart-button" id="floating-cart-button" aria-label="{{ 'templates.cart.cart' | t }}">
+    <span class="floating-cart-icon">
+      {% if cart == empty %}
+        <span class="svg-wrapper">{{ 'icon-cart-empty.svg' | inline_asset_content }}</span>
+      {% else %}
+        <span class="svg-wrapper">{{ 'icon-cart.svg' | inline_asset_content }}</span>
+      {% endif %}
+    </span>
+    <span class="floating-cart-badge">
+      {%- if cart.item_count < 100 -%}
+        <span aria-hidden="true">{{ cart.item_count }}</span>
+      {%- else -%}
+        <span aria-hidden="true">99+</span>
+      {%- endif -%}
+      <span class="visually-hidden">{{ 'sections.header.cart_count' | t: count: cart.item_count }}</span>
+    </span>
+  </a>
+{%- endif -%}
+

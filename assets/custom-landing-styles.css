@@ -362,6 +362,148 @@ details-modal.header__search {
   padding: 0;
 }
 
+/* ============================================
+   FLOATING CART BUTTON
+   ============================================ */
+
+.floating-cart-button {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  width: 56px;
+  height: 56px;
+  background: #234846;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
+  opacity: 0;
+  animation: fadeInCart 0.5s ease forwards;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.floating-cart-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.floating-cart-button:active {
+  transform: scale(0.95);
+}
+
+.floating-cart-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: #FFFFFF;
+}
+
+.floating-cart-icon .svg-wrapper {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.floating-cart-icon svg {
+  width: 24px;
+  height: 24px;
+  fill: #FFFFFF;
+}
+
+.floating-cart-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #FF4444;
+  color: #FFFFFF;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes fadeInCart {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseCart {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+.floating-cart-button.pulse {
+  animation: pulseCart 0.5s ease;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .floating-cart-button {
+    top: 15px;
+    right: 15px;
+    width: 50px;
+    height: 50px;
+  }
+  
+  .floating-cart-icon .svg-wrapper {
+    width: 22px;
+    height: 22px;
+  }
+  
+  .floating-cart-icon svg {
+    width: 22px;
+    height: 22px;
+  }
+  
+  .floating-cart-badge {
+    width: 20px;
+    height: 20px;
+    font-size: 10px;
+    top: -3px;
+    right: -3px;
+  }
+}
+
+@media (max-width: 480px) {
+  .floating-cart-button {
+    top: 10px;
+    right: 10px;
+    width: 48px;
+    height: 48px;
+  }
+  
+  .floating-cart-badge {
+    width: 18px;
+    height: 18px;
+    font-size: 9px;
+  }
+}
+
 .kahnke-form-success {
   background: #d4edda;
   color: #155724;
