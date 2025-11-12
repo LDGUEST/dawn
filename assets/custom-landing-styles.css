@@ -350,6 +350,18 @@ details-modal.header__search {
   transform: none;
 }
 
+.kahnke-newsletter-footer-text {
+  margin-top: 20px;
+  text-align: center;
+  color: #666666;
+  line-height: 1.5;
+}
+
+.kahnke-newsletter-footer-text p {
+  margin: 0;
+  padding: 0;
+}
+
 .kahnke-form-success {
   background: #d4edda;
   color: #155724;

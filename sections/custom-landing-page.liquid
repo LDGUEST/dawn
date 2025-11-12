@@ -155,6 +155,12 @@
           {{ section.settings.subscribe_button_text | default: "Subscribe" }}
         </button>
       {% endform %}
+      
+      {%- if section.settings.subscribe_footer_text != blank -%}
+        <div class="kahnke-newsletter-footer-text" style="font-size: {{ section.settings.subscribe_footer_text_size | default: 14 }}px;">
+          {{ section.settings.subscribe_footer_text }}
+        </div>
+      {%- endif -%}
     </div>
     
   </div>
@@ -382,6 +388,27 @@
       "id": "subscribe_button_text",
       "label": "Subscribe Button Text",
       "default": "Subscribe"
+    },
+    {
+      "type": "header",
+      "content": "Text Below Subscribe Button"
+    },
+    {
+      "type": "richtext",
+      "id": "subscribe_footer_text",
+      "label": "Footer Text",
+      "info": "Text that appears below the Subscribe button within the newsletter box"
+    },
+    {
+      "type": "range",
+      "id": "subscribe_footer_text_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Footer Text Size",
+      "default": 14,
+      "info": "Font size for the text below the Subscribe button"
     },
     {
       "type": "header",
