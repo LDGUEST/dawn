@@ -30,6 +30,13 @@ body:has(.kahnke-landing-wrapper) .shopify-section-footer-group {
   display: none !important;
 }
 
+/* Hide search icon globally (backup via CSS) */
+.header__icon--search,
+.header__search,
+details-modal.header__search {
+  display: none !important;
+}
+
 /* Main wrapper with gradient background */
 .kahnke-landing-wrapper {
   background: linear-gradient(180deg, var(--kahnke-gradient-start) 0%, var(--kahnke-gradient-end) 100%);
