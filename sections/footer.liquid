@@ -85,8 +85,8 @@
                   {%- when 'text' -%}
                     <div class="footer-block__details-content rte">
                       {{ block.settings.subtext }}
-                      {%- comment -%} Add button below text if it contains "Art of Wrapping" {%- endcomment -%}
-                      {%- if block.settings.subtext contains 'Art of Wrapping' or block.settings.subtext contains 'art of wrapping' -%}
+                      {%- comment -%} Add button below text if heading contains "Art of Wrapping" {%- endcomment -%}
+                      {%- if block.settings.heading contains 'Art of Wrapping' or block.settings.heading contains 'art of wrapping' -%}
                         <div style="text-align: center; margin-top: 20px;">
                           <button class="open-email-popup" type="button">
                             Get the FREE Guide
