@@ -4,7 +4,7 @@
 {%- endcomment -%}
 
 {%- if cart.item_count > 0 -%}
-  <a href="{{ routes.cart_url }}" class="floating-cart-button" id="floating-cart-button" aria-label="{{ 'templates.cart.cart' | t }}">
+  <a href="{{ routes.cart_url }}" class="floating-cart-button floating-cart-hidden" id="floating-cart-button" aria-label="{{ 'templates.cart.cart' | t }}">
     <span class="floating-cart-icon">
       {% if cart == empty %}
         <span class="svg-wrapper">{{ 'icon-cart-empty.svg' | inline_asset_content }}</span>
@@ -21,5 +21,40 @@
       <span class="visually-hidden">{{ 'sections.header.cart_count' | t: count: cart.item_count }}</span>
     </span>
   </a>
+  
+  <script>
+  (function() {
+    const floatingCart = document.getElementById('floating-cart-button');
+    if (!floatingCart) return;
+    
+    const SCROLL_THRESHOLD = 150;
+    
+    function handleScroll() {
+      if (window.scrollY >= SCROLL_THRESHOLD) {
+        floatingCart.classList.remove('floating-cart-hidden');
+      } else {
+        floatingCart.classList.add('floating-cart-hidden');
+      }
+    }
+    
+    // Throttle scroll events for performance
+    let ticking = false;
+    function onScroll() {
+      if (!ticking) {
+        window.requestAnimationFrame(function() {
+          handleScroll();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }
+    
+    // Check initial scroll position
+    handleScroll();
+    
+    // Listen for scroll events
+    window.addEventListener('scroll', onScroll, { passive: true });
+  })();
+  </script>
 {%- endif -%}
 
