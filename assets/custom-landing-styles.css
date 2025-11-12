@@ -399,12 +399,13 @@ details-modal.header__search {
 .email-popup-content {
   position: relative;
   z-index: 10000;
-  width: 90%;
+  width: calc(100% - 40px);
   max-width: 500px;
   max-height: 90vh;
   overflow-y: auto;
   transform: scale(0.9);
   transition: transform 0.3s ease;
+  margin: 0 20px;
 }
 
 .email-popup-modal.active .email-popup-content {
@@ -436,7 +437,8 @@ details-modal.header__search {
 
 .email-popup-card {
   position: relative;
-  border: 2px solid #000000 !important;
+  border: 3px solid #000000 !important;
+  border-radius: 24px !important;
   margin: 0;
 }
 
@@ -466,11 +468,20 @@ details-modal.header__search {
   transform: translateY(0);
 }
 
-/* Mobile responsive for modal */
-@media (max-width: 768px) {
+/* Desktop - larger modal width */
+@media (min-width: 768px) {
   .email-popup-content {
-    width: 95%;
-    max-width: none;
+    max-width: 600px;
+    width: calc(100% - 40px);
+  }
+}
+
+/* Mobile responsive for modal */
+@media (max-width: 767px) {
+  .email-popup-content {
+    width: calc(100% - 40px);
+    max-width: 500px;
+    margin: 0 20px;
   }
   
   .email-popup-close {
@@ -481,18 +492,19 @@ details-modal.header__search {
   
   .email-popup-card {
     padding: 30px 25px !important;
+    border-radius: 24px !important;
   }
 }
 
 @media (max-width: 480px) {
   .email-popup-content {
-    width: 100%;
-    max-height: 100vh;
-    border-radius: 0;
+    width: calc(100% - 40px);
+    max-width: 500px;
+    margin: 0 20px;
   }
   
   .email-popup-card {
-    border-radius: 0 !important;
+    border-radius: 24px !important;
     padding: 25px 20px !important;
   }
   
