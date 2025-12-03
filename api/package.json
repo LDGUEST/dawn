@@ -1,0 +1,21 @@
+{
+  "name": "shopify-order-lookup",
+  "version": "1.0.0",
+  "description": "Serverless function for Shopify order lookup by order number and email",
+  "main": "find-order.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "shopify",
+    "order",
+    "lookup",
+    "serverless"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
+
