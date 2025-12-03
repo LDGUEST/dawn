@@ -244,13 +244,6 @@
             </div>
           {%- endif -%}
 
-          {%- comment -%} Find My Order Button {%- endcomment -%}
-          <div class="find-order-button-wrapper" style="text-align: center; padding: 2rem 0;">
-            <a href="{{ routes.root_url }}/pages/contact" class="button button--primary">
-              Can't Find Your Download?
-            </a>
-          </div>
-
           {%- if shop.features.follow_on_shop? and section.settings.enable_follow_on_shop -%}
             <div class="footer__follow-on-shop">
               {{ shop | login_button: action: 'follow' }}
@@ -260,6 +253,13 @@
           {%- if section.settings.show_social and has_social_icons -%}
             {%- render 'social-icons', class: 'footer__list-social' -%}
           {%- endif -%}
+        </div>
+
+        {%- comment -%} Find My Order Button - On separate line after newsletter/social {%- endcomment -%}
+        <div class="find-order-button-wrapper" style="text-align: center; padding: 3rem 0; width: 100%; clear: both;">
+          <a href="mailto:cookingwithkahnke@gmail.com?subject=Can't Find My Download" class="button button--primary" style="display: inline-block;">
+            Can't Find Your Download?
+          </a>
         </div>
       </div>
     {%- endunless -%}
