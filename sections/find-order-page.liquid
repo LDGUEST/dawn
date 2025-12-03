@@ -99,9 +99,11 @@
     <h1 class="main-page-title page-title h0{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}">
       {{ section.settings.heading | default: 'Find Your Order' }}
     </h1>
-    
+
     {%- comment -%} Test: If you see this, the section is loading {%- endcomment -%}
-    <p style="background: yellow; padding: 1rem; margin: 1rem 0;">SECTION IS LOADING - If you see this, the section works!</p>
+    <p style="background: yellow; padding: 1rem; margin: 1rem 0;">
+      SECTION IS LOADING - If you see this, the section works!
+    </p>
 
     <div class="rte{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
       {%- if section.settings.description != blank -%}
