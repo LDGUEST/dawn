@@ -1,11 +1,10 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "api/find-order.js",
-      "use": "@vercel/node"
+  "functions": {
+    "api/find-order.js": {
+      "runtime": "nodejs18.x"
     }
-  ],
+  },
   "routes": [
     {
       "src": "/api/find-order",
@@ -13,4 +12,3 @@
     }
   ]
 }
-
