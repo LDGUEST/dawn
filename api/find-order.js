@@ -10,7 +10,6 @@
 
 // For Vercel/Netlify
 if (typeof module !== 'undefined' && module.exports) {
-  // Vercel requires default export
   module.exports = handler;
   module.exports.default = handler;
 }
@@ -23,66 +22,64 @@ if (typeof addEventListener !== 'undefined') {
 }
 
 async function handler(req, res) {
+  // Set CORS headers for all responses
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Max-Age': '86400'
+  };
+
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
-    return {
-      statusCode: 200,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
-        'Access-Control-Max-Age': '86400'
-      },
-      body: ''
-    };
+    res.writeHead(200, corsHeaders);
+    res.end();
+    return;
   }
 
   // Only allow POST requests
   if (req.method !== 'POST') {
-    return {
-      statusCode: 405,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      },
-      body: JSON.stringify({ error: 'Method not allowed' })
-    };
+    res.writeHead(405, { ...corsHeaders, 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Method not allowed' }));
+    return;
   }
 
   try {
-    // Get request body
-    const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
-    const { order_number, email } = body;
+    // Get request body - Vercel provides req.body as parsed JSON
+    let body;
+    if (typeof req.body === 'string') {
+      body = JSON.parse(req.body);
+    } else if (req.body) {
+      body = req.body;
+    } else {
+      // Read from stream if needed
+      let data = '';
+      req.on('data', chunk => { data += chunk; });
+      await new Promise(resolve => req.on('end', resolve));
+      body = JSON.parse(data);
+    }
+    
+    const { order_number, email } = body || {};
 
     // Validate input
     if (!order_number || !email) {
-      return {
-        statusCode: 400,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        },
-        body: JSON.stringify({ 
-          error: 'Missing required fields',
-          message: 'Order number and email are required.'
-        })
-      };
+      res.writeHead(400, { ...corsHeaders, 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ 
+        error: 'Missing required fields',
+        message: 'Order number and email are required.'
+      }));
+      return;
     }
 
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return {
-        statusCode: 400,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        },
-        body: JSON.stringify({ 
-          error: 'Invalid email format',
-          message: 'Please provide a valid email address.'
-        })
-      };
+      res.writeHead(400, { ...corsHeaders, 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ 
+        error: 'Invalid email format',
+        message: 'Please provide a valid email address.'
+      }));
+      return;
     }
 
     // Get Shopify API credentials from environment
@@ -91,17 +88,12 @@ async function handler(req, res) {
 
     if (!shopifyStore || !shopifyToken) {
       console.error('Missing Shopify API credentials');
-      return {
-        statusCode: 500,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        },
-        body: JSON.stringify({ 
-          error: 'Server configuration error',
-          message: 'Service is not properly configured. Please contact support.'
-        })
-      };
+      res.writeHead(500, { ...corsHeaders, 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ 
+        error: 'Server configuration error',
+        message: 'Service is not properly configured. Please contact support.'
+      }));
+      return;
     }
 
     // Clean shopify store URL (remove https:// and trailing slash)
@@ -109,7 +101,6 @@ async function handler(req, res) {
     const apiUrl = `https://${cleanStore}/admin/api/2024-01/orders.json`;
 
     // Query Shopify Admin API
-    // First, try to find by email and order name
     const queryParams = new URLSearchParams({
       email: email,
       name: order_number,
@@ -128,17 +119,12 @@ async function handler(req, res) {
     if (!response.ok) {
       if (response.status === 401 || response.status === 403) {
         console.error('Shopify API authentication failed');
-        return {
-          statusCode: 500,
-          headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
-          },
-          body: JSON.stringify({ 
-            error: 'Authentication error',
-            message: 'Service configuration error. Please contact support.'
-          })
-        };
+        res.writeHead(500, { ...corsHeaders, 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ 
+          error: 'Authentication error',
+          message: 'Service configuration error. Please contact support.'
+        }));
+        return;
       }
 
       throw new Error(`Shopify API error: ${response.status}`);
@@ -155,17 +141,12 @@ async function handler(req, res) {
     });
 
     if (!matchingOrder) {
-      return {
-        statusCode: 404,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        },
-        body: JSON.stringify({ 
-          error: 'Order not found',
-          message: 'No order found with that order number and email address.'
-        })
-      };
+      res.writeHead(404, { ...corsHeaders, 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ 
+        error: 'Order not found',
+        message: 'No order found with that order number and email address.'
+      }));
+      return;
     }
 
     // Extract download links from fulfillments
@@ -187,7 +168,6 @@ async function handler(req, res) {
     // Check line items for digital download links
     if (matchingOrder.line_items) {
       matchingOrder.line_items.forEach(item => {
-        // Some digital download apps store URLs in properties or metafields
         if (item.properties) {
           item.properties.forEach(prop => {
             if (prop.name && (prop.name.toLowerCase().includes('download') || prop.name.toLowerCase().includes('url'))) {
@@ -204,39 +184,27 @@ async function handler(req, res) {
     }
 
     // Return order data with downloads and order status URL
-    return {
-      statusCode: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      },
-      body: JSON.stringify({
-        success: true,
-        order: {
-          name: matchingOrder.name,
-          created_at: matchingOrder.created_at,
-          total_price: matchingOrder.total_price,
-          currency: matchingOrder.currency,
-          order_status_url: matchingOrder.order_status_url || null
-        },
-        downloads: downloads,
+    res.writeHead(200, { ...corsHeaders, 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({
+      success: true,
+      order: {
+        name: matchingOrder.name,
+        created_at: matchingOrder.created_at,
+        total_price: matchingOrder.total_price,
+        currency: matchingOrder.currency,
         order_status_url: matchingOrder.order_status_url || null
-      })
-    };
+      },
+      downloads: downloads,
+      order_status_url: matchingOrder.order_status_url || null
+    }));
 
   } catch (error) {
     console.error('Order lookup error:', error);
-    return {
-      statusCode: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      },
-      body: JSON.stringify({ 
-        error: 'Internal server error',
-        message: 'An error occurred while processing your request. Please try again later.'
-      })
-    };
+    res.writeHead(500, { ...corsHeaders, 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ 
+      error: 'Internal server error',
+      message: 'An error occurred while processing your request. Please try again later.'
+    }));
   }
 }
 
@@ -294,7 +262,6 @@ async function handleRequest(request) {
       });
     }
 
-    // Get environment variables (Cloudflare Workers)
     const shopifyStore = SHOPIFY_STORE || SHOPIFY_STORE_URL;
     const shopifyToken = SHOPIFY_ADMIN_API_TOKEN;
 
@@ -433,4 +400,3 @@ async function handleRequest(request) {
     });
   }
 }
-
