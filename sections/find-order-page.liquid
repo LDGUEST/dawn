@@ -94,6 +94,9 @@
       {{ section.settings.heading | default: 'Find Your Order' }}
     </h1>
     
+    {%- comment -%} Test: If you see this, the section is loading {%- endcomment -%}
+    <p style="background: yellow; padding: 1rem; margin: 1rem 0;">SECTION IS LOADING - If you see this, the section works!</p>
+
     <div class="rte{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
       {%- if section.settings.description != blank -%}
         <p>{{ section.settings.description }}</p>
@@ -102,7 +105,11 @@
       {%- endif -%}
     </div>
 
-    <form class="find-order-form isolate" id="FindOrderForm" data-api-endpoint="{{ section.settings.api_endpoint | default: '' }}">
+    <form
+      class="find-order-form isolate"
+      id="FindOrderForm"
+      data-api-endpoint="{{ section.settings.api_endpoint | default: '' }}"
+    >
       <div class="contact__fields">
         <div class="field">
           <input
@@ -119,7 +126,7 @@
             <span aria-hidden="true">*</span>
           </label>
         </div>
-        
+
         <div class="field field--with-error">
           <input
             autocomplete="email"
@@ -147,9 +154,7 @@
       <div class="find-order-error" id="FindOrderError" role="alert" aria-live="assertive"></div>
 
       <div class="contact__button">
-        <button type="submit" class="button button--primary" id="FindOrderSubmit">
-          Find My Order
-        </button>
+        <button type="submit" class="button button--primary" id="FindOrderSubmit">Find My Order</button>
       </div>
     </form>
 
@@ -224,4 +229,3 @@
   ]
 }
 {% endschema %}
-
