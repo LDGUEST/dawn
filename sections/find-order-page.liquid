@@ -1,6 +1,12 @@
 <<<<<<< HEAD
 {{ 'section-main-page.css' | asset_url | stylesheet_tag }}
 {{ 'section-contact-form.css' | asset_url | stylesheet_tag }}
+
+{%- comment -%} DEBUG: Section is loading {%- endcomment -%}
+<div style="background: red; color: white; padding: 2rem; font-size: 2rem; text-align: center;">
+  <strong>SECTION IS RENDERING - If you see this red box, the section works!</strong>
+</div>
+
 <script src="{{ 'find-order.js' | asset_url }}" defer="defer"></script>
 
 {%- style -%}
