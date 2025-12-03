@@ -3617,3 +3617,13 @@ details-disclosure > details {
     transform: translateX(100%) scaleX(0);
   }
 }
+
+/* Hide customer account/login icon completely */
+.header__icon--account,
+.header__account-link,
+.menu-drawer__account,
+.account-link,
+a[href*="/account/login"],
+a[href*="/account"] {
+  display: none !important;
+}
