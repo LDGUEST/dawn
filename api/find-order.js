@@ -47,19 +47,29 @@ async function handler(req, res) {
   try {
     // Get request body - Vercel provides req.body as parsed JSON
     let body;
-    if (typeof req.body === 'string') {
-      body = JSON.parse(req.body);
-    } else if (req.body) {
-      body = req.body;
-    } else {
-      // Read from stream if needed
-      let data = '';
-      req.on('data', chunk => { data += chunk; });
-      await new Promise(resolve => req.on('end', resolve));
-      body = JSON.parse(data);
+    try {
+      if (req.body) {
+        body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+      } else {
+        // Read from stream if needed
+        let data = '';
+        req.on('data', chunk => { data += chunk.toString(); });
+        await new Promise(resolve => req.on('end', resolve));
+        body = data ? JSON.parse(data) : {};
+      }
+    } catch (parseError) {
+      console.error('Body parse error:', parseError);
+      res.writeHead(400, { ...corsHeaders, 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ 
+        error: 'Invalid request body',
+        message: 'Could not parse request body as JSON.'
+      }));
+      return;
     }
     
     const { order_number, email } = body || {};
+    
+    console.log('Request received:', { order_number, email: email ? email.substring(0, 3) + '***' : null });
 
     // Validate input
     if (!order_number || !email) {
@@ -86,12 +96,22 @@ async function handler(req, res) {
     const shopifyStore = process.env.SHOPIFY_STORE || process.env.SHOPIFY_STORE_URL;
     const shopifyToken = process.env.SHOPIFY_ADMIN_API_TOKEN;
 
+    console.log('Environment check:', { 
+      hasStore: !!shopifyStore, 
+      hasToken: !!shopifyToken,
+      storeValue: shopifyStore ? shopifyStore.substring(0, 10) + '...' : 'missing'
+    });
+
     if (!shopifyStore || !shopifyToken) {
-      console.error('Missing Shopify API credentials');
+      console.error('Missing Shopify API credentials:', { 
+        SHOPIFY_STORE: !!shopifyStore, 
+        SHOPIFY_ADMIN_API_TOKEN: !!shopifyToken 
+      });
       res.writeHead(500, { ...corsHeaders, 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ 
         error: 'Server configuration error',
-        message: 'Service is not properly configured. Please contact support.'
+        message: 'Service is not properly configured. Please contact support.',
+        details: 'Missing environment variables. Check Vercel dashboard.'
       }));
       return;
     }
@@ -200,10 +220,12 @@ async function handler(req, res) {
 
   } catch (error) {
     console.error('Order lookup error:', error);
+    console.error('Error stack:', error.stack);
     res.writeHead(500, { ...corsHeaders, 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ 
       error: 'Internal server error',
-      message: 'An error occurred while processing your request. Please try again later.'
+      message: 'An error occurred while processing your request. Please try again later.',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
     }));
   }
 }
