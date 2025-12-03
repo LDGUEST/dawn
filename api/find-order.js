@@ -201,7 +201,7 @@ async function handler(req, res) {
       });
     }
 
-    // Return order data with downloads
+    // Return order data with downloads and order status URL
     return {
       statusCode: 200,
       headers: {
@@ -214,9 +214,11 @@ async function handler(req, res) {
           name: matchingOrder.name,
           created_at: matchingOrder.created_at,
           total_price: matchingOrder.total_price,
-          currency: matchingOrder.currency
+          currency: matchingOrder.currency,
+          order_status_url: matchingOrder.order_status_url || null
         },
-        downloads: downloads
+        downloads: downloads,
+        order_status_url: matchingOrder.order_status_url || null
       })
     };
 
@@ -402,9 +404,11 @@ async function handleRequest(request) {
         name: matchingOrder.name,
         created_at: matchingOrder.created_at,
         total_price: matchingOrder.total_price,
-        currency: matchingOrder.currency
+        currency: matchingOrder.currency,
+        order_status_url: matchingOrder.order_status_url || null
       },
-      downloads: downloads
+      downloads: downloads,
+      order_status_url: matchingOrder.order_status_url || null
     }), {
       status: 200,
       headers: {
