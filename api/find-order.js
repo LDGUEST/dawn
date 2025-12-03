@@ -10,8 +10,8 @@
 
 // For Vercel/Netlify
 if (typeof module !== 'undefined' && module.exports) {
+  // Vercel requires default export
   module.exports = handler;
-  // Vercel also supports default export
   module.exports.default = handler;
 }
 
