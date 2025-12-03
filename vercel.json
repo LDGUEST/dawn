@@ -1,10 +1,4 @@
 {
-  "version": 2,
-  "functions": {
-    "api/find-order.js": {
-      "runtime": "nodejs18.x"
-    }
-  },
   "routes": [
     {
       "src": "/api/find-order",
