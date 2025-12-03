@@ -18,25 +18,19 @@ class FindOrder {
   }
 
   init() {
-    if (!this.apiEndpoint || this.apiEndpoint === '') {
-      this.showError('Order lookup is not configured. Please contact support.');
-      this.submitButton.disabled = true;
-      return;
-    }
-
     this.form.addEventListener('submit', (e) => this.handleSubmit(e));
   }
 
-  async handleSubmit(event) {
+  handleSubmit(event) {
     event.preventDefault();
 
     // Get form data
     const orderNumber = this.form.querySelector('#FindOrderForm-orderNumber').value.trim();
     const email = this.form.querySelector('#FindOrderForm-email').value.trim();
 
-    // Validate
+    // Validation
     if (!orderNumber || !email) {
-      this.showError('Please fill in all fields.');
+      this.showError('Please fill in both fields.');
       return;
     }
 
@@ -45,102 +39,46 @@ class FindOrder {
       return;
     }
 
-    // Clean order number (remove # if present)
-    const cleanOrderNumber = orderNumber.replace(/^#/, '');
+    // Clean the order number (remove # and spaces if present)
+    const cleanOrderNum = orderNumber.replace(/[#\s]/g, '');
 
-    // Disable button during submission
-    this.setLoading(true);
+    // Generate Shopify Order Status URL
+    const orderStatusUrl = `https://cookingwithkahnke.com/${cleanOrderNum}/orders`;
+
+    // Hide error messages
     this.hideMessages();
     this.hideResults();
 
-    try {
-      const orderData = await this.fetchOrder(cleanOrderNumber, email);
-      this.displayResults(orderData);
-    } catch (error) {
-      console.error('Order lookup error:', error);
-      this.showError(error.message || 'Unable to find your order. Please check your order number and email address, or contact support.');
-    } finally {
-      this.setLoading(false);
-    }
+    // Display success with link
+    this.displayOrderStatusLink(orderStatusUrl);
   }
 
-  async fetchOrder(orderNumber, email) {
-    const response = await fetch(this.apiEndpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      body: JSON.stringify({
-        order_number: orderNumber,
-        email: email
-      })
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      
-      if (response.status === 404) {
-        throw new Error('No order found with that order number and email. Please check your information and try again.');
-      } else if (response.status === 400) {
-        throw new Error(errorData.message || 'Invalid request. Please check your information.');
-      } else if (response.status === 429) {
-        throw new Error('Too many requests. Please try again in a moment.');
-      } else {
-        throw new Error(errorData.message || 'Unable to process your request. Please try again later.');
-      }
-    }
-
-    return await response.json();
-  }
-
-  displayResults(orderData) {
-    // Display order details
-    if (orderData.order) {
-      let detailsHTML = '';
-      
-      if (orderData.order.name) {
-        detailsHTML += `<p><strong>Order Number:</strong> ${this.escapeHtml(orderData.order.name)}</p>`;
-      }
-      
-      if (orderData.order.created_at) {
-        const date = new Date(orderData.order.created_at);
-        detailsHTML += `<p><strong>Order Date:</strong> ${date.toLocaleDateString()}</p>`;
-      }
-      
-      if (orderData.order.total_price) {
-        detailsHTML += `<p><strong>Total:</strong> ${this.escapeHtml(orderData.order.total_price)}</p>`;
-      }
-
-      this.detailsElement.innerHTML = detailsHTML;
-    }
-
-    // Display download links
-    if (orderData.downloads && orderData.downloads.length > 0) {
-      let downloadsHTML = '<h4 style="margin-top: 2rem; margin-bottom: 1rem;">Your Downloads:</h4>';
-      
-      orderData.downloads.forEach((download, index) => {
-        downloadsHTML += `
-          <div style="margin-bottom: 1.5rem;">
-            ${download.name ? `<p><strong>${this.escapeHtml(download.name)}</strong></p>` : ''}
-            <a href="${this.escapeHtml(download.url)}" 
-               class="find-order-download-link" 
-               target="_blank" 
-               rel="noopener noreferrer"
-               download>
-              Download ${download.name || 'File'}
-            </a>
-          </div>
-        `;
-      });
-
-      this.downloadsElement.innerHTML = downloadsHTML;
-    } else {
-      this.downloadsElement.innerHTML = '<p>No download links found for this order. Please contact support if you expected a download.</p>';
-    }
-
-    // Show results
+  displayOrderStatusLink(orderStatusUrl) {
+    // Update results element with success message and link
+    this.resultsElement.style.display = 'block';
     this.resultsElement.classList.add('show');
+    
+    this.detailsElement.innerHTML = '';
+    this.downloadsElement.innerHTML = `
+      <div style="background: #e8f5e9; border: 1px solid #4caf50; padding: 2rem; border-radius: var(--inputs-radius);">
+        <p style="margin: 0 0 15px 0; color: #2e7d32; font-weight: 600; font-size: 1.6rem;">
+          ✅ Order Found!
+        </p>
+        <p style="margin: 0 0 20px 0; color: rgb(var(--color-foreground));">
+          Click below to view your order and access your downloads:
+        </p>
+        <a href="${this.escapeHtml(orderStatusUrl)}" 
+           class="find-order-download-link" 
+           style="display: inline-block; padding: 15px 32px; background: #005633; color: #fff; text-decoration: none; border-radius: 4px; font-weight: 600; font-size: 16px; margin-bottom: 15px;">
+          View My Order & Downloads
+        </a>
+        <p style="margin: 20px 0 0 0; font-size: 14px; color: rgba(var(--color-foreground), 0.7);">
+          You may need to verify your email address on the next page.
+        </p>
+      </div>
+    `;
+
+    // Scroll to results
     this.resultsElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
@@ -158,6 +96,11 @@ class FindOrder {
     } else {
       this.loadingElement.classList.remove('show');
     }
+  }
+
+  displayResults(orderData) {
+    // Legacy method - kept for compatibility but not used with new implementation
+    this.displayOrderStatusLink('');
   }
 
   hideMessages() {

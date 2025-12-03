@@ -1,11 +1,5 @@
 {{ 'section-main-page.css' | asset_url | stylesheet_tag }}
 {{ 'section-contact-form.css' | asset_url | stylesheet_tag }}
-
-{%- comment -%} DEBUG: Section is loading {%- endcomment -%}
-<div style="background: red; color: white; padding: 2rem; font-size: 2rem; text-align: center;">
-  <strong>SECTION IS RENDERING - If you see this red box, the section works!</strong>
-</div>
-
 <script src="{{ 'find-order.js' | asset_url }}" defer="defer"></script>
 
 {%- style -%}
@@ -100,11 +94,6 @@
       {{ section.settings.heading | default: 'Find Your Order' }}
     </h1>
 
-    {%- comment -%} Test: If you see this, the section is loading {%- endcomment -%}
-    <p style="background: yellow; padding: 1rem; margin: 1rem 0;">
-      SECTION IS LOADING - If you see this, the section works!
-    </p>
-
     <div class="rte{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
       {%- if section.settings.description != blank -%}
         <p>{{ section.settings.description }}</p>
@@ -116,7 +105,6 @@
     <form
       class="find-order-form isolate"
       id="FindOrderForm"
-      data-api-endpoint="{{ section.settings.api_endpoint | default: '' }}"
     >
       <div class="contact__fields">
         <div class="field">
@@ -190,14 +178,7 @@
       "type": "textarea",
       "id": "description",
       "label": "Description",
-      "default": "Enter your order number and email address to find your download links."
-    },
-    {
-      "type": "text",
-      "id": "api_endpoint",
-      "label": "API Endpoint URL",
-      "info": "Enter the serverless function endpoint URL (e.g., https://your-function.vercel.app/api/find-order)",
-      "default": ""
+      "default": "Enter your order number and email address to access your order status page and downloads."
     },
     {
       "type": "color_scheme",
