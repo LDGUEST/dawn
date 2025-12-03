@@ -11,6 +11,10 @@
   "sections": {
     "find_order": {
       "type": "find-order-page",
+      "custom_css": [
+        "/* Hide account login */.header__account-link,.account-link,.customer-login,.header__icon--account,.header-account-link,a[href=\"/account\"],a[href=\"/account/login\"],a[href*=\"/account/login\"],a[href=\"/account/register\"],details[id*=\"Details-HeaderMenu-account\"],.header-menu-account{display:none!important}",
+        "/* Find My Order button */.find-order-button{display:inline-block;padding:16px 32px;background:#000;color:#fff;text-decoration:none;border-radius:4px;font-weight:600}"
+      ],
       "settings": {}
     }
   },
