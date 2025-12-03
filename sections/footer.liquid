@@ -244,6 +244,13 @@
             </div>
           {%- endif -%}
 
+          {%- comment -%} Find My Order Button {%- endcomment -%}
+          <div class="find-order-button-wrapper" style="text-align: center; padding: 2rem 0;">
+            <a href="{{ routes.root_url }}/pages/contact" class="button button--primary">
+              Can't Find Your Download?
+            </a>
+          </div>
+
           {%- if shop.features.follow_on_shop? and section.settings.enable_follow_on_shop -%}
             <div class="footer__follow-on-shop">
               {{ shop | login_button: action: 'follow' }}
@@ -257,13 +264,6 @@
       </div>
     {%- endunless -%}
   {%- endif -%}
-
-  {%- comment -%} Find My Order Button {%- endcomment -%}
-  <div class="find-order-button-wrapper" style="text-align: center; padding: 40px 0; background: transparent;">
-    <a href="/pages/find-my-order" class="button button--primary">
-      Can't Find Your Download?
-    </a>
-  </div>
 
   <div
     class="footer__content-bottom{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
