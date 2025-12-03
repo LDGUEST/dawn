@@ -1,4 +1,5 @@
 {{ 'section-main-page.css' | asset_url | stylesheet_tag }}
+{{ 'section-contact-form.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'find-order.js' | asset_url }}" defer="defer"></script>
 
 {%- style -%}
@@ -87,76 +88,76 @@
   }
 {%- endstyle -%}
 
-<div class="page-width page-width--narrow section-{{ section.id }}-padding">
-  <h1 class="main-page-title page-title h0{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}">
-    {{ section.settings.heading | default: 'Find Your Order' }}
-  </h1>
-  
-  {%- comment -%} Debug: Section is rendering {%- endcomment -%}
-  
-  <div class="rte{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
-    {%- if section.settings.description != blank -%}
-      <p>{{ section.settings.description }}</p>
-    {%- else -%}
-      <p>Enter your order number and email address to find your download links.</p>
-    {%- endif -%}
-  </div>
+<div class="color-{{ section.settings.color_scheme | default: 'scheme-1' }} gradient">
+  <div class="contact page-width page-width--narrow section-{{ section.id }}-padding">
+    <h1 class="main-page-title page-title h0{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}">
+      {{ section.settings.heading | default: 'Find Your Order' }}
+    </h1>
+    
+    <div class="rte{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+      {%- if section.settings.description != blank -%}
+        <p>{{ section.settings.description }}</p>
+      {%- else -%}
+        <p>Enter your order number and email address to find your download links.</p>
+      {%- endif -%}
+    </div>
 
-  <form class="find-order-form isolate" id="FindOrderForm" data-api-endpoint="{{ section.settings.api_endpoint | default: '' }}">
-    <div class="contact__fields">
-      <div class="field">
-        <input
-          class="field__input"
-          type="text"
-          id="FindOrderForm-orderNumber"
-          name="order_number"
-          placeholder="Order Number (e.g., #1001)"
-          required
-          autocomplete="off"
-        >
-        <label class="field__label" for="FindOrderForm-orderNumber">
-          Order Number
-          <span aria-hidden="true">*</span>
-        </label>
+    <form class="find-order-form isolate" id="FindOrderForm" data-api-endpoint="{{ section.settings.api_endpoint | default: '' }}">
+      <div class="contact__fields">
+        <div class="field">
+          <input
+            class="field__input"
+            type="text"
+            id="FindOrderForm-orderNumber"
+            name="order_number"
+            placeholder="Order Number (e.g., #1001)"
+            required
+            autocomplete="off"
+          >
+          <label class="field__label" for="FindOrderForm-orderNumber">
+            Order Number
+            <span aria-hidden="true">*</span>
+          </label>
+        </div>
+        
+        <div class="field field--with-error">
+          <input
+            autocomplete="email"
+            type="email"
+            id="FindOrderForm-email"
+            class="field__input"
+            name="email"
+            spellcheck="false"
+            autocapitalize="off"
+            aria-required="true"
+            placeholder="Email Address"
+            required
+          >
+          <label class="field__label" for="FindOrderForm-email">
+            Email Address
+            <span aria-hidden="true">*</span>
+          </label>
+        </div>
       </div>
-      
-      <div class="field field--with-error">
-        <input
-          autocomplete="email"
-          type="email"
-          id="FindOrderForm-email"
-          class="field__input"
-          name="email"
-          spellcheck="false"
-          autocapitalize="off"
-          aria-required="true"
-          placeholder="Email Address"
-          required
-        >
-        <label class="field__label" for="FindOrderForm-email">
-          Email Address
-          <span aria-hidden="true">*</span>
-        </label>
+
+      <div class="find-order-loading" id="FindOrderLoading" role="status" aria-live="polite">
+        <p>Searching for your order...</p>
       </div>
+
+      <div class="find-order-error" id="FindOrderError" role="alert" aria-live="assertive"></div>
+
+      <div class="contact__button">
+        <button type="submit" class="button button--primary" id="FindOrderSubmit">
+          Find My Order
+        </button>
+      </div>
+    </form>
+
+    <div class="find-order-results" id="FindOrderResults">
+      <h3>Order Found!</h3>
+      <div class="find-order-order-details" id="FindOrderDetails"></div>
+      <div id="FindOrderDownloads"></div>
     </div>
-
-    <div class="find-order-loading" id="FindOrderLoading" role="status" aria-live="polite">
-      <p>Searching for your order...</p>
-    </div>
-
-    <div class="find-order-error" id="FindOrderError" role="alert" aria-live="assertive"></div>
-
-    <div class="contact__button">
-      <button type="submit" class="button button--primary" id="FindOrderSubmit">
-        Find My Order
-      </button>
-    </div>
-  </form>
-
-  <div class="find-order-results" id="FindOrderResults">
-    <h3>Order Found!</h3>
-    <div class="find-order-order-details" id="FindOrderDetails"></div>
-    <div id="FindOrderDownloads"></div>
   </div>
 </div>
 
@@ -184,6 +185,12 @@
       "label": "API Endpoint URL",
       "info": "Enter the serverless function endpoint URL (e.g., https://your-function.vercel.app/api/find-order)",
       "default": ""
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
     },
     {
       "type": "header",
