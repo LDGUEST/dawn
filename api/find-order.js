@@ -11,6 +11,8 @@
 // For Vercel/Netlify
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = handler;
+  // Vercel also supports default export
+  module.exports.default = handler;
 }
 
 // For Cloudflare Workers
