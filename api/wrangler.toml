@@ -1,0 +1,7 @@
+name = "shopify-order-lookup"
+main = "find-order.js"
+compatibility_date = "2024-01-01"
+
+# Environment variables will be set via wrangler secret put
+# or in Cloudflare dashboard
+

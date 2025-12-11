@@ -14,8 +14,22 @@ if (typeof module !== 'undefined' && module.exports) {
   module.exports.default = handler;
 }
 
-// For Cloudflare Workers
-if (typeof addEventListener !== 'undefined') {
+// For Cloudflare Workers (modern API - preferred)
+export default {
+  async fetch(request, env) {
+    // Set environment variables from Cloudflare Workers env
+    if (env.SHOPIFY_STORE) {
+      globalThis.SHOPIFY_STORE = env.SHOPIFY_STORE;
+    }
+    if (env.SHOPIFY_ADMIN_API_TOKEN) {
+      globalThis.SHOPIFY_ADMIN_API_TOKEN = env.SHOPIFY_ADMIN_API_TOKEN;
+    }
+    return handleRequest(request);
+  }
+};
+
+// For Cloudflare Workers (legacy API - fallback for older Workers)
+if (typeof addEventListener !== 'undefined' && typeof exports === 'undefined' && typeof globalThis !== 'undefined') {
   addEventListener('fetch', event => {
     event.respondWith(handleRequest(event.request));
   });
@@ -284,8 +298,8 @@ async function handleRequest(request) {
       });
     }
 
-    const shopifyStore = SHOPIFY_STORE || SHOPIFY_STORE_URL;
-    const shopifyToken = SHOPIFY_ADMIN_API_TOKEN;
+    const shopifyStore = globalThis.SHOPIFY_STORE || process?.env?.SHOPIFY_STORE || SHOPIFY_STORE;
+    const shopifyToken = globalThis.SHOPIFY_ADMIN_API_TOKEN || process?.env?.SHOPIFY_ADMIN_API_TOKEN || SHOPIFY_ADMIN_API_TOKEN;
 
     if (!shopifyStore || !shopifyToken) {
       return new Response(JSON.stringify({ 
