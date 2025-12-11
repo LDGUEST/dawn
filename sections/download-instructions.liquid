@@ -1,0 +1,241 @@
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  .download-instructions {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .download-instructions-card {
+    background: #f8f9fa;
+    border: 2px solid #005633;
+    border-radius: 12px;
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .download-instructions h2 {
+    color: #005633;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0 0 1.5rem 0;
+    text-align: center;
+  }
+
+  .download-instructions h3 {
+    color: #005633;
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin: 2rem 0 1rem 0;
+  }
+
+  .download-instructions p {
+    font-size: 1.25rem;
+    line-height: 1.7;
+    color: #234846;
+    margin: 0 0 1.5rem 0;
+  }
+
+  .download-instructions ul {
+    font-size: 1.25rem;
+    line-height: 1.8;
+    color: #234846;
+    margin: 0 0 1.5rem 0;
+    padding-left: 2rem;
+  }
+
+  .download-instructions li {
+    margin: 0.75rem 0;
+  }
+
+  .download-instructions li strong {
+    color: #005633;
+  }
+
+  .download-instructions .highlight-box {
+    background: #e8f5e9;
+    border-left: 4px solid #005633;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    border-radius: 4px;
+  }
+
+  .download-instructions .highlight-box p {
+    margin: 0;
+    font-weight: 600;
+    color: #005633;
+  }
+
+  .download-instructions .action-button {
+    display: inline-block;
+    background: #005633;
+    color: #FFFFFF;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.25rem;
+    margin: 0.5rem 0.5rem 0.5rem 0;
+    transition: background-color 0.3s ease;
+  }
+
+  .download-instructions .action-button:hover {
+    background: #004428;
+    color: #FFFFFF;
+  }
+
+  .download-instructions .action-button.secondary {
+    background: transparent;
+    color: #005633;
+    border: 2px solid #005633;
+  }
+
+  .download-instructions .action-button.secondary:hover {
+    background: #005633;
+    color: #FFFFFF;
+  }
+
+  @media (max-width: 749px) {
+    .download-instructions-card {
+      padding: 1.5rem;
+    }
+
+    .download-instructions h2 {
+      font-size: 2rem;
+    }
+
+    .download-instructions h3 {
+      font-size: 1.5rem;
+    }
+
+    .download-instructions p,
+    .download-instructions ul {
+      font-size: 1.125rem;
+    }
+  }
+{%- endstyle -%}
+
+<div class="color-{{ section.settings.color_scheme | default: 'scheme-1' }} gradient">
+  <div class="page-width section-{{ section.id }}-padding">
+    <div class="download-instructions">
+      <div class="download-instructions-card">
+        <h2>{{ section.settings.heading | default: "How to Access Your Digital Downloads" }}</h2>
+        
+        <p>{{ section.settings.intro_text | default: "After completing your purchase, you'll receive an email with your download links. Here's how to access your digital products:" }}</p>
+
+        <h3>Step 1: Check Your Email</h3>
+        <p>Look for an email from us with your order confirmation and download links. This email is usually sent immediately after purchase.</p>
+
+        <div class="highlight-box">
+          <p>📧 <strong>Can't find the email?</strong> Check your spam or junk folder! Sometimes our emails end up there.</p>
+        </div>
+
+        <h3>Step 2: Access Your Downloads</h3>
+        <ul>
+          <li><strong>Click the download link</strong> in your email to access your digital products</li>
+          <li><strong>Log in to your account</strong> if prompted (use the email address you used to place the order)</li>
+          <li><strong>Download your files</strong> - you can download them as many times as you need!</li>
+        </ul>
+
+        <h3>Forgot Your Password?</h3>
+        <p>If you don't remember your password or need to reset it:</p>
+        <ul>
+          <li>Click the <strong>"Reset Password"</strong> link on the login page</li>
+          <li>Enter the email address you used for your order</li>
+          <li>Check your email for the password reset link</li>
+          <li>Create a new password and log in to access your downloads</li>
+        </ul>
+
+        <h3>Still Need Help?</h3>
+        <p>If you've checked your spam folder and still can't find your download email, or if you're having trouble accessing your account:</p>
+        
+        <div style="margin-top: 2rem; text-align: center;">
+          <a href="#find-order-form" class="action-button">Find My Order</a>
+          {% if section.settings.show_contact_email %}
+            <a href="mailto:{{ section.settings.contact_email | default: 'cookingwithkahnke@gmail.com' }}" class="action-button secondary">Contact Support</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Download Instructions",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "How to Access Your Digital Downloads"
+    },
+    {
+      "type": "textarea",
+      "id": "intro_text",
+      "label": "Introduction Text",
+      "default": "After completing your purchase, you'll receive an email with your download links. Here's how to access your digital products:"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_contact_email",
+      "label": "Show Contact Support Button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "contact_email",
+      "label": "Contact Email",
+      "default": "cookingwithkahnke@gmail.com"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    }
+  ],
+  "presets": [
+    {
+      "name": "Download Instructions"
+    }
+  ]
+}
+{% endschema %}
+

@@ -1,0 +1,31 @@
+{
+  "sections": {
+    "download_instructions": {
+      "type": "download-instructions",
+      "settings": {
+        "heading": "How to Access Your Digital Downloads",
+        "intro_text": "After completing your purchase, you'll receive an email with your download links. Here's how to access your digital products:",
+        "show_contact_email": true,
+        "contact_email": "cookingwithkahnke@gmail.com",
+        "color_scheme": "scheme-1",
+        "padding_top": 36,
+        "padding_bottom": 24
+      }
+    },
+    "find_order": {
+      "type": "find-order-page",
+      "settings": {
+        "heading": "Find Your Order",
+        "description": "Enter your order number and email address below to access your order status page and download links.",
+        "color_scheme": "scheme-1",
+        "padding_top": 24,
+        "padding_bottom": 36
+      }
+    }
+  },
+  "order": [
+    "download_instructions",
+    "find_order"
+  ]
+}
+
