@@ -979,7 +979,7 @@ body.modal-open .email-popup-modal {
 }
 
 .upsell-price-original {
-  font-size: 1.375rem;
+  font-size: 2.5rem;
   color: #999;
   text-decoration: line-through;
   font-weight: 500;
@@ -998,7 +998,7 @@ body.modal-open .email-popup-modal {
   padding: 0.35rem 0.85rem;
   border-radius: 20px;
   font-weight: 700;
-  font-size: 0.875rem;
+  font-size: 2.5rem;
   box-shadow: 0 2px 8px rgba(255, 235, 59, 0.4);
 }
 
@@ -1113,7 +1113,7 @@ body.modal-open .email-popup-modal {
   gap: 0.5rem;
   color: #005633;
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 1.375rem;
 }
 
 .guarantee-item svg {
