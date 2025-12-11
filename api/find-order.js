@@ -262,15 +262,17 @@ async function handler(req, res) {
       res.end(
         JSON.stringify({
           error: 'Order not found',
-          message: `No order found matching order #${cleanOrderNumber} and email ${email.substring(0, 3)}***. Found ${orders.length} order(s) for this email. Please verify the order number and email address.`,
+          message: `No order found matching order #${cleanOrderNumber} and email ${email.substring(0, 3)}***. Found ${
+            orders.length
+          } order(s) for this email. Please verify the order number and email address.`,
           debug: {
             requestedOrderNumber: cleanOrderNumber,
             requestedEmail: cleanEmail,
             ordersFound: orders.length,
-            sampleOrderNumbers: orders.slice(0, 10).map(o => o.name),
-            sampleOrderEmails: orders.slice(0, 10).map(o => o.email?.toLowerCase()),
-            matchAttempts: matchAttempts.slice(0, 5)
-          }
+            sampleOrderNumbers: orders.slice(0, 10).map((o) => o.name),
+            sampleOrderEmails: orders.slice(0, 10).map((o) => o.email?.toLowerCase()),
+            matchAttempts: matchAttempts.slice(0, 5),
+          },
         })
       );
       return;
@@ -469,6 +471,34 @@ async function handleRequest(request) {
         );
       }
 
+      // Shopify API 404 means no orders found for that email
+      if (response.status === 404) {
+        console.log('⚠️ Shopify API returned 404 - no orders found for email');
+        const data = await response.json().catch(() => ({ orders: [] }));
+        const orders = data.orders || [];
+        
+        return new Response(
+          JSON.stringify({
+            error: 'Order not found',
+            message: `No orders found for email ${email.substring(0, 3)}***. Please verify the email address is correct.`,
+            debug: {
+              requestedOrderNumber: order_number.toString(),
+              requestedEmail: email.toLowerCase().trim(),
+              ordersFound: 0,
+              shopifyApiStatus: 404,
+              note: 'Shopify API returned 404 - this email may not exist in the system'
+            }
+          }),
+          {
+            status: 404,
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*',
+            },
+          }
+        );
+      }
+
       throw new Error(`Shopify API error: ${response.status}`);
     }
 
@@ -568,7 +598,7 @@ async function handleRequest(request) {
             ordersFound: orders.length,
             sampleOrderNumbers: orders.slice(0, 10).map((o) => o.name),
             sampleOrderEmails: orders.slice(0, 10).map((o) => o.email?.toLowerCase()),
-            matchAttempts: matchAttempts.slice(0, 5)
+            matchAttempts: matchAttempts.slice(0, 5),
           },
         }),
         {
