@@ -71,6 +71,8 @@
 <script>
 let bundleModalShown = false;
 
+let modalPreventDefault = false;
+
 function showBundleModal() {
   document.getElementById('bundle-modal-overlay').style.display = 'flex';
   document.body.style.overflow = 'hidden';
@@ -80,6 +82,7 @@ function showBundleModal() {
 function closeBundleModal() {
   document.getElementById('bundle-modal-overlay').style.display = 'none';
   document.body.style.overflow = '';
+  modalPreventDefault = false;
 }
 
 async function acceptBundleOffer() {
@@ -129,6 +132,9 @@ async function acceptBundleOffer() {
 async function declineBundleOffer() {
   closeBundleModal();
   
+  // Allow the form to submit now
+  bundleModalShown = true; // Mark as shown so it won't trigger again
+  
   const form = document.querySelector('product-form form');
   if (form) {
     const formData = new FormData(form);
@@ -148,6 +154,7 @@ async function declineBundleOffer() {
   }
 }
 
+// Click outside to close
 document.addEventListener('click', function(event) {
   const overlay = document.getElementById('bundle-modal-overlay');
   if (event.target === overlay) {
@@ -155,21 +162,45 @@ document.addEventListener('click', function(event) {
   }
 });
 
+// Escape key to close
 document.addEventListener('keydown', function(event) {
   if (event.key === 'Escape') {
     closeBundleModal();
   }
 });
 
+// Intercept ALL form submissions on this page
 document.addEventListener('DOMContentLoaded', function() {
   const productForm = document.querySelector('product-form form');
+  
   if (productForm) {
+    // Use capture phase to intercept BEFORE other handlers
     productForm.addEventListener('submit', function(event) {
       if (!bundleModalShown) {
+        // Stop ALL submission behavior
         event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+        
+        // Show modal instead
         showBundleModal();
+        return false;
       }
-    });
+    }, true); // TRUE = capture phase (runs first)
+    
+    // Also intercept the submit button click directly
+    const submitButton = productForm.querySelector('[type="submit"]');
+    if (submitButton) {
+      submitButton.addEventListener('click', function(event) {
+        if (!bundleModalShown) {
+          event.preventDefault();
+          event.stopPropagation();
+          event.stopImmediatePropagation();
+          showBundleModal();
+          return false;
+        }
+      }, true);
+    }
   }
 });
 </script>
