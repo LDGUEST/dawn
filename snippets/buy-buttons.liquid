@@ -18,21 +18,31 @@
         assign gift_card_recipient_feature_active = true
       endif
 
-      assign show_dynamic_checkout = false
-      if block.settings.show_dynamic_checkout and gift_card_recipient_feature_active == false
-        assign show_dynamic_checkout = true
-      endif
-      
       comment
-        Hide Shop Pay button for:
-        1. Free products (price == 0)
-        2. New cookbook page (lettuce-wraps-and-sauce-cookbook-pdf)
-        Keep it visible for other products
+        Hide dynamic checkout (Shop Pay) for:
+        1. Free products (price = 0)
+        2. New cookbook (lettuce-wraps-and-sauce-cookbook-pdf)
+      endcomment
+      
+      assign hide_shop_pay = false
+      
+      comment Check if product is free
       endcomment
       if product.selected_or_first_available_variant.price == 0
-        assign show_dynamic_checkout = false
-      elsif product.handle == 'lettuce-wraps-and-sauce-cookbook-pdf'
-        assign show_dynamic_checkout = false
+        assign hide_shop_pay = true
+      endif
+      
+      comment Check if product is the new cookbook
+      endcomment
+      if product.handle == 'lettuce-wraps-and-sauce-cookbook-pdf'
+        assign hide_shop_pay = true
+      endif
+      
+      comment Set show_dynamic_checkout based on conditions
+      endcomment
+      assign show_dynamic_checkout = false
+      if block.settings.show_dynamic_checkout and gift_card_recipient_feature_active == false and hide_shop_pay == false
+        assign show_dynamic_checkout = true
       endif
     -%}
 
@@ -40,9 +50,7 @@
       class="product-form"
       data-hide-errors="{{ gift_card_recipient_feature_active }}"
       data-section-id="{{ section.id }}"
-      {% if product.selected_or_first_available_variant.price == 0 or product.handle == 'lettuce-wraps-and-sauce-cookbook-pdf' %}
-        data-hide-shop-pay="true"
-      {% endif %}
+      {% if hide_shop_pay %}data-hide-shop-pay="true"{% endif %}
     >
       <div class="product-form__error-message-wrapper" role="alert" hidden>
         <span class="svg-wrapper">
