@@ -22,6 +22,7 @@
         Hide dynamic checkout (Shop Pay) for:
         1. Free products (price = 0)
         2. New cookbook (lettuce-wraps-and-sauce-cookbook-pdf)
+        3. 30 Lettuce Wrap Recipes Book (30-lettuce-wrap-recipes-book-pdf)
       endcomment
       
       assign hide_shop_pay = false
@@ -35,6 +36,12 @@
       comment Check if product is the new cookbook
       endcomment
       if product.handle == 'lettuce-wraps-and-sauce-cookbook-pdf'
+        assign hide_shop_pay = true
+      endif
+      
+      comment Check if product is 30 Lettuce Wrap Recipes Book
+      endcomment
+      if product.handle == '30-lettuce-wrap-recipes-book-pdf'
         assign hide_shop_pay = true
       endif
       
