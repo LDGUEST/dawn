@@ -1,6 +1,7 @@
 /**
  * Find Order - Order Lookup Handler
  * Handles form submission and API communication for order lookup
+ * Version: 2.0 - Fixed 404 redirect issue
  */
 
 class FindOrder {
@@ -68,6 +69,14 @@ class FindOrder {
 
         const data = await response.json();
         
+        // Debug logging (remove in production if needed)
+        console.log('API Response:', { 
+          success: data.success, 
+          hasDownloads: !!(data.downloads && data.downloads.length > 0),
+          hasOrderStatusUrl: !!data.order_status_url,
+          orderStatusUrl: data.order_status_url
+        });
+        
         if (data.success) {
           // Always display results on the page instead of redirecting
           // This avoids 404 errors and provides a better user experience
@@ -78,6 +87,7 @@ class FindOrder {
             this.displayDownloads(data.downloads, data.order, data.order_status_url);
           } else if (data.order_status_url) {
             // If no downloads but we have order status URL, show order details with link
+            // IMPORTANT: We display as a link, NOT redirect, to avoid 404 errors
             this.displayOrderWithStatusLink(data.order, data.order_status_url);
           } else {
             // Just show order details
@@ -88,12 +98,9 @@ class FindOrder {
           throw new Error('Order found but no information available.');
         }
       } else {
-        // Fallback: Use Shopify's guest order status page
-        // Format: /orders/{order_number}?key={token}
-        // Since we don't have token, redirect to order status page which will prompt for email
+        // Fallback: No API endpoint configured - show error
         this.setLoading(false);
-        const orderStatusUrl = `https://cookingwithkahnke.com/orders/${cleanOrderNum}`;
-        window.location.href = orderStatusUrl;
+        this.showError('Order lookup service is not configured. Please contact support for assistance.');
       }
     } catch (error) {
       this.setLoading(false);
@@ -240,8 +247,10 @@ class FindOrder {
   }
 
   displayOrderStatusLink(orderStatusUrl) {
-    // Legacy method - redirects to order status page
-    window.location.href = orderStatusUrl;
+    // Legacy method - no longer redirects, just returns the URL
+    // This method is kept for compatibility but should not be used
+    console.warn('displayOrderStatusLink called but redirects are disabled');
+    return orderStatusUrl;
   }
 
   validateEmail(email) {
