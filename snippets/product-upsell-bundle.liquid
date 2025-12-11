@@ -18,7 +18,7 @@
         {% comment %} Try multiple image sources {% endcomment %}
         {% assign original_product = all_products['30-lettuce-wrap-recipes-book-pdf'] %}
         {% if original_product.featured_image %}
-          <img src="{{ original_product.featured_image | img_url: '300x300', crop: 'center' }}" alt="30 Lettuce Wraps Cookbook" class="upsell-image">
+          <img src="{{ original_product.featured_image | image_url: width: 300 }}" alt="30 Lettuce Wraps Cookbook" class="upsell-image">
         {% else %}
           <div class="upsell-image-placeholder">
             <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="#005633" stroke-width="2">
