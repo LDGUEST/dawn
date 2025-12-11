@@ -1,0 +1,178 @@
+{% comment %}
+  Bundle Upsell Modal - Pre-Checkout
+  Only appears on new cookbook when clicking single "Buy Now" button
+  Product: lettuce-wraps-and-sauce-cookbook-pdf ONLY
+{% endcomment %}
+
+{% if product.handle == 'lettuce-wraps-and-sauce-cookbook-pdf' %}
+
+<div id="bundle-modal-overlay" class="bundle-modal-overlay" style="display: none;">
+  <div class="bundle-modal-container">
+    <button class="bundle-modal-close" onclick="closeBundleModal()">&times;</button>
+    
+    <div class="bundle-modal-header">
+      <div class="bundle-modal-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ff6b6b" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+      </div>
+      <h2 class="bundle-modal-title">Wait! Don't Miss This Deal</h2>
+      <p class="bundle-modal-subtitle">Complete your collection and save $5</p>
+    </div>
+    
+    <div class="bundle-modal-body">
+      <div class="bundle-modal-offer">
+        <div class="bundle-modal-product">
+          {% assign original_product = all_products['30-lettuce-wrap-recipes-book-pdf'] %}
+          {% if original_product.featured_image %}
+            <img src="{{ original_product.featured_image | image_url: width: 150 }}" alt="30 Lettuce Wraps Cookbook" class="bundle-modal-image">
+          {% else %}
+            <div class="bundle-modal-image-placeholder">📖</div>
+          {% endif %}
+          <div class="bundle-modal-details">
+            <h4>30 Lettuce Wraps Cookbook</h4>
+            <p>Add 30 more recipes for just <strong>$4.99</strong></p>
+            <p class="bundle-modal-savings">Save $5 off regular price!</p>
+          </div>
+        </div>
+        
+        <div class="bundle-modal-summary">
+          <div class="summary-line">
+            <span>New Cookbook</span>
+            <span>$14.99</span>
+          </div>
+          <div class="summary-line highlight">
+            <span>Original Cookbook</span>
+            <span>$4.99</span>
+          </div>
+          <div class="summary-divider"></div>
+          <div class="summary-line total">
+            <span><strong>Bundle Total</strong></span>
+            <span><strong>$19.98</strong></span>
+          </div>
+          <p class="bundle-modal-note">✓ 65 total recipes • Instant delivery</p>
+        </div>
+      </div>
+      
+      <div class="bundle-modal-actions">
+        <button type="button" class="bundle-modal-accept" onclick="acceptBundleOffer()">
+          Yes! Add Both Cookbooks - $19.98
+        </button>
+        <button type="button" class="bundle-modal-decline" onclick="declineBundleOffer()">
+          No Thanks, Just This One
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let bundleModalShown = false;
+
+function showBundleModal() {
+  document.getElementById('bundle-modal-overlay').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  bundleModalShown = true;
+}
+
+function closeBundleModal() {
+  document.getElementById('bundle-modal-overlay').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+async function acceptBundleOffer() {
+  const acceptButton = document.querySelector('.bundle-modal-accept');
+  const originalText = acceptButton.textContent;
+  acceptButton.disabled = true;
+  acceptButton.textContent = 'Adding to cart...';
+  
+  try {
+    const currentProductVariantId = document.querySelector('[name="id"]').value;
+    const originalCookbookVariantId = '52664745394483';
+    
+    const formData = {
+      items: [
+        {
+          id: currentProductVariantId,
+          quantity: 1
+        },
+        {
+          id: originalCookbookVariantId,
+          quantity: 1
+        }
+      ]
+    };
+    
+    const response = await fetch('/cart/add.js', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData)
+    });
+    
+    if (response.ok) {
+      window.location.href = '/checkout?discount=BUNDLE5OFF';
+    } else {
+      throw new Error('Failed to add to cart');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    acceptButton.disabled = false;
+    acceptButton.textContent = originalText;
+    alert('Sorry, there was an error. Please try again.');
+  }
+}
+
+async function declineBundleOffer() {
+  closeBundleModal();
+  
+  const form = document.querySelector('product-form form');
+  if (form) {
+    const formData = new FormData(form);
+    
+    try {
+      const response = await fetch('/cart/add.js', {
+        method: 'POST',
+        body: formData
+      });
+      
+      if (response.ok) {
+        window.location.href = '/checkout';
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+}
+
+document.addEventListener('click', function(event) {
+  const overlay = document.getElementById('bundle-modal-overlay');
+  if (event.target === overlay) {
+    closeBundleModal();
+  }
+});
+
+document.addEventListener('keydown', function(event) {
+  if (event.key === 'Escape') {
+    closeBundleModal();
+  }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+  const productForm = document.querySelector('product-form form');
+  if (productForm) {
+    productForm.addEventListener('submit', function(event) {
+      if (!bundleModalShown) {
+        event.preventDefault();
+        showBundleModal();
+      }
+    });
+  }
+});
+</script>
+
+{% endif %}
+
