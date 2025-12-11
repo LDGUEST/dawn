@@ -456,19 +456,31 @@ async function handleRequest(request) {
 
     if (!matchingOrder) {
       // Enhanced error logging for debugging
-      console.error('Order not found:', {
+      const orderDetails = orders.slice(0, 10).map(o => ({
+        name: o.name,
+        email: o.email?.toLowerCase(),
+        created: o.created_at
+      }));
+      
+      console.error('❌ API - Order not found (Cloudflare):', {
         requestedOrderNumber: cleanOrderNumber,
-        requestedEmail: email.toLowerCase(),
+        requestedEmail: email.toLowerCase().trim(),
         ordersFound: orders.length,
-        orderNumbers: orders.map((o) => o.name).slice(0, 5), // Log first 5 order numbers
-        orderEmails: orders.map((o) => o.email?.toLowerCase()).slice(0, 5),
+        sampleOrders: orderDetails,
+        allOrderNumbers: orders.map(o => o.name),
+        allOrderEmails: orders.map(o => o.email?.toLowerCase())
       });
 
       return new Response(
         JSON.stringify({
           error: 'Order not found',
-          message:
-            'No order found with that order number and email address. Please verify both the order number and email address are correct.',
+          message: `No order found matching order #${cleanOrderNumber} and email ${email.substring(0, 3)}***. Found ${orders.length} order(s) for this email. Please verify the order number and email address.`,
+          debug: {
+            requestedOrderNumber: cleanOrderNumber,
+            requestedEmail: email.toLowerCase().trim(),
+            ordersFound: orders.length,
+            sampleOrderNumbers: orders.slice(0, 5).map(o => o.name)
+          }
         }),
         {
           status: 404,
