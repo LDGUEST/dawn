@@ -41,7 +41,28 @@ async function testOrderLookup(orderNumber, email) {
       console.log('\n❌ FAILED: Order not found');
       if (data.debug) {
         console.log('\n🔍 Debug Info:');
-        console.log(JSON.stringify(data.debug, null, 2));
+        console.log(`  Requested Order Number: ${data.debug.requestedOrderNumber}`);
+        console.log(`  Requested Email: ${data.debug.requestedEmail}`);
+        console.log(`  Orders Found for Email: ${data.debug.ordersFound}`);
+        if (data.debug.sampleOrderNumbers && data.debug.sampleOrderNumbers.length > 0) {
+          console.log(`\n  Sample Order Numbers Found:`);
+          data.debug.sampleOrderNumbers.forEach((num, i) => {
+            console.log(`    ${i + 1}. ${num}`);
+          });
+        }
+        if (data.debug.sampleOrderEmails && data.debug.sampleOrderEmails.length > 0) {
+          console.log(`\n  Sample Emails Found:`);
+          data.debug.sampleOrderEmails.forEach((email, i) => {
+            console.log(`    ${i + 1}. ${email}`);
+          });
+        }
+        if (data.debug.matchAttempts && data.debug.matchAttempts.length > 0) {
+          console.log(`\n  Match Attempts (first 5):`);
+          data.debug.matchAttempts.forEach((attempt, i) => {
+            console.log(`    ${i + 1}. Order: ${attempt.orderName}, Email: ${attempt.orderEmail}`);
+            console.log(`       Name Match: ${attempt.nameMatch}, Email Match: ${attempt.emailMatch}`);
+          });
+        }
       }
     }
 
