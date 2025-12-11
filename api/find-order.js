@@ -193,7 +193,7 @@ async function handler(req, res) {
     console.log('🔍 Matching - Looking for:', {
       cleanOrderNumber,
       cleanEmail,
-      totalOrdersToCheck: orders.length
+      totalOrdersToCheck: orders.length,
     });
 
     // Find exact match by order number (name) and email
@@ -222,7 +222,7 @@ async function handler(req, res) {
         cleanedOrderEmail: orderEmail,
         nameMatch,
         emailMatch,
-        bothMatch: nameMatch && emailMatch
+        bothMatch: nameMatch && emailMatch,
       };
       matchAttempts.push(attempt);
 
@@ -255,7 +255,7 @@ async function handler(req, res) {
         ordersFound: orders.length,
         orderNumbers: orders.map((o) => o.name).slice(0, 5), // Log first 5 order numbers
         orderEmails: orders.map((o) => o.email?.toLowerCase()).slice(0, 5),
-        matchAttempts: matchAttempts.slice(0, 5)
+        matchAttempts: matchAttempts.slice(0, 5),
       });
 
       res.writeHead(404, { ...corsHeaders, 'Content-Type': 'application/json' });
@@ -477,7 +477,7 @@ async function handleRequest(request) {
     console.log('🔍 Matching (Cloudflare) - Looking for:', {
       cleanOrderNumber,
       cleanEmail,
-      totalOrdersToCheck: orders.length
+      totalOrdersToCheck: orders.length,
     });
 
     // Find exact match by order number (name) and email
@@ -506,7 +506,7 @@ async function handleRequest(request) {
         cleanedOrderEmail: orderEmail,
         nameMatch,
         emailMatch,
-        bothMatch: nameMatch && emailMatch
+        bothMatch: nameMatch && emailMatch,
       };
       matchAttempts.push(attempt);
 
@@ -546,7 +546,7 @@ async function handleRequest(request) {
         sampleOrders: orderDetails,
         allOrderNumbers: orders.map((o) => o.name),
         allOrderEmails: orders.map((o) => o.email?.toLowerCase()),
-        matchAttempts: matchAttempts.slice(0, 5)
+        matchAttempts: matchAttempts.slice(0, 5),
       });
 
       return new Response(
