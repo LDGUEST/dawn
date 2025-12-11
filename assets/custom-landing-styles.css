@@ -1210,9 +1210,21 @@ body.modal-open .email-popup-modal {
    Appears on new cookbook product page only
    ========================================== */
 
+/* Improve spacing in product form buttons container */
+.product-form__buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.product-form__submit {
+  margin-bottom: 0 !important;
+}
+
 .special-offer-scroll-button {
   width: 100%;
-  margin-top: 1rem;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
   padding: 1rem 1.5rem;
   background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%) !important;
   color: white !important;
