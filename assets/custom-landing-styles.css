@@ -1328,6 +1328,22 @@ product-form[data-hide-shop-pay="true"] [data-shopify="payment-button"] {
 }
 
 /* ==========================================
+   DISABLE PRODUCT IMAGE ZOOM/CLICKING
+   Prevent clicking on product images to zoom
+   ========================================== */
+
+.product__media-toggle,
+.product__media-icon,
+modal-opener[data-modal] {
+  pointer-events: none !important;
+  cursor: default !important;
+}
+
+.product__media-toggle {
+  display: none !important;
+}
+
+/* ==========================================
    BUNDLE MODAL POPUP - PRE-CHECKOUT
    ONLY shows on new cookbook product page
    ========================================== */
