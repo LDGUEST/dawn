@@ -1270,7 +1270,7 @@ body.modal-open .email-popup-modal {
 /* Mobile responsive */
 @media (max-width: 768px) {
   .special-offer-scroll-button {
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     padding: 0.875rem 1.25rem;
     margin-top: 1.25rem;
     margin-bottom: 1.25rem;
@@ -1279,7 +1279,7 @@ body.modal-open .email-popup-modal {
 
 @media (max-width: 480px) {
   .special-offer-scroll-button {
-    font-size: 0.95rem;
+    font-size: 1.375rem;
     margin-top: 1rem;
     margin-bottom: 1rem;
   }
