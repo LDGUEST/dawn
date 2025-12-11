@@ -262,8 +262,15 @@ async function handler(req, res) {
       res.end(
         JSON.stringify({
           error: 'Order not found',
-          message:
-            'No order found with that order number and email address. Please verify both the order number and email address are correct.',
+          message: `No order found matching order #${cleanOrderNumber} and email ${email.substring(0, 3)}***. Found ${orders.length} order(s) for this email. Please verify the order number and email address.`,
+          debug: {
+            requestedOrderNumber: cleanOrderNumber,
+            requestedEmail: cleanEmail,
+            ordersFound: orders.length,
+            sampleOrderNumbers: orders.slice(0, 10).map(o => o.name),
+            sampleOrderEmails: orders.slice(0, 10).map(o => o.email?.toLowerCase()),
+            matchAttempts: matchAttempts.slice(0, 5)
+          }
         })
       );
       return;
@@ -559,7 +566,9 @@ async function handleRequest(request) {
             requestedOrderNumber: cleanOrderNumber,
             requestedEmail: email.toLowerCase().trim(),
             ordersFound: orders.length,
-            sampleOrderNumbers: orders.slice(0, 5).map((o) => o.name),
+            sampleOrderNumbers: orders.slice(0, 10).map((o) => o.name),
+            sampleOrderEmails: orders.slice(0, 10).map((o) => o.email?.toLowerCase()),
+            matchAttempts: matchAttempts.slice(0, 5)
           },
         }),
         {
