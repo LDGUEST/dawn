@@ -1413,14 +1413,14 @@ product-form[data-hide-shop-pay="true"] [data-shopify="payment-button"] {
 }
 
 .bundle-modal-title {
-  font-size: 2.75rem;
+  font-size: 3.25rem;
   font-weight: 800;
   margin: 0 0 0.5rem 0;
   color: white;
 }
 
 .bundle-modal-subtitle {
-  font-size: 1.625rem;
+  font-size: 1.875rem;
   margin: 0;
   color: rgba(255, 255, 255, 0.9);
   font-weight: 400;
@@ -1467,7 +1467,7 @@ product-form[data-hide-shop-pay="true"] [data-shopify="payment-button"] {
 }
 
 .bundle-modal-details h4 {
-  font-size: 1.75rem;
+  font-size: 2rem;
   font-weight: 700;
   color: #005633;
   margin: 0 0 0.5rem 0;
@@ -1476,13 +1476,13 @@ product-form[data-hide-shop-pay="true"] [data-shopify="payment-button"] {
 .bundle-modal-details p {
   margin: 0.25rem 0;
   color: #234846;
-  font-size: 1.375rem;
+  font-size: 1.625rem;
 }
 
 .bundle-modal-savings {
   color: #ff6b6b !important;
   font-weight: 700 !important;
-  font-size: 1.25rem !important;
+  font-size: 1.5rem !important;
 }
 
 .bundle-modal-summary {
@@ -1495,7 +1495,7 @@ product-form[data-hide-shop-pay="true"] [data-shopify="payment-button"] {
   display: flex;
   justify-content: space-between;
   padding: 0.5rem 0;
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   color: #234846;
 }
 
@@ -1505,7 +1505,7 @@ product-form[data-hide-shop-pay="true"] [data-shopify="payment-button"] {
 }
 
 .summary-line.total {
-  font-size: 1.5rem;
+  font-size: 1.875rem;
   color: #005633;
 }
 
@@ -1518,7 +1518,7 @@ product-form[data-hide-shop-pay="true"] [data-shopify="payment-button"] {
 .bundle-modal-note {
   text-align: center;
   margin-top: 1rem;
-  font-size: 1.125rem;
+  font-size: 1.375rem;
   color: #666;
 }
 
@@ -1535,7 +1535,7 @@ product-form[data-hide-shop-pay="true"] [data-shopify="payment-button"] {
   padding: 1.25rem 2rem;
   border: none;
   border-radius: 12px;
-  font-size: 1.65rem;
+  font-size: 1.875rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -1562,7 +1562,7 @@ product-form[data-hide-shop-pay="true"] [data-shopify="payment-button"] {
   padding: 1rem 2rem;
   border: 2px solid #ddd;
   border-radius: 12px;
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
