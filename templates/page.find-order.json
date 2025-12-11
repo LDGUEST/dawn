@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "download_instructions": {
@@ -14,10 +23,10 @@
     },
     "find_order": {
       "type": "find-order-page",
+      "disabled": true,
       "settings": {
         "heading": "Find Your Order",
         "description": "Enter your order number and email address below to access your order status page and download links.",
-        "api_endpoint": "https://shopify-order-lookup.cookingwithkahnke.workers.dev",
         "color_scheme": "scheme-1",
         "padding_top": 24,
         "padding_bottom": 36
