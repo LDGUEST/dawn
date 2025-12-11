@@ -1,50 +1,99 @@
 {% comment %}
   ⚠️ UPSELL ONLY SHOWS ON: Lettuce Wraps and Sauce Cookbook PDF
   Product URL: https://cookingwithkahnke.com/products/lettuce-wraps-and-sauce-cookbook-pdf
-  Will NOT appear anywhere else on the site
 {% endcomment %}
 
 {% if product.handle == 'lettuce-wraps-and-sauce-cookbook-pdf' %}
 
 <div class="product-upsell-bundle">
   <div class="upsell-container">
-    <div class="upsell-badge">SPECIAL OFFER</div>
-    
-    <h3 class="upsell-title">Complete Your Collection!</h3>
+    <div class="upsell-header">
+      <div class="upsell-badge">🎉 SPECIAL OFFER</div>
+      <h3 class="upsell-title">Complete Your Collection!</h3>
+      <p class="upsell-subtitle">Get 65 total recipes when you bundle both cookbooks</p>
+    </div>
     
     <div class="upsell-content">
-      <div class="upsell-product">
-        <img 
-          src="https://cookingwithkahnke.com/cdn/shop/files/30LettuceWrapsbyCookingwithKahnke-Cover_47f0d0e1-034e-4b14-92bd-8a752fae09f7.jpg?v=1762917258&width=300" 
-          srcset="https://cookingwithkahnke.com/cdn/shop/files/30LettuceWrapsbyCookingwithKahnke-Cover_47f0d0e1-034e-4b14-92bd-8a752fae09f7.jpg?v=1762917258&width=300 300w,
-                  https://cookingwithkahnke.com/cdn/shop/files/30LettuceWrapsbyCookingwithKahnke-Cover_47f0d0e1-034e-4b14-92bd-8a752fae09f7.jpg?v=1762917258&width=600 600w"
-          sizes="150px"
-          alt="30 Lettuce Wraps Cookbook" 
-          class="upsell-image"
-          loading="lazy"
-          width="150"
-          height="150"
-        >
+      <div class="upsell-product-card">
+        {% comment %} Try multiple image sources {% endcomment %}
+        {% assign original_product = all_products['30-lettuce-wrap-recipes-book-pdf'] %}
+        {% if original_product.featured_image %}
+          <img src="{{ original_product.featured_image | img_url: '300x300', crop: 'center' }}" alt="30 Lettuce Wraps Cookbook" class="upsell-image">
+        {% else %}
+          <div class="upsell-image-placeholder">
+            <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="#005633" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+          </div>
+        {% endif %}
+        
         <div class="upsell-details">
-          <h4>30 Lettuce Wraps Cookbook</h4>
-          <p class="upsell-description">Get the original cookbook with 30 more recipes!</p>
+          <h4 class="upsell-product-title">30 Lettuce Wraps Cookbook</h4>
+          <p class="upsell-description">Add 30 more delicious lettuce wrap recipes to your collection!</p>
+          
           <div class="upsell-pricing">
-            <span class="upsell-price-original">$9.99</span>
-            <span class="upsell-price-bundle">$4.99</span>
-            <span class="upsell-savings">Save $5!</span>
+            <div class="pricing-row">
+              <span class="upsell-price-label">Regular Price:</span>
+              <span class="upsell-price-original">$9.99</span>
+            </div>
+            <div class="pricing-row highlight">
+              <span class="upsell-price-label">Bundle Price:</span>
+              <span class="upsell-price-bundle">$4.99</span>
+              <span class="upsell-savings">Save $5!</span>
+            </div>
           </div>
         </div>
       </div>
       
-      <div class="upsell-total">
-        <p><strong>Bundle Total:</strong> $19.98 <span class="regular-price">(Regular $24.98)</span></p>
+      <div class="upsell-summary">
+        <div class="summary-row">
+          <span>New Cookbook:</span>
+          <span>$14.99</span>
+        </div>
+        <div class="summary-row">
+          <span>Original Cookbook:</span>
+          <span class="highlight-price">$4.99</span>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-row total">
+          <span><strong>Bundle Total:</strong></span>
+          <span class="total-price">$19.98</span>
+        </div>
+        <div class="summary-savings">
+          You save $5.00 (Regular $24.98)
+        </div>
       </div>
       
       <button type="button" class="upsell-button" id="add-bundle-button">
+        <svg class="button-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="9" cy="21" r="1"></circle>
+          <circle cx="20" cy="21" r="1"></circle>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+        </svg>
         Add Both Cookbooks - $19.98
       </button>
       
-      <p class="upsell-guarantee">✓ Instant digital delivery • ✓ 65 total recipes</p>
+      <div class="upsell-guarantee">
+        <div class="guarantee-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#005633" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          <span>Instant digital delivery</span>
+        </div>
+        <div class="guarantee-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#005633" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          <span>65 total recipes</span>
+        </div>
+        <div class="guarantee-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#005633" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          <span>Best value bundle</span>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -52,17 +101,14 @@
 <script>
 document.getElementById('add-bundle-button').addEventListener('click', async function() {
   const button = this;
+  const originalText = button.innerHTML;
   button.disabled = true;
-  button.textContent = 'Adding to cart...';
+  button.innerHTML = '<svg class="button-spinner" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line></svg> Adding to cart...';
   
   try {
-    // Current product (NEW Lettuce Wraps and Sauce Cookbook)
     const currentProductVariantId = document.querySelector('[name="id"]').value;
-    
-    // Original 30 Lettuce Wraps Cookbook variant ID
     const originalCookbookVariantId = '52664745394483';
     
-    // Add both items to cart
     const formData = {
       items: [
         {
@@ -95,11 +141,10 @@ document.getElementById('add-bundle-button').addEventListener('click', async fun
   } catch (error) {
     console.error('Error:', error);
     button.disabled = false;
-    button.textContent = 'Add Both Cookbooks - $19.98';
+    button.innerHTML = originalText;
     alert('Sorry, there was an error. Please try again.');
   }
 });
 </script>
 
 {% endif %}
-
