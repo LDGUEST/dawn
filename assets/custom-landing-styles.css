@@ -1498,7 +1498,7 @@ body.modal-open .email-popup-modal {
   padding: 1.25rem 2rem;
   border: none;
   border-radius: 12px;
-  font-size: 1.5rem;
+  font-size: 1.65rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -1525,7 +1525,7 @@ body.modal-open .email-popup-modal {
   padding: 1rem 2rem;
   border: 2px solid #ddd;
   border-radius: 12px;
-  font-size: 1rem;
+  font-size: 1.25rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -1597,7 +1597,7 @@ body.modal-open .email-popup-modal {
 
 @media (max-width: 480px) {
   .bundle-modal-title {
-    font-size: 1.375rem;
+    font-size: 1.75rem;
   }
   
   .bundle-modal-subtitle {
