@@ -228,8 +228,7 @@ async function handler(req, res) {
 
     console.log(`Found ${orders.length} orders for email ${email.substring(0, 3)}***`);
 
-    // Clean the order number for comparison (remove # and any whitespace)
-    const cleanOrderNumber = order_number.toString().replace(/[#\s]/g, '').trim();
+    // cleanOrderNumber already defined above at line 151
     const cleanEmail = email.toLowerCase().trim();
 
     console.log('🔍 Matching - Looking for:', {
