@@ -1180,6 +1180,11 @@ body.modal-open .email-popup-modal {
   .upsell-guarantee {
     flex-direction: column;
     gap: 1rem;
+    align-items: center;
+  }
+  
+  .guarantee-item {
+    justify-content: center;
   }
 }
 
