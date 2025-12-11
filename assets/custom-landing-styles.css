@@ -1221,6 +1221,26 @@ body.modal-open .email-popup-modal {
   margin-bottom: 0 !important;
 }
 
+/* Center purchase buttons on mobile */
+@media screen and (max-width: 749px) {
+  .product-form__buttons {
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .product-form__submit {
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  .special-offer-scroll-button {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
 .special-offer-scroll-button {
   width: 100%;
   margin-top: 1.5rem;
