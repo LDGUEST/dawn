@@ -147,23 +147,65 @@ async function handler(req, res) {
     const cleanStore = shopifyStore.replace(/^https?:\/\//, '').replace(/\/$/, '');
     const apiUrl = `https://${cleanStore}/admin/api/2024-01/orders.json`;
 
-    // Query Shopify Admin API by email only (name parameter doesn't work as a filter)
-    // We'll filter by order number in JavaScript after getting the results
-    const queryParams = new URLSearchParams({
-      email: email.toLowerCase(),
+    // Clean order number for query
+    const cleanOrderNumber = order_number.toString().replace(/[#\s]/g, '').trim();
+    
+    // Try querying by order name first (more reliable for archived orders)
+    // Format: name=#1779 or name=1779
+    let queryParams = new URLSearchParams({
+      name: `#${cleanOrderNumber}`, // Try with # prefix first
       status: 'any',
-      limit: '250', // Increased limit to ensure we get all orders for the email
+      limit: '10',
     });
 
-    console.log('Querying Shopify API:', { email: email.toLowerCase(), order_number });
+    console.log('Querying Shopify API by order number:', { name: `#${cleanOrderNumber}`, email: email.toLowerCase() });
 
-    const response = await fetch(`${apiUrl}?${queryParams.toString()}`, {
+    let response = await fetch(`${apiUrl}?${queryParams.toString()}`, {
       method: 'GET',
       headers: {
         'X-Shopify-Access-Token': shopifyToken,
         'Content-Type': 'application/json',
       },
     });
+
+    // If that doesn't work, try without # prefix
+    let responseData = await response.json().catch(() => ({ orders: [] }));
+    if (!response.ok || responseData.orders?.length === 0) {
+      queryParams = new URLSearchParams({
+        name: cleanOrderNumber, // Try without # prefix
+        status: 'any',
+        limit: '10',
+      });
+      
+      console.log('Retrying without # prefix:', { name: cleanOrderNumber });
+      response = await fetch(`${apiUrl}?${queryParams.toString()}`, {
+        method: 'GET',
+        headers: {
+          'X-Shopify-Access-Token': shopifyToken,
+          'Content-Type': 'application/json',
+        },
+      });
+      responseData = await response.json().catch(() => ({ orders: [] }));
+    }
+
+    // If still no results, fall back to email query
+    if (!response.ok || responseData.orders?.length === 0) {
+      console.log('Falling back to email query');
+      queryParams = new URLSearchParams({
+        email: email.toLowerCase(),
+        status: 'any',
+        limit: '250',
+      });
+      
+      response = await fetch(`${apiUrl}?${queryParams.toString()}`, {
+        method: 'GET',
+        headers: {
+          'X-Shopify-Access-Token': shopifyToken,
+          'Content-Type': 'application/json',
+        },
+      });
+      responseData = await response.json().catch(() => ({ orders: [] }));
+    }
 
     if (!response.ok) {
       if (response.status === 401 || response.status === 403) {
@@ -436,17 +478,19 @@ async function handleRequest(request) {
     const cleanStore = shopifyStore.replace(/^https?:\/\//, '').replace(/\/$/, '');
     const apiUrl = `https://${cleanStore}/admin/api/2024-01/orders.json`;
 
-    // Query Shopify Admin API by email only (name parameter doesn't work as a filter)
-    // We'll filter by order number in JavaScript after getting the results
-    const queryParams = new URLSearchParams({
-      email: email.toLowerCase(),
+    // Clean order number for query
+    const cleanOrderNum = order_number.toString().replace(/[#\s]/g, '').trim();
+    
+    // Try querying by order name first (more reliable for archived orders)
+    let queryParams = new URLSearchParams({
+      name: `#${cleanOrderNum}`, // Try with # prefix first
       status: 'any',
-      limit: '250', // Increased limit to ensure we get all orders for the email
+      limit: '10',
     });
 
-    console.log('Querying Shopify API:', { email: email.toLowerCase(), order_number });
+    console.log('Querying Shopify API by order number:', { name: `#${cleanOrderNum}`, email: email.toLowerCase() });
 
-    const response = await fetch(`${apiUrl}?${queryParams.toString()}`, {
+    let shopifyResponse = await fetch(`${apiUrl}?${queryParams.toString()}`, {
       method: 'GET',
       headers: {
         'X-Shopify-Access-Token': shopifyToken,
@@ -454,8 +498,47 @@ async function handleRequest(request) {
       },
     });
 
-    if (!response.ok) {
-      if (response.status === 401 || response.status === 403) {
+    // If that doesn't work, try without # prefix
+    let shopifyData = await shopifyResponse.json().catch(() => ({ orders: [] }));
+    if (!shopifyResponse.ok || shopifyData.orders?.length === 0) {
+      queryParams = new URLSearchParams({
+        name: cleanOrderNum, // Try without # prefix
+        status: 'any',
+        limit: '10',
+      });
+      
+      console.log('Retrying without # prefix:', { name: cleanOrderNum });
+      shopifyResponse = await fetch(`${apiUrl}?${queryParams.toString()}`, {
+        method: 'GET',
+        headers: {
+          'X-Shopify-Access-Token': shopifyToken,
+          'Content-Type': 'application/json',
+        },
+      });
+      shopifyData = await shopifyResponse.json().catch(() => ({ orders: [] }));
+    }
+
+    // If still no results, fall back to email query
+    if (!shopifyResponse.ok || shopifyData.orders?.length === 0) {
+      console.log('Falling back to email query');
+      queryParams = new URLSearchParams({
+        email: email.toLowerCase(),
+        status: 'any',
+        limit: '250',
+      });
+      
+      shopifyResponse = await fetch(`${apiUrl}?${queryParams.toString()}`, {
+        method: 'GET',
+        headers: {
+          'X-Shopify-Access-Token': shopifyToken,
+          'Content-Type': 'application/json',
+        },
+      });
+      shopifyData = await shopifyResponse.json().catch(() => ({ orders: [] }));
+    }
+
+    if (!shopifyResponse.ok) {
+      if (shopifyResponse.status === 401 || shopifyResponse.status === 403) {
         return new Response(
           JSON.stringify({
             error: 'Authentication error',
@@ -471,23 +554,20 @@ async function handleRequest(request) {
         );
       }
 
-      // Shopify API 404 means no orders found for that email
-      if (response.status === 404) {
-        console.log('⚠️ Shopify API returned 404 - no orders found for email');
-        const data = await response.json().catch(() => ({ orders: [] }));
-        const orders = data.orders || [];
-        
+      // Shopify API 404 means no orders found
+      if (shopifyResponse.status === 404) {
+        console.log('⚠️ Shopify API returned 404 - no orders found');
         return new Response(
           JSON.stringify({
             error: 'Order not found',
-            message: `No orders found for email ${email.substring(0, 3)}***. Please verify the email address is correct.`,
+            message: `No orders found. Please verify the order number and email address are correct.`,
             debug: {
-              requestedOrderNumber: order_number.toString(),
+              requestedOrderNumber: cleanOrderNum,
               requestedEmail: email.toLowerCase().trim(),
               ordersFound: 0,
               shopifyApiStatus: 404,
-              note: 'Shopify API returned 404 - this email may not exist in the system'
-            }
+              note: 'Shopify API returned 404 - order may not exist or app may need read_all_orders scope for archived orders',
+            },
           }),
           {
             status: 404,
@@ -499,16 +579,14 @@ async function handleRequest(request) {
         );
       }
 
-      throw new Error(`Shopify API error: ${response.status}`);
+      throw new Error(`Shopify API error: ${shopifyResponse.status}`);
     }
 
-    const data = await response.json();
-    const orders = data.orders || [];
-
-    console.log(`Found ${orders.length} orders for email ${email.substring(0, 3)}***`);
+    const orders = shopifyData.orders || [];
+    console.log(`Found ${orders.length} orders (queried by ${shopifyData.orders?.length > 0 ? 'order number' : 'email'})`);
 
     // Clean the order number for comparison (remove # and any whitespace)
-    const cleanOrderNumber = order_number.toString().replace(/[#\s]/g, '').trim();
+    const cleanOrderNumber = cleanOrderNum;
     const cleanEmail = email.toLowerCase().trim();
 
     console.log('🔍 Matching (Cloudflare) - Looking for:', {
