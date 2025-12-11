@@ -83,7 +83,14 @@ async function handler(req, res) {
 
     const { order_number, email } = body || {};
 
-    console.log('Request received:', { order_number, email: email ? email.substring(0, 3) + '***' : null });
+    // Comprehensive logging
+    console.log('🔍 API - Request received:', { 
+      order_number, 
+      email: email ? email.substring(0, 3) + '***' : null,
+      fullEmail: email, // Log full email for debugging (remove in production)
+      orderNumberType: typeof order_number,
+      emailType: typeof email
+    });
 
     // Validate input
     if (!order_number || !email) {
@@ -186,19 +193,19 @@ async function handler(req, res) {
     // Handle both "#1779" and "1779" formats
     const matchingOrder = orders.find((order) => {
       if (!order.email || !order.name) return false;
-      
+
       // Clean order name (remove # prefix and whitespace)
       const orderName = order.name.replace(/^#/, '').replace(/\s/g, '').trim();
       const orderEmail = order.email.toLowerCase().trim();
-      
+
       // Compare cleaned values
       const nameMatch = orderName === cleanOrderNumber;
       const emailMatch = orderEmail === email.toLowerCase().trim();
-      
+
       if (nameMatch && emailMatch) {
         console.log('Match found:', { orderName, orderEmail, requestedOrder: cleanOrderNumber, requestedEmail: email });
       }
-      
+
       return nameMatch && emailMatch;
     });
 
@@ -208,15 +215,16 @@ async function handler(req, res) {
         requestedOrderNumber: cleanOrderNumber,
         requestedEmail: email.toLowerCase(),
         ordersFound: orders.length,
-        orderNumbers: orders.map(o => o.name).slice(0, 5), // Log first 5 order numbers
-        orderEmails: orders.map(o => o.email?.toLowerCase()).slice(0, 5)
+        orderNumbers: orders.map((o) => o.name).slice(0, 5), // Log first 5 order numbers
+        orderEmails: orders.map((o) => o.email?.toLowerCase()).slice(0, 5),
       });
-      
+
       res.writeHead(404, { ...corsHeaders, 'Content-Type': 'application/json' });
       res.end(
         JSON.stringify({
           error: 'Order not found',
-          message: 'No order found with that order number and email address. Please verify both the order number and email address are correct.',
+          message:
+            'No order found with that order number and email address. Please verify both the order number and email address are correct.',
         })
       );
       return;
@@ -315,6 +323,15 @@ async function handleRequest(request) {
   try {
     const body = await request.json();
     const { order_number, email } = body;
+
+    // Comprehensive logging for Cloudflare Workers
+    console.log('🔍 API (Cloudflare) - Request received:', { 
+      order_number, 
+      email: email ? email.substring(0, 3) + '***' : null,
+      fullEmail: email, // Log full email for debugging
+      orderNumberType: typeof order_number,
+      emailType: typeof email
+    });
 
     if (!order_number || !email) {
       return new Response(
@@ -421,19 +438,19 @@ async function handleRequest(request) {
     // Handle both "#1779" and "1779" formats
     const matchingOrder = orders.find((order) => {
       if (!order.email || !order.name) return false;
-      
+
       // Clean order name (remove # prefix and whitespace)
       const orderName = order.name.replace(/^#/, '').replace(/\s/g, '').trim();
       const orderEmail = order.email.toLowerCase().trim();
-      
+
       // Compare cleaned values
       const nameMatch = orderName === cleanOrderNumber;
       const emailMatch = orderEmail === email.toLowerCase().trim();
-      
+
       if (nameMatch && emailMatch) {
         console.log('Match found:', { orderName, orderEmail, requestedOrder: cleanOrderNumber, requestedEmail: email });
       }
-      
+
       return nameMatch && emailMatch;
     });
 
@@ -443,14 +460,15 @@ async function handleRequest(request) {
         requestedOrderNumber: cleanOrderNumber,
         requestedEmail: email.toLowerCase(),
         ordersFound: orders.length,
-        orderNumbers: orders.map(o => o.name).slice(0, 5), // Log first 5 order numbers
-        orderEmails: orders.map(o => o.email?.toLowerCase()).slice(0, 5)
+        orderNumbers: orders.map((o) => o.name).slice(0, 5), // Log first 5 order numbers
+        orderEmails: orders.map((o) => o.email?.toLowerCase()).slice(0, 5),
       });
-      
+
       return new Response(
         JSON.stringify({
           error: 'Order not found',
-          message: 'No order found with that order number and email address. Please verify both the order number and email address are correct.',
+          message:
+            'No order found with that order number and email address. Please verify both the order number and email address are correct.',
         }),
         {
           status: 404,

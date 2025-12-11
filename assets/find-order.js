@@ -15,17 +15,18 @@ class FindOrder {
     this.downloadsElement = document.getElementById('FindOrderDownloads');
     // Get API endpoint from data attribute (kebab-case converts to camelCase)
     // Fallback to hardcoded endpoint if not set in theme settings
-    this.apiEndpoint = formElement.dataset.apiEndpoint 
-      || formElement.getAttribute('data-api-endpoint') 
-      || 'https://shopify-order-lookup.cookingwithkahnke.workers.dev';
-    
+    this.apiEndpoint =
+      formElement.dataset.apiEndpoint ||
+      formElement.getAttribute('data-api-endpoint') ||
+      'https://shopify-order-lookup.cookingwithkahnke.workers.dev';
+
     // Debug logging
     console.log('FindOrder initialized:', {
       hasApiEndpoint: !!this.apiEndpoint,
       apiEndpoint: this.apiEndpoint ? this.apiEndpoint.substring(0, 50) + '...' : 'NOT SET',
-      formDataAttributes: Array.from(formElement.attributes).filter(attr => attr.name.startsWith('data-'))
+      formDataAttributes: Array.from(formElement.attributes).filter((attr) => attr.name.startsWith('data-')),
     });
-    
+
     this.init();
   }
 
@@ -54,6 +55,14 @@ class FindOrder {
     // Clean the order number (remove # and spaces if present)
     const cleanOrderNum = orderNumber.replace(/[#\s]/g, '');
 
+    // Debug logging - what we're sending
+    console.log('🔍 FindOrder - Sending request:', {
+      originalOrderNumber: orderNumber,
+      cleanedOrderNumber: cleanOrderNum,
+      email: email,
+      apiEndpoint: this.apiEndpoint
+    });
+
     // Hide error messages
     this.hideMessages();
     this.hideResults();
@@ -62,37 +71,59 @@ class FindOrder {
     try {
       // Call API endpoint if configured, otherwise use direct redirect
       if (this.apiEndpoint) {
+        const requestBody = {
+          order_number: cleanOrderNum,
+          email: email.trim().toLowerCase(),
+        };
+        
+        console.log('📤 FindOrder - API Request:', {
+          url: this.apiEndpoint,
+          method: 'POST',
+          body: requestBody
+        });
+
         const response = await fetch(this.apiEndpoint, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            order_number: cleanOrderNum,
-            email: email
-          })
+          body: JSON.stringify(requestBody),
         });
+
+        console.log('📥 FindOrder - API Response status:', response.status, response.statusText);
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
+          console.error('❌ FindOrder - API Error:', {
+            status: response.status,
+            statusText: response.statusText,
+            errorData: errorData
+          });
           throw new Error(errorData.message || 'Order not found. Please check your order number and email address.');
         }
 
         const data = await response.json();
-        
+        console.log('✅ FindOrder - API Success:', {
+          success: data.success,
+          hasOrder: !!data.order,
+          hasDownloads: !!(data.downloads && data.downloads.length > 0),
+          orderName: data.order?.name,
+          downloadCount: data.downloads?.length || 0
+        });
+
         // Debug logging (remove in production if needed)
-        console.log('API Response:', { 
-          success: data.success, 
+        console.log('API Response:', {
+          success: data.success,
           hasDownloads: !!(data.downloads && data.downloads.length > 0),
           hasOrderStatusUrl: !!data.order_status_url,
-          orderStatusUrl: data.order_status_url
+          orderStatusUrl: data.order_status_url,
         });
-        
+
         if (data.success) {
           // Always display results on the page instead of redirecting
           // This avoids 404 errors and provides a better user experience
           this.setLoading(false);
-          
+
           if (data.downloads && data.downloads.length > 0) {
             // Display download links if available
             this.displayDownloads(data.downloads, data.order, data.order_status_url);
@@ -113,7 +144,7 @@ class FindOrder {
         this.setLoading(false);
         console.error('API endpoint not configured. Form element:', {
           dataset: this.form.dataset,
-          attributes: Array.from(this.form.attributes).map(attr => ({ name: attr.name, value: attr.value }))
+          attributes: Array.from(this.form.attributes).map((attr) => ({ name: attr.name, value: attr.value })),
         });
         this.showError('Order lookup service is not configured. Please contact support for assistance.');
       }
@@ -127,13 +158,15 @@ class FindOrder {
     // Update results element with success message and download links
     this.resultsElement.style.display = 'block';
     this.resultsElement.classList.add('show');
-    
+
     let orderDetailsHtml = '';
     if (order) {
       orderDetailsHtml = `
         <div style="margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid rgba(var(--color-foreground), 0.1);">
           <p style="margin: 0.5rem 0;"><strong>Order:</strong> ${this.escapeHtml(order.name || '')}</p>
-          <p style="margin: 0.5rem 0;"><strong>Date:</strong> ${order.created_at ? new Date(order.created_at).toLocaleDateString() : ''}</p>
+          <p style="margin: 0.5rem 0;"><strong>Date:</strong> ${
+            order.created_at ? new Date(order.created_at).toLocaleDateString() : ''
+          }</p>
           <p style="margin: 0.5rem 0;"><strong>Total:</strong> ${order.currency || '$'}${order.total_price || ''}</p>
         </div>
       `;
@@ -141,7 +174,9 @@ class FindOrder {
 
     let downloadsHtml = '';
     if (downloads && downloads.length > 0) {
-      downloadsHtml = downloads.map(download => `
+      downloadsHtml = downloads
+        .map(
+          (download) => `
         <a href="${this.escapeHtml(download.url)}" 
            class="find-order-download-link" 
            target="_blank"
@@ -149,7 +184,9 @@ class FindOrder {
            style="display: inline-block; padding: 15px 32px; background: #005633; color: #fff; text-decoration: none; border-radius: 4px; font-weight: 600; font-size: 16px; margin: 0.5rem 0.5rem 0.5rem 0;">
           Download: ${this.escapeHtml(download.name || 'File')}
         </a>
-      `).join('');
+      `
+        )
+        .join('');
     } else {
       downloadsHtml = '<p>No download links found for this order.</p>';
     }
@@ -194,13 +231,15 @@ class FindOrder {
     // Display order details with a link to the order status page
     this.resultsElement.style.display = 'block';
     this.resultsElement.classList.add('show');
-    
+
     let orderDetailsHtml = '';
     if (order) {
       orderDetailsHtml = `
         <div style="margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid rgba(var(--color-foreground), 0.1);">
           <p style="margin: 0.5rem 0;"><strong>Order:</strong> ${this.escapeHtml(order.name || '')}</p>
-          <p style="margin: 0.5rem 0;"><strong>Date:</strong> ${order.created_at ? new Date(order.created_at).toLocaleDateString() : ''}</p>
+          <p style="margin: 0.5rem 0;"><strong>Date:</strong> ${
+            order.created_at ? new Date(order.created_at).toLocaleDateString() : ''
+          }</p>
           <p style="margin: 0.5rem 0;"><strong>Total:</strong> ${order.currency || '$'}${order.total_price || ''}</p>
         </div>
       `;
@@ -213,9 +252,15 @@ class FindOrder {
           ✅ Order Found!
         </p>
         <p style="margin: 0 0 20px 0; color: rgb(var(--color-foreground));">
-          ${orderStatusUrl ? 'Click the link below to view your order status and download links:' : 'Your order has been found.'}
+          ${
+            orderStatusUrl
+              ? 'Click the link below to view your order status and download links:'
+              : 'Your order has been found.'
+          }
         </p>
-        ${orderStatusUrl ? `
+        ${
+          orderStatusUrl
+            ? `
           <a href="${this.escapeHtml(orderStatusUrl)}" 
              class="find-order-download-link" 
              target="_blank"
@@ -223,7 +268,9 @@ class FindOrder {
              style="display: inline-block; padding: 15px 32px; background: #005633; color: #fff; text-decoration: none; border-radius: 4px; font-weight: 600; font-size: 16px; margin: 0.5rem 0.5rem 0.5rem 0;">
             View Order Status & Downloads
           </a>
-        ` : ''}
+        `
+            : ''
+        }
       </div>
     `;
 
@@ -234,13 +281,15 @@ class FindOrder {
     // Display order details without downloads or status link
     this.resultsElement.style.display = 'block';
     this.resultsElement.classList.add('show');
-    
+
     let orderDetailsHtml = '';
     if (order) {
       orderDetailsHtml = `
         <div style="margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid rgba(var(--color-foreground), 0.1);">
           <p style="margin: 0.5rem 0;"><strong>Order:</strong> ${this.escapeHtml(order.name || '')}</p>
-          <p style="margin: 0.5rem 0;"><strong>Date:</strong> ${order.created_at ? new Date(order.created_at).toLocaleDateString() : ''}</p>
+          <p style="margin: 0.5rem 0;"><strong>Date:</strong> ${
+            order.created_at ? new Date(order.created_at).toLocaleDateString() : ''
+          }</p>
           <p style="margin: 0.5rem 0;"><strong>Total:</strong> ${order.currency || '$'}${order.total_price || ''}</p>
         </div>
       `;
@@ -276,7 +325,7 @@ class FindOrder {
   setLoading(isLoading) {
     this.submitButton.disabled = isLoading;
     this.submitButton.textContent = isLoading ? 'Searching...' : 'Find My Order';
-    
+
     if (isLoading) {
       this.loadingElement.classList.add('show');
     } else {
@@ -314,11 +363,10 @@ class FindOrder {
 }
 
 // Initialize when DOM is ready
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   const findOrderForm = document.getElementById('FindOrderForm');
-  
+
   if (findOrderForm) {
     new FindOrder(findOrderForm);
   }
 });
-
