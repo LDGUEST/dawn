@@ -13,7 +13,15 @@ class FindOrder {
     this.resultsElement = document.getElementById('FindOrderResults');
     this.detailsElement = document.getElementById('FindOrderDetails');
     this.downloadsElement = document.getElementById('FindOrderDownloads');
-    this.apiEndpoint = formElement.dataset.apiEndpoint;
+    // Get API endpoint from data attribute (kebab-case converts to camelCase)
+    this.apiEndpoint = formElement.dataset.apiEndpoint || formElement.getAttribute('data-api-endpoint') || '';
+    
+    // Debug logging
+    console.log('FindOrder initialized:', {
+      hasApiEndpoint: !!this.apiEndpoint,
+      apiEndpoint: this.apiEndpoint ? this.apiEndpoint.substring(0, 50) + '...' : 'NOT SET',
+      formDataAttributes: Array.from(formElement.attributes).filter(attr => attr.name.startsWith('data-'))
+    });
     
     this.init();
   }
@@ -100,6 +108,10 @@ class FindOrder {
       } else {
         // Fallback: No API endpoint configured - show error
         this.setLoading(false);
+        console.error('API endpoint not configured. Form element:', {
+          dataset: this.form.dataset,
+          attributes: Array.from(this.form.attributes).map(attr => ({ name: attr.name, value: attr.value }))
+        });
         this.showError('Order lookup service is not configured. Please contact support for assistance.');
       }
     } catch (error) {
