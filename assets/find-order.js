@@ -68,18 +68,24 @@ class FindOrder {
 
         const data = await response.json();
         
-        if (data.success && data.order_status_url) {
-          // Use the guest order status URL from API (no login required)
+        if (data.success) {
+          // Always display results on the page instead of redirecting
+          // This avoids 404 errors and provides a better user experience
           this.setLoading(false);
-          window.location.href = data.order_status_url;
-          return;
-        } else if (data.downloads && data.downloads.length > 0) {
-          // Display download links directly if API returns them
-          this.setLoading(false);
-          this.displayDownloads(data.downloads, data.order);
+          
+          if (data.downloads && data.downloads.length > 0) {
+            // Display download links if available
+            this.displayDownloads(data.downloads, data.order, data.order_status_url);
+          } else if (data.order_status_url) {
+            // If no downloads but we have order status URL, show order details with link
+            this.displayOrderWithStatusLink(data.order, data.order_status_url);
+          } else {
+            // Just show order details
+            this.displayOrderDetails(data.order);
+          }
           return;
         } else {
-          throw new Error('Order found but no download links available.');
+          throw new Error('Order found but no information available.');
         }
       } else {
         // Fallback: Use Shopify's guest order status page
@@ -95,7 +101,7 @@ class FindOrder {
     }
   }
 
-  displayDownloads(downloads, order) {
+  displayDownloads(downloads, order, orderStatusUrl = null) {
     // Update results element with success message and download links
     this.resultsElement.style.display = 'block';
     this.resultsElement.classList.add('show');
@@ -126,6 +132,22 @@ class FindOrder {
       downloadsHtml = '<p>No download links found for this order.</p>';
     }
 
+    // Add order status link if available
+    let statusLinkHtml = '';
+    if (orderStatusUrl) {
+      statusLinkHtml = `
+        <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(var(--color-foreground), 0.1);">
+          <a href="${this.escapeHtml(orderStatusUrl)}" 
+             class="find-order-download-link" 
+             target="_blank"
+             rel="noopener noreferrer"
+             style="display: inline-block; padding: 15px 32px; background: #6c757d; color: #fff; text-decoration: none; border-radius: 4px; font-weight: 600; font-size: 16px; margin: 0.5rem 0.5rem 0.5rem 0;">
+            View Full Order Status
+          </a>
+        </div>
+      `;
+    }
+
     this.detailsElement.innerHTML = orderDetailsHtml;
     this.downloadsElement.innerHTML = `
       <div style="background: #e8f5e9; border: 1px solid #4caf50; padding: 2rem; border-radius: var(--inputs-radius);">
@@ -138,10 +160,82 @@ class FindOrder {
         <div style="margin: 1rem 0;">
           ${downloadsHtml}
         </div>
+        ${statusLinkHtml}
       </div>
     `;
 
     // Scroll to results
+    this.resultsElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  displayOrderWithStatusLink(order, orderStatusUrl) {
+    // Display order details with a link to the order status page
+    this.resultsElement.style.display = 'block';
+    this.resultsElement.classList.add('show');
+    
+    let orderDetailsHtml = '';
+    if (order) {
+      orderDetailsHtml = `
+        <div style="margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid rgba(var(--color-foreground), 0.1);">
+          <p style="margin: 0.5rem 0;"><strong>Order:</strong> ${this.escapeHtml(order.name || '')}</p>
+          <p style="margin: 0.5rem 0;"><strong>Date:</strong> ${order.created_at ? new Date(order.created_at).toLocaleDateString() : ''}</p>
+          <p style="margin: 0.5rem 0;"><strong>Total:</strong> ${order.currency || '$'}${order.total_price || ''}</p>
+        </div>
+      `;
+    }
+
+    this.detailsElement.innerHTML = orderDetailsHtml;
+    this.downloadsElement.innerHTML = `
+      <div style="background: #e8f5e9; border: 1px solid #4caf50; padding: 2rem; border-radius: var(--inputs-radius);">
+        <p style="margin: 0 0 15px 0; color: #2e7d32; font-weight: 600; font-size: 1.6rem;">
+          ✅ Order Found!
+        </p>
+        <p style="margin: 0 0 20px 0; color: rgb(var(--color-foreground));">
+          ${orderStatusUrl ? 'Click the link below to view your order status and download links:' : 'Your order has been found.'}
+        </p>
+        ${orderStatusUrl ? `
+          <a href="${this.escapeHtml(orderStatusUrl)}" 
+             class="find-order-download-link" 
+             target="_blank"
+             rel="noopener noreferrer"
+             style="display: inline-block; padding: 15px 32px; background: #005633; color: #fff; text-decoration: none; border-radius: 4px; font-weight: 600; font-size: 16px; margin: 0.5rem 0.5rem 0.5rem 0;">
+            View Order Status & Downloads
+          </a>
+        ` : ''}
+      </div>
+    `;
+
+    this.resultsElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  displayOrderDetails(order) {
+    // Display order details without downloads or status link
+    this.resultsElement.style.display = 'block';
+    this.resultsElement.classList.add('show');
+    
+    let orderDetailsHtml = '';
+    if (order) {
+      orderDetailsHtml = `
+        <div style="margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid rgba(var(--color-foreground), 0.1);">
+          <p style="margin: 0.5rem 0;"><strong>Order:</strong> ${this.escapeHtml(order.name || '')}</p>
+          <p style="margin: 0.5rem 0;"><strong>Date:</strong> ${order.created_at ? new Date(order.created_at).toLocaleDateString() : ''}</p>
+          <p style="margin: 0.5rem 0;"><strong>Total:</strong> ${order.currency || '$'}${order.total_price || ''}</p>
+        </div>
+      `;
+    }
+
+    this.detailsElement.innerHTML = orderDetailsHtml;
+    this.downloadsElement.innerHTML = `
+      <div style="background: #fff3cd; border: 1px solid #ffc107; padding: 2rem; border-radius: var(--inputs-radius);">
+        <p style="margin: 0 0 15px 0; color: #856404; font-weight: 600; font-size: 1.6rem;">
+          ✅ Order Found!
+        </p>
+        <p style="margin: 0; color: rgb(var(--color-foreground));">
+          Your order has been found. Please check your email for download links or contact support if you need assistance.
+        </p>
+      </div>
+    `;
+
     this.resultsElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
