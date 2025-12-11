@@ -846,3 +846,196 @@ body.modal-open .email-popup-modal {
   }
 }
 
+/* ==========================================
+   PRODUCT UPSELL BUNDLE
+   ONLY displays on NEW cookbook product page
+   URL: /products/lettuce-wraps-and-sauce-cookbook-pdf
+   ========================================== */
+
+.product-upsell-bundle {
+  margin: 3rem 0;
+  padding: 2rem;
+  background: linear-gradient(135deg, #f0f9f4 0%, #e8f5e9 100%);
+  border: 3px solid #005633;
+  border-radius: 16px;
+}
+
+.upsell-container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.upsell-badge {
+  background: #ff6b6b;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.875rem;
+  display: inline-block;
+  margin-bottom: 1rem;
+  letter-spacing: 1px;
+}
+
+.upsell-title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #005633;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.upsell-product {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+  align-items: center;
+}
+
+.upsell-image {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 2px solid #005633;
+  flex-shrink: 0;
+}
+
+.upsell-details h4 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #234846;
+  margin-bottom: 0.5rem;
+}
+
+.upsell-description {
+  font-size: 1rem;
+  color: #234846;
+  margin-bottom: 1rem;
+}
+
+.upsell-pricing {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.upsell-price-original {
+  font-size: 1.125rem;
+  color: #999;
+  text-decoration: line-through;
+}
+
+.upsell-price-bundle {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #005633;
+}
+
+.upsell-savings {
+  background: #ffeb3b;
+  color: #000;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.875rem;
+}
+
+.upsell-total {
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.upsell-total strong {
+  color: #005633;
+  font-size: 1.25rem;
+}
+
+.upsell-total .regular-price {
+  color: #999;
+  font-size: 0.875rem;
+}
+
+.upsell-button {
+  width: 100%;
+  background: #005633 !important;
+  color: white !important;
+  padding: 1.25rem 2rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.25rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  letter-spacing: 0;
+}
+
+.upsell-button:hover {
+  background: #004428 !important;
+}
+
+.upsell-button:active {
+  background: #00331f !important;
+}
+
+.upsell-button:disabled {
+  background: #ccc !important;
+  cursor: not-allowed;
+}
+
+.upsell-guarantee {
+  text-align: center;
+  margin-top: 1rem;
+  color: #005633;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .product-upsell-bundle {
+    padding: 1.5rem;
+  }
+  
+  .upsell-product {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .upsell-image {
+    width: 120px;
+    height: 120px;
+  }
+  
+  .upsell-title {
+    font-size: 1.5rem;
+  }
+  
+  .upsell-button {
+    font-size: 1.125rem;
+    padding: 1rem 1.5rem;
+  }
+  
+  .upsell-pricing {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .upsell-title {
+    font-size: 1.25rem;
+  }
+  
+  .upsell-details h4 {
+    font-size: 1.125rem;
+  }
+  
+  .upsell-button {
+    font-size: 1rem;
+  }
+}
+

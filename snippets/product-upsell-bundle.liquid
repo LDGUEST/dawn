@@ -1,0 +1,95 @@
+{% comment %}
+  ⚠️ UPSELL ONLY SHOWS ON: Lettuce Wraps and Sauce Cookbook PDF
+  Product URL: https://cookingwithkahnke.com/products/lettuce-wraps-and-sauce-cookbook-pdf
+  Will NOT appear anywhere else on the site
+{% endcomment %}
+
+{% if product.handle == 'lettuce-wraps-and-sauce-cookbook-pdf' %}
+
+<div class="product-upsell-bundle">
+  <div class="upsell-container">
+    <div class="upsell-badge">SPECIAL OFFER</div>
+    
+    <h3 class="upsell-title">Complete Your Collection!</h3>
+    
+    <div class="upsell-content">
+      <div class="upsell-product">
+        <img src="{{ '30_Lettuce_Wraps_by_CookingwithKahnke__Cover.jpg' | asset_url }}" alt="30 Lettuce Wraps Cookbook" class="upsell-image">
+        <div class="upsell-details">
+          <h4>30 Lettuce Wraps Cookbook</h4>
+          <p class="upsell-description">Get the original cookbook with 30 more recipes!</p>
+          <div class="upsell-pricing">
+            <span class="upsell-price-original">$9.99</span>
+            <span class="upsell-price-bundle">$4.99</span>
+            <span class="upsell-savings">Save $5!</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="upsell-total">
+        <p><strong>Bundle Total:</strong> $14.98 <span class="regular-price">(Regular $19.98)</span></p>
+      </div>
+      
+      <button type="button" class="upsell-button" id="add-bundle-button">
+        Add Both Cookbooks - $14.98
+      </button>
+      
+      <p class="upsell-guarantee">✓ Instant digital delivery • ✓ 65 total recipes</p>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('add-bundle-button').addEventListener('click', async function() {
+  const button = this;
+  button.disabled = true;
+  button.textContent = 'Adding to cart...';
+  
+  try {
+    // Current product (NEW Lettuce Wraps and Sauce Cookbook)
+    const currentProductVariantId = document.querySelector('[name="id"]').value;
+    
+    // Original 30 Lettuce Wraps Cookbook variant ID
+    const originalCookbookVariantId = '52664745394483';
+    
+    // Add both items to cart
+    const formData = {
+      items: [
+        {
+          id: currentProductVariantId,
+          quantity: 1
+        },
+        {
+          id: originalCookbookVariantId,
+          quantity: 1,
+          properties: {
+            '_bundle_discount': '$5.00 off'
+          }
+        }
+      ]
+    };
+    
+    const response = await fetch('/cart/add.js', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData)
+    });
+    
+    if (response.ok) {
+      window.location.href = '/checkout';
+    } else {
+      throw new Error('Failed to add to cart');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    button.disabled = false;
+    button.textContent = 'Add Both Cookbooks - $14.98';
+    alert('Sorry, there was an error. Please try again.');
+  }
+});
+</script>
+
+{% endif %}
+

@@ -86,11 +86,11 @@
                     <div class="footer-block__details-content rte">
                       {{ block.settings.subtext }}
                       {%- comment -%} Add button below text if heading contains "Art of Wrapping" {%- endcomment -%}
-                      {%- if block.settings.heading contains 'Art of Wrapping' or block.settings.heading contains 'art of wrapping' -%}
+                      {%- if block.settings.heading contains 'Art of Wrapping'
+                        or block.settings.heading contains 'art of wrapping'
+                      -%}
                         <div style="text-align: center; margin-top: 20px;">
-                          <button class="open-email-popup" type="button">
-                            Get the FREE Guide
-                          </button>
+                          <button class="open-email-popup" type="button">Get the FREE Guide</button>
                         </div>
                       {%- endif -%}
                     </div>
@@ -253,6 +253,13 @@
           {%- if section.settings.show_social and has_social_icons -%}
             {%- render 'social-icons', class: 'footer__list-social' -%}
           {%- endif -%}
+        </div>
+
+        {%- comment -%} Find My Order Button - On separate line after newsletter/social {%- endcomment -%}
+        <div class="find-order-button-wrapper" style="text-align: center; padding: 3rem 0; width: 100%; clear: both;">
+          <a href="/pages/find-my-order" class="button button--primary">
+            Can't Find Your Download?
+          </a>
         </div>
       </div>
     {%- endunless -%}
