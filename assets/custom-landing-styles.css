@@ -1205,3 +1205,67 @@ body.modal-open .email-popup-modal {
   }
 }
 
+/* ==========================================
+   SPECIAL OFFER SCROLL BUTTON
+   Appears on new cookbook product page only
+   ========================================== */
+
+.special-offer-scroll-button {
+  width: 100%;
+  margin-top: 1rem;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%) !important;
+  color: white !important;
+  border: 2px solid #ff5252;
+  border-radius: 8px;
+  font-size: 1.125rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  letter-spacing: 0;
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+}
+
+.special-offer-scroll-button:hover {
+  background: linear-gradient(135deg, #ff5252 0%, #ff3838 100%) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 107, 107, 0.4);
+}
+
+.special-offer-scroll-button:active {
+  transform: translateY(0);
+}
+
+.special-offer-scroll-button svg {
+  flex-shrink: 0;
+}
+
+/* Highlight animation for bundle section */
+@keyframes highlight-pulse {
+  0%, 100% {
+    box-shadow: 0 8px 24px rgba(0, 86, 51, 0.15);
+  }
+  50% {
+    box-shadow: 0 12px 32px rgba(255, 107, 107, 0.4);
+    transform: scale(1.01);
+  }
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .special-offer-scroll-button {
+    font-size: 1rem;
+    padding: 0.875rem 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .special-offer-scroll-button {
+    font-size: 0.95rem;
+  }
+}
+

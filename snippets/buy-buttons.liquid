@@ -97,6 +97,18 @@
             </span>
             {%- render 'loading-spinner' -%}
           </button>
+          {%- if product.handle == 'lettuce-wraps-and-sauce-cookbook-pdf' -%}
+          <button type="button" class="special-offer-scroll-button" onclick="scrollToBundle(event)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            Special Offer - Save $5!
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          {%- endif -%}
           {%- if show_dynamic_checkout -%}
             {{ form | payment_button }}
           {%- endif -%}
