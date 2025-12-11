@@ -105,6 +105,7 @@
     <form
       class="find-order-form isolate"
       id="FindOrderForm"
+      data-api-endpoint="{{ section.settings.api_endpoint | default: '' }}"
     >
       <div class="contact__fields">
         <div class="field">
@@ -185,6 +186,13 @@
       "id": "color_scheme",
       "label": "t:sections.all.colors.label",
       "default": "scheme-1"
+    },
+    {
+      "type": "text",
+      "id": "api_endpoint",
+      "label": "API Endpoint URL",
+      "info": "Optional: Enter your order lookup API endpoint URL (e.g., https://your-api.vercel.app/api/find-order). Leave empty to use Shopify's order status page.",
+      "default": ""
     },
     {
       "type": "header",

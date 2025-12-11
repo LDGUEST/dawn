@@ -21,7 +21,7 @@ class FindOrder {
     this.form.addEventListener('submit', (e) => this.handleSubmit(e));
   }
 
-  handleSubmit(event) {
+  async handleSubmit(event) {
     event.preventDefault();
 
     // Get form data
@@ -42,44 +42,112 @@ class FindOrder {
     // Clean the order number (remove # and spaces if present)
     const cleanOrderNum = orderNumber.replace(/[#\s]/g, '');
 
-    // Generate Shopify Order Status URL
-    const orderStatusUrl = `https://cookingwithkahnke.com/${cleanOrderNum}/orders`;
-
     // Hide error messages
     this.hideMessages();
     this.hideResults();
+    this.setLoading(true);
 
-    // Display success with link
-    this.displayOrderStatusLink(orderStatusUrl);
+    try {
+      // Call API endpoint if configured, otherwise use direct redirect
+      if (this.apiEndpoint) {
+        const response = await fetch(this.apiEndpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            order_number: cleanOrderNum,
+            email: email
+          })
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.message || 'Order not found. Please check your order number and email address.');
+        }
+
+        const data = await response.json();
+        
+        if (data.success && data.order_status_url) {
+          // Use the guest order status URL from API (no login required)
+          this.setLoading(false);
+          window.location.href = data.order_status_url;
+          return;
+        } else if (data.downloads && data.downloads.length > 0) {
+          // Display download links directly if API returns them
+          this.setLoading(false);
+          this.displayDownloads(data.downloads, data.order);
+          return;
+        } else {
+          throw new Error('Order found but no download links available.');
+        }
+      } else {
+        // Fallback: Use Shopify's guest order status page
+        // Format: /orders/{order_number}?key={token}
+        // Since we don't have token, redirect to order status page which will prompt for email
+        this.setLoading(false);
+        const orderStatusUrl = `https://cookingwithkahnke.com/orders/${cleanOrderNum}`;
+        window.location.href = orderStatusUrl;
+      }
+    } catch (error) {
+      this.setLoading(false);
+      this.showError(error.message || 'An error occurred. Please try again or contact support.');
+    }
   }
 
-  displayOrderStatusLink(orderStatusUrl) {
-    // Update results element with success message and link
+  displayDownloads(downloads, order) {
+    // Update results element with success message and download links
     this.resultsElement.style.display = 'block';
     this.resultsElement.classList.add('show');
     
-    this.detailsElement.innerHTML = '';
+    let orderDetailsHtml = '';
+    if (order) {
+      orderDetailsHtml = `
+        <div style="margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid rgba(var(--color-foreground), 0.1);">
+          <p style="margin: 0.5rem 0;"><strong>Order:</strong> ${this.escapeHtml(order.name || '')}</p>
+          <p style="margin: 0.5rem 0;"><strong>Date:</strong> ${order.created_at ? new Date(order.created_at).toLocaleDateString() : ''}</p>
+          <p style="margin: 0.5rem 0;"><strong>Total:</strong> ${order.currency || '$'}${order.total_price || ''}</p>
+        </div>
+      `;
+    }
+
+    let downloadsHtml = '';
+    if (downloads && downloads.length > 0) {
+      downloadsHtml = downloads.map(download => `
+        <a href="${this.escapeHtml(download.url)}" 
+           class="find-order-download-link" 
+           target="_blank"
+           rel="noopener noreferrer"
+           style="display: inline-block; padding: 15px 32px; background: #005633; color: #fff; text-decoration: none; border-radius: 4px; font-weight: 600; font-size: 16px; margin: 0.5rem 0.5rem 0.5rem 0;">
+          Download: ${this.escapeHtml(download.name || 'File')}
+        </a>
+      `).join('');
+    } else {
+      downloadsHtml = '<p>No download links found for this order.</p>';
+    }
+
+    this.detailsElement.innerHTML = orderDetailsHtml;
     this.downloadsElement.innerHTML = `
       <div style="background: #e8f5e9; border: 1px solid #4caf50; padding: 2rem; border-radius: var(--inputs-radius);">
         <p style="margin: 0 0 15px 0; color: #2e7d32; font-weight: 600; font-size: 1.6rem;">
           ✅ Order Found!
         </p>
         <p style="margin: 0 0 20px 0; color: rgb(var(--color-foreground));">
-          Click below to view your order and access your downloads:
+          Your download links are below:
         </p>
-        <a href="${this.escapeHtml(orderStatusUrl)}" 
-           class="find-order-download-link" 
-           style="display: inline-block; padding: 15px 32px; background: #005633; color: #fff; text-decoration: none; border-radius: 4px; font-weight: 600; font-size: 16px; margin-bottom: 15px;">
-          View My Order & Downloads
-        </a>
-        <p style="margin: 20px 0 0 0; font-size: 14px; color: rgba(var(--color-foreground), 0.7);">
-          You may need to verify your email address on the next page.
-        </p>
+        <div style="margin: 1rem 0;">
+          ${downloadsHtml}
+        </div>
       </div>
     `;
 
     // Scroll to results
     this.resultsElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  displayOrderStatusLink(orderStatusUrl) {
+    // Legacy method - redirects to order status page
+    window.location.href = orderStatusUrl;
   }
 
   validateEmail(email) {
