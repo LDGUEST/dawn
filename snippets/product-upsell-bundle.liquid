@@ -5,6 +5,28 @@
 {% endcomment %}
 
 {% if product.handle == 'lettuce-wraps-and-sauce-cookbook-pdf' %}
+  {%- comment -%} Get the original cookbook product by handle - try multiple possible handles {%- endcomment -%}
+  {%- assign original_cookbook = all_products['30-lettuce-wrap-recipes-book-pdf'] -%}
+  {%- if original_cookbook == blank -%}
+    {%- assign original_cookbook = all_products['30-lettuce-wraps-cookbook'] -%}
+  {%- endif -%}
+  {%- if original_cookbook == blank -%}
+    {%- assign original_cookbook = all_products['30-lettuce-wrap-recipes'] -%}
+  {%- endif -%}
+  {%- if original_cookbook == blank -%}
+    {%- comment -%} Last resort: try to find by variant ID if product lookup fails {%- endcomment -%}
+    {%- for product_item in collections.all.products -%}
+      {%- for variant in product_item.variants -%}
+        {%- if variant.id == 52664745394483 -%}
+          {%- assign original_cookbook = product_item -%}
+          {%- break -%}
+        {%- endif -%}
+      {%- endfor -%}
+      {%- if original_cookbook != blank -%}
+        {%- break -%}
+      {%- endif -%}
+    {%- endfor -%}
+  {%- endif -%}
 
 <div class="product-upsell-bundle">
   <div class="upsell-container">
@@ -14,7 +36,24 @@
     
     <div class="upsell-content">
       <div class="upsell-product">
-        <img src="{{ '30_Lettuce_Wraps_by_CookingwithKahnke__Cover.jpg' | asset_url }}" alt="30 Lettuce Wraps Cookbook" class="upsell-image">
+        {%- if original_cookbook.featured_image -%}
+          <img 
+            src="{{ original_cookbook.featured_image | image_url: width: 300 }}" 
+            srcset="{{ original_cookbook.featured_image | image_url: width: 300 }} 300w,
+                    {{ original_cookbook.featured_image | image_url: width: 600 }} 600w"
+            sizes="150px"
+            alt="{{ original_cookbook.featured_image.alt | default: '30 Lettuce Wraps Cookbook' | escape }}" 
+            class="upsell-image"
+            loading="lazy"
+            width="150"
+            height="{{ 150 | divided_by: original_cookbook.featured_image.aspect_ratio | ceil }}"
+          >
+        {%- else -%}
+          {%- comment -%} Fallback placeholder if product image not found {%- endcomment -%}
+          <div class="upsell-image upsell-image-placeholder" style="width: 150px; height: 150px; background: #f0f0f0; border: 2px solid #005633; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #999; font-size: 0.875rem;">
+            Image
+          </div>
+        {%- endif -%}
         <div class="upsell-details">
           <h4>30 Lettuce Wraps Cookbook</h4>
           <p class="upsell-description">Get the original cookbook with 30 more recipes!</p>

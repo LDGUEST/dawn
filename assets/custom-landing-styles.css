@@ -901,6 +901,20 @@ body.modal-open .email-popup-modal {
   flex-shrink: 0;
 }
 
+.upsell-image-placeholder {
+  width: 150px;
+  height: 150px;
+  background: #f0f0f0;
+  border: 2px solid #005633;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  font-size: 0.875rem;
+  flex-shrink: 0;
+}
+
 .upsell-details h4 {
   font-size: 1.25rem;
   font-weight: 700;
