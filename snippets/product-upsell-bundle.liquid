@@ -109,6 +109,7 @@ document.getElementById('add-bundle-button').addEventListener('click', async fun
     const currentProductVariantId = document.querySelector('[name="id"]').value;
     const originalCookbookVariantId = '52664745394483';
     
+    // Add both items to cart
     const formData = {
       items: [
         {
@@ -117,10 +118,7 @@ document.getElementById('add-bundle-button').addEventListener('click', async fun
         },
         {
           id: originalCookbookVariantId,
-          quantity: 1,
-          properties: {
-            '_bundle_discount': '$5.00 off'
-          }
+          quantity: 1
         }
       ]
     };
@@ -134,7 +132,8 @@ document.getElementById('add-bundle-button').addEventListener('click', async fun
     });
     
     if (response.ok) {
-      window.location.href = '/checkout';
+      // Redirect to checkout with BUNDLE5OFF discount code auto-applied
+      window.location.href = '/checkout?discount=BUNDLE5OFF';
     } else {
       throw new Error('Failed to add to cart');
     }
