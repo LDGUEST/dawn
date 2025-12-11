@@ -144,6 +144,11 @@ product-info {
   display: none;
 }
 
+/* Hide red payment button (dynamic checkout) - can be restored by removing this rule */
+.shopify-payment-button {
+  display: none !important;
+}
+
 /* Product form */
 
 .product-form {
