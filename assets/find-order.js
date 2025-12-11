@@ -14,7 +14,10 @@ class FindOrder {
     this.detailsElement = document.getElementById('FindOrderDetails');
     this.downloadsElement = document.getElementById('FindOrderDownloads');
     // Get API endpoint from data attribute (kebab-case converts to camelCase)
-    this.apiEndpoint = formElement.dataset.apiEndpoint || formElement.getAttribute('data-api-endpoint') || '';
+    // Fallback to hardcoded endpoint if not set in theme settings
+    this.apiEndpoint = formElement.dataset.apiEndpoint 
+      || formElement.getAttribute('data-api-endpoint') 
+      || 'https://shopify-order-lookup.cookingwithkahnke.workers.dev';
     
     // Debug logging
     console.log('FindOrder initialized:', {
