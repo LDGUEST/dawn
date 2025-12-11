@@ -1286,6 +1286,18 @@ body.modal-open .email-popup-modal {
 }
 
 /* ==========================================
+   HIDE SHOP PAY BUTTON
+   Hide on free products ($0) and new cookbook page
+   ========================================== */
+
+/* Hide Shop Pay button when data-hide-shop-pay attribute is present */
+product-form[data-hide-shop-pay="true"] .shopify-payment-button,
+product-form[data-hide-shop-pay="true"] .dynamic-checkout__content,
+product-form[data-hide-shop-pay="true"] ~ .shopify-payment-button {
+  display: none !important;
+}
+
+/* ==========================================
    BUNDLE MODAL POPUP - PRE-CHECKOUT
    ONLY shows on new cookbook product page
    ========================================== */
