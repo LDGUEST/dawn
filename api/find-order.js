@@ -84,12 +84,12 @@ async function handler(req, res) {
     const { order_number, email } = body || {};
 
     // Comprehensive logging
-    console.log('🔍 API - Request received:', { 
-      order_number, 
+    console.log('🔍 API - Request received:', {
+      order_number,
       email: email ? email.substring(0, 3) + '***' : null,
       fullEmail: email, // Log full email for debugging (remove in production)
       orderNumberType: typeof order_number,
-      emailType: typeof email
+      emailType: typeof email,
     });
 
     // Validate input
@@ -188,11 +188,22 @@ async function handler(req, res) {
 
     // Clean the order number for comparison (remove # and any whitespace)
     const cleanOrderNumber = order_number.toString().replace(/[#\s]/g, '').trim();
+    const cleanEmail = email.toLowerCase().trim();
+
+    console.log('🔍 Matching - Looking for:', {
+      cleanOrderNumber,
+      cleanEmail,
+      totalOrdersToCheck: orders.length
+    });
 
     // Find exact match by order number (name) and email
     // Handle both "#1779" and "1779" formats
-    const matchingOrder = orders.find((order) => {
-      if (!order.email || !order.name) return false;
+    let matchAttempts = [];
+    const matchingOrder = orders.find((order, index) => {
+      if (!order.email || !order.name) {
+        matchAttempts.push({ index, reason: 'Missing email or name', orderName: order.name, orderEmail: order.email });
+        return false;
+      }
 
       // Clean order name (remove # prefix and whitespace)
       const orderName = order.name.replace(/^#/, '').replace(/\s/g, '').trim();
@@ -200,23 +211,51 @@ async function handler(req, res) {
 
       // Compare cleaned values
       const nameMatch = orderName === cleanOrderNumber;
-      const emailMatch = orderEmail === email.toLowerCase().trim();
+      const emailMatch = orderEmail === cleanEmail;
+
+      // Log each comparison attempt
+      const attempt = {
+        index,
+        orderName: order.name,
+        cleanedOrderName: orderName,
+        orderEmail: order.email,
+        cleanedOrderEmail: orderEmail,
+        nameMatch,
+        emailMatch,
+        bothMatch: nameMatch && emailMatch
+      };
+      matchAttempts.push(attempt);
 
       if (nameMatch && emailMatch) {
-        console.log('Match found:', { orderName, orderEmail, requestedOrder: cleanOrderNumber, requestedEmail: email });
+        console.log('✅ Match found!', attempt);
+        return true;
       }
 
-      return nameMatch && emailMatch;
+      // Log near-matches for debugging
+      if (nameMatch && !emailMatch) {
+        console.log('⚠️ Name matches but email differs:', attempt);
+      }
+      if (!nameMatch && emailMatch) {
+        console.log('⚠️ Email matches but name differs:', attempt);
+      }
+
+      return false;
     });
+
+    // Log all match attempts if no match found
+    if (!matchingOrder && orders.length > 0) {
+      console.log('📋 All match attempts:', matchAttempts.slice(0, 10)); // Log first 10
+    }
 
     if (!matchingOrder) {
       // Enhanced error logging for debugging
       console.error('Order not found:', {
         requestedOrderNumber: cleanOrderNumber,
-        requestedEmail: email.toLowerCase(),
+        requestedEmail: cleanEmail,
         ordersFound: orders.length,
         orderNumbers: orders.map((o) => o.name).slice(0, 5), // Log first 5 order numbers
         orderEmails: orders.map((o) => o.email?.toLowerCase()).slice(0, 5),
+        matchAttempts: matchAttempts.slice(0, 5)
       });
 
       res.writeHead(404, { ...corsHeaders, 'Content-Type': 'application/json' });
@@ -325,12 +364,12 @@ async function handleRequest(request) {
     const { order_number, email } = body;
 
     // Comprehensive logging for Cloudflare Workers
-    console.log('🔍 API (Cloudflare) - Request received:', { 
-      order_number, 
+    console.log('🔍 API (Cloudflare) - Request received:', {
+      order_number,
       email: email ? email.substring(0, 3) + '***' : null,
       fullEmail: email, // Log full email for debugging
       orderNumberType: typeof order_number,
-      emailType: typeof email
+      emailType: typeof email,
     });
 
     if (!order_number || !email) {
@@ -433,11 +472,22 @@ async function handleRequest(request) {
 
     // Clean the order number for comparison (remove # and any whitespace)
     const cleanOrderNumber = order_number.toString().replace(/[#\s]/g, '').trim();
+    const cleanEmail = email.toLowerCase().trim();
+
+    console.log('🔍 Matching (Cloudflare) - Looking for:', {
+      cleanOrderNumber,
+      cleanEmail,
+      totalOrdersToCheck: orders.length
+    });
 
     // Find exact match by order number (name) and email
     // Handle both "#1779" and "1779" formats
-    const matchingOrder = orders.find((order) => {
-      if (!order.email || !order.name) return false;
+    let matchAttempts = [];
+    const matchingOrder = orders.find((order, index) => {
+      if (!order.email || !order.name) {
+        matchAttempts.push({ index, reason: 'Missing email or name', orderName: order.name, orderEmail: order.email });
+        return false;
+      }
 
       // Clean order name (remove # prefix and whitespace)
       const orderName = order.name.replace(/^#/, '').replace(/\s/g, '').trim();
@@ -445,42 +495,72 @@ async function handleRequest(request) {
 
       // Compare cleaned values
       const nameMatch = orderName === cleanOrderNumber;
-      const emailMatch = orderEmail === email.toLowerCase().trim();
+      const emailMatch = orderEmail === cleanEmail;
+
+      // Log each comparison attempt
+      const attempt = {
+        index,
+        orderName: order.name,
+        cleanedOrderName: orderName,
+        orderEmail: order.email,
+        cleanedOrderEmail: orderEmail,
+        nameMatch,
+        emailMatch,
+        bothMatch: nameMatch && emailMatch
+      };
+      matchAttempts.push(attempt);
 
       if (nameMatch && emailMatch) {
-        console.log('Match found:', { orderName, orderEmail, requestedOrder: cleanOrderNumber, requestedEmail: email });
+        console.log('✅ Match found!', attempt);
+        return true;
       }
 
-      return nameMatch && emailMatch;
+      // Log near-matches for debugging
+      if (nameMatch && !emailMatch) {
+        console.log('⚠️ Name matches but email differs:', attempt);
+      }
+      if (!nameMatch && emailMatch) {
+        console.log('⚠️ Email matches but name differs:', attempt);
+      }
+
+      return false;
     });
+
+    // Log all match attempts if no match found
+    if (!matchingOrder && orders.length > 0) {
+      console.log('📋 All match attempts:', matchAttempts.slice(0, 10)); // Log first 10
+    }
 
     if (!matchingOrder) {
       // Enhanced error logging for debugging
-      const orderDetails = orders.slice(0, 10).map(o => ({
+      const orderDetails = orders.slice(0, 10).map((o) => ({
         name: o.name,
         email: o.email?.toLowerCase(),
-        created: o.created_at
+        created: o.created_at,
       }));
-      
+
       console.error('❌ API - Order not found (Cloudflare):', {
         requestedOrderNumber: cleanOrderNumber,
-        requestedEmail: email.toLowerCase().trim(),
+        requestedEmail: cleanEmail,
         ordersFound: orders.length,
         sampleOrders: orderDetails,
-        allOrderNumbers: orders.map(o => o.name),
-        allOrderEmails: orders.map(o => o.email?.toLowerCase())
+        allOrderNumbers: orders.map((o) => o.name),
+        allOrderEmails: orders.map((o) => o.email?.toLowerCase()),
+        matchAttempts: matchAttempts.slice(0, 5)
       });
 
       return new Response(
         JSON.stringify({
           error: 'Order not found',
-          message: `No order found matching order #${cleanOrderNumber} and email ${email.substring(0, 3)}***. Found ${orders.length} order(s) for this email. Please verify the order number and email address.`,
+          message: `No order found matching order #${cleanOrderNumber} and email ${email.substring(0, 3)}***. Found ${
+            orders.length
+          } order(s) for this email. Please verify the order number and email address.`,
           debug: {
             requestedOrderNumber: cleanOrderNumber,
             requestedEmail: email.toLowerCase().trim(),
             ordersFound: orders.length,
-            sampleOrderNumbers: orders.slice(0, 5).map(o => o.name)
-          }
+            sampleOrderNumbers: orders.slice(0, 5).map((o) => o.name),
+          },
         }),
         {
           status: 404,
