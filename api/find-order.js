@@ -1,7 +1,7 @@
 /**
  * Shopify Order Lookup Serverless Function
  * Queries Shopify Admin API to find orders by order number and email
- * 
+ *
  * Compatible with:
  * - Vercel (serverless function)
  * - Netlify (serverless function)
@@ -18,19 +18,15 @@ if (typeof module !== 'undefined' && module.exports) {
 export default {
   async fetch(request, env) {
     // Set environment variables from Cloudflare Workers env
-    if (env.SHOPIFY_STORE) {
-      globalThis.SHOPIFY_STORE = env.SHOPIFY_STORE;
-    }
-    if (env.SHOPIFY_ADMIN_API_TOKEN) {
-      globalThis.SHOPIFY_ADMIN_API_TOKEN = env.SHOPIFY_ADMIN_API_TOKEN;
-    }
+    globalThis.SHOPIFY_STORE = env.SHOPIFY_STORE;
+    globalThis.SHOPIFY_ADMIN_API_TOKEN = env.SHOPIFY_ADMIN_API_TOKEN;
     return handleRequest(request);
-  }
+  },
 };
 
 // For Cloudflare Workers (legacy API - fallback for older Workers)
 if (typeof addEventListener !== 'undefined' && typeof exports === 'undefined' && typeof globalThis !== 'undefined') {
-  addEventListener('fetch', event => {
+  addEventListener('fetch', (event) => {
     event.respondWith(handleRequest(event.request));
   });
 }
@@ -41,7 +37,7 @@ async function handler(req, res) {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Max-Age': '86400'
+    'Access-Control-Max-Age': '86400',
   };
 
   // Handle CORS preflight
@@ -67,31 +63,37 @@ async function handler(req, res) {
       } else {
         // Read from stream if needed
         let data = '';
-        req.on('data', chunk => { data += chunk.toString(); });
-        await new Promise(resolve => req.on('end', resolve));
+        req.on('data', (chunk) => {
+          data += chunk.toString();
+        });
+        await new Promise((resolve) => req.on('end', resolve));
         body = data ? JSON.parse(data) : {};
       }
     } catch (parseError) {
       console.error('Body parse error:', parseError);
       res.writeHead(400, { ...corsHeaders, 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ 
-        error: 'Invalid request body',
-        message: 'Could not parse request body as JSON.'
-      }));
+      res.end(
+        JSON.stringify({
+          error: 'Invalid request body',
+          message: 'Could not parse request body as JSON.',
+        })
+      );
       return;
     }
-    
+
     const { order_number, email } = body || {};
-    
+
     console.log('Request received:', { order_number, email: email ? email.substring(0, 3) + '***' : null });
 
     // Validate input
     if (!order_number || !email) {
       res.writeHead(400, { ...corsHeaders, 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ 
-        error: 'Missing required fields',
-        message: 'Order number and email are required.'
-      }));
+      res.end(
+        JSON.stringify({
+          error: 'Missing required fields',
+          message: 'Order number and email are required.',
+        })
+      );
       return;
     }
 
@@ -99,10 +101,12 @@ async function handler(req, res) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       res.writeHead(400, { ...corsHeaders, 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ 
-        error: 'Invalid email format',
-        message: 'Please provide a valid email address.'
-      }));
+      res.end(
+        JSON.stringify({
+          error: 'Invalid email format',
+          message: 'Please provide a valid email address.',
+        })
+      );
       return;
     }
 
@@ -110,23 +114,25 @@ async function handler(req, res) {
     const shopifyStore = process.env.SHOPIFY_STORE || process.env.SHOPIFY_STORE_URL;
     const shopifyToken = process.env.SHOPIFY_ADMIN_API_TOKEN;
 
-    console.log('Environment check:', { 
-      hasStore: !!shopifyStore, 
+    console.log('Environment check:', {
+      hasStore: !!shopifyStore,
       hasToken: !!shopifyToken,
-      storeValue: shopifyStore ? shopifyStore.substring(0, 10) + '...' : 'missing'
+      storeValue: shopifyStore ? shopifyStore.substring(0, 10) + '...' : 'missing',
     });
 
     if (!shopifyStore || !shopifyToken) {
-      console.error('Missing Shopify API credentials:', { 
-        SHOPIFY_STORE: !!shopifyStore, 
-        SHOPIFY_ADMIN_API_TOKEN: !!shopifyToken 
+      console.error('Missing Shopify API credentials:', {
+        SHOPIFY_STORE: !!shopifyStore,
+        SHOPIFY_ADMIN_API_TOKEN: !!shopifyToken,
       });
       res.writeHead(500, { ...corsHeaders, 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ 
-        error: 'Server configuration error',
-        message: 'Service is not properly configured. Please contact support.',
-        details: 'Missing environment variables. Check Vercel dashboard.'
-      }));
+      res.end(
+        JSON.stringify({
+          error: 'Server configuration error',
+          message: 'Service is not properly configured. Please contact support.',
+          details: 'Missing environment variables. Check Vercel dashboard.',
+        })
+      );
       return;
     }
 
@@ -134,30 +140,34 @@ async function handler(req, res) {
     const cleanStore = shopifyStore.replace(/^https?:\/\//, '').replace(/\/$/, '');
     const apiUrl = `https://${cleanStore}/admin/api/2024-01/orders.json`;
 
-    // Query Shopify Admin API
+    // Query Shopify Admin API by email only (name parameter doesn't work as a filter)
+    // We'll filter by order number in JavaScript after getting the results
     const queryParams = new URLSearchParams({
-      email: email,
-      name: order_number,
+      email: email.toLowerCase(),
       status: 'any',
-      limit: '10'
+      limit: '250', // Increased limit to ensure we get all orders for the email
     });
+
+    console.log('Querying Shopify API:', { email: email.toLowerCase(), order_number });
 
     const response = await fetch(`${apiUrl}?${queryParams.toString()}`, {
       method: 'GET',
       headers: {
         'X-Shopify-Access-Token': shopifyToken,
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      },
     });
 
     if (!response.ok) {
       if (response.status === 401 || response.status === 403) {
         console.error('Shopify API authentication failed');
         res.writeHead(500, { ...corsHeaders, 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ 
-          error: 'Authentication error',
-          message: 'Service configuration error. Please contact support.'
-        }));
+        res.end(
+          JSON.stringify({
+            error: 'Authentication error',
+            message: 'Service configuration error. Please contact support.',
+          })
+        );
         return;
       }
 
@@ -167,32 +177,61 @@ async function handler(req, res) {
     const data = await response.json();
     const orders = data.orders || [];
 
+    console.log(`Found ${orders.length} orders for email ${email.substring(0, 3)}***`);
+
+    // Clean the order number for comparison (remove # and any whitespace)
+    const cleanOrderNumber = order_number.toString().replace(/[#\s]/g, '').trim();
+
     // Find exact match by order number (name) and email
-    const matchingOrder = orders.find(order => {
-      const orderName = order.name ? order.name.replace(/^#/, '') : '';
-      const orderEmail = order.email ? order.email.toLowerCase() : '';
-      return orderName === order_number.toString() && orderEmail === email.toLowerCase();
+    // Handle both "#1779" and "1779" formats
+    const matchingOrder = orders.find((order) => {
+      if (!order.email || !order.name) return false;
+      
+      // Clean order name (remove # prefix and whitespace)
+      const orderName = order.name.replace(/^#/, '').replace(/\s/g, '').trim();
+      const orderEmail = order.email.toLowerCase().trim();
+      
+      // Compare cleaned values
+      const nameMatch = orderName === cleanOrderNumber;
+      const emailMatch = orderEmail === email.toLowerCase().trim();
+      
+      if (nameMatch && emailMatch) {
+        console.log('Match found:', { orderName, orderEmail, requestedOrder: cleanOrderNumber, requestedEmail: email });
+      }
+      
+      return nameMatch && emailMatch;
     });
 
     if (!matchingOrder) {
+      // Enhanced error logging for debugging
+      console.error('Order not found:', {
+        requestedOrderNumber: cleanOrderNumber,
+        requestedEmail: email.toLowerCase(),
+        ordersFound: orders.length,
+        orderNumbers: orders.map(o => o.name).slice(0, 5), // Log first 5 order numbers
+        orderEmails: orders.map(o => o.email?.toLowerCase()).slice(0, 5)
+      });
+      
       res.writeHead(404, { ...corsHeaders, 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ 
-        error: 'Order not found',
-        message: 'No order found with that order number and email address.'
-      }));
+      res.end(
+        JSON.stringify({
+          error: 'Order not found',
+          message: 'No order found with that order number and email address. Please verify both the order number and email address are correct.',
+        })
+      );
       return;
     }
 
     // Extract download links from fulfillments
     const downloads = [];
-    
+
     if (matchingOrder.fulfillments) {
-      matchingOrder.fulfillments.forEach(fulfillment => {
+      matchingOrder.fulfillments.forEach((fulfillment) => {
         if (fulfillment.tracking_urls && fulfillment.tracking_urls.length > 0) {
           fulfillment.tracking_urls.forEach((url, index) => {
             downloads.push({
               name: fulfillment.tracking_company || `Download ${index + 1}`,
-              url: url
+              url: url,
             });
           });
         }
@@ -201,14 +240,17 @@ async function handler(req, res) {
 
     // Check line items for digital download links
     if (matchingOrder.line_items) {
-      matchingOrder.line_items.forEach(item => {
+      matchingOrder.line_items.forEach((item) => {
         if (item.properties) {
-          item.properties.forEach(prop => {
-            if (prop.name && (prop.name.toLowerCase().includes('download') || prop.name.toLowerCase().includes('url'))) {
+          item.properties.forEach((prop) => {
+            if (
+              prop.name &&
+              (prop.name.toLowerCase().includes('download') || prop.name.toLowerCase().includes('url'))
+            ) {
               if (prop.value && (prop.value.startsWith('http://') || prop.value.startsWith('https://'))) {
                 downloads.push({
                   name: item.name || 'Download',
-                  url: prop.value
+                  url: prop.value,
                 });
               }
             }
@@ -219,28 +261,31 @@ async function handler(req, res) {
 
     // Return order data with downloads and order status URL
     res.writeHead(200, { ...corsHeaders, 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({
-      success: true,
-      order: {
-        name: matchingOrder.name,
-        created_at: matchingOrder.created_at,
-        total_price: matchingOrder.total_price,
-        currency: matchingOrder.currency,
-        order_status_url: matchingOrder.order_status_url || null
-      },
-      downloads: downloads,
-      order_status_url: matchingOrder.order_status_url || null
-    }));
-
+    res.end(
+      JSON.stringify({
+        success: true,
+        order: {
+          name: matchingOrder.name,
+          created_at: matchingOrder.created_at,
+          total_price: matchingOrder.total_price,
+          currency: matchingOrder.currency,
+          order_status_url: matchingOrder.order_status_url || null,
+        },
+        downloads: downloads,
+        order_status_url: matchingOrder.order_status_url || null,
+      })
+    );
   } catch (error) {
     console.error('Order lookup error:', error);
     console.error('Error stack:', error.stack);
     res.writeHead(500, { ...corsHeaders, 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ 
-      error: 'Internal server error',
-      message: 'An error occurred while processing your request. Please try again later.',
-      details: process.env.NODE_ENV === 'development' ? error.message : undefined
-    }));
+    res.end(
+      JSON.stringify({
+        error: 'Internal server error',
+        message: 'An error occurred while processing your request. Please try again later.',
+        details: process.env.NODE_ENV === 'development' ? error.message : undefined,
+      })
+    );
   }
 }
 
@@ -252,8 +297,8 @@ async function handleRequest(request) {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'POST, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type',
-        'Access-Control-Max-Age': '86400'
-      }
+        'Access-Control-Max-Age': '86400',
+      },
     });
   }
 
@@ -262,8 +307,8 @@ async function handleRequest(request) {
       status: 405,
       headers: {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
+        'Access-Control-Allow-Origin': '*',
+      },
     });
   }
 
@@ -272,78 +317,93 @@ async function handleRequest(request) {
     const { order_number, email } = body;
 
     if (!order_number || !email) {
-      return new Response(JSON.stringify({ 
-        error: 'Missing required fields',
-        message: 'Order number and email are required.'
-      }), {
-        status: 400,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
+      return new Response(
+        JSON.stringify({
+          error: 'Missing required fields',
+          message: 'Order number and email are required.',
+        }),
+        {
+          status: 400,
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          },
         }
-      });
+      );
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return new Response(JSON.stringify({ 
-        error: 'Invalid email format',
-        message: 'Please provide a valid email address.'
-      }), {
-        status: 400,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
+      return new Response(
+        JSON.stringify({
+          error: 'Invalid email format',
+          message: 'Please provide a valid email address.',
+        }),
+        {
+          status: 400,
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          },
         }
-      });
+      );
     }
 
-    const shopifyStore = globalThis.SHOPIFY_STORE || process?.env?.SHOPIFY_STORE || SHOPIFY_STORE;
-    const shopifyToken = globalThis.SHOPIFY_ADMIN_API_TOKEN || process?.env?.SHOPIFY_ADMIN_API_TOKEN || SHOPIFY_ADMIN_API_TOKEN;
+    const shopifyStore = globalThis.SHOPIFY_STORE || process?.env?.SHOPIFY_STORE;
+    const shopifyToken = globalThis.SHOPIFY_ADMIN_API_TOKEN || process?.env?.SHOPIFY_ADMIN_API_TOKEN;
 
     if (!shopifyStore || !shopifyToken) {
-      return new Response(JSON.stringify({ 
-        error: 'Server configuration error',
-        message: 'Service is not properly configured. Please contact support.'
-      }), {
-        status: 500,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
+      return new Response(
+        JSON.stringify({
+          error: 'Server configuration error',
+          message: 'Service is not properly configured. Please contact support.',
+        }),
+        {
+          status: 500,
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          },
         }
-      });
+      );
     }
 
     const cleanStore = shopifyStore.replace(/^https?:\/\//, '').replace(/\/$/, '');
     const apiUrl = `https://${cleanStore}/admin/api/2024-01/orders.json`;
 
+    // Query Shopify Admin API by email only (name parameter doesn't work as a filter)
+    // We'll filter by order number in JavaScript after getting the results
     const queryParams = new URLSearchParams({
-      email: email,
-      name: order_number,
+      email: email.toLowerCase(),
       status: 'any',
-      limit: '10'
+      limit: '250', // Increased limit to ensure we get all orders for the email
     });
+
+    console.log('Querying Shopify API:', { email: email.toLowerCase(), order_number });
 
     const response = await fetch(`${apiUrl}?${queryParams.toString()}`, {
       method: 'GET',
       headers: {
         'X-Shopify-Access-Token': shopifyToken,
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      },
     });
 
     if (!response.ok) {
       if (response.status === 401 || response.status === 403) {
-        return new Response(JSON.stringify({ 
-          error: 'Authentication error',
-          message: 'Service configuration error. Please contact support.'
-        }), {
-          status: 500,
-          headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
+        return new Response(
+          JSON.stringify({
+            error: 'Authentication error',
+            message: 'Service configuration error. Please contact support.',
+          }),
+          {
+            status: 500,
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*',
+            },
           }
-        });
+        );
       }
 
       throw new Error(`Shopify API error: ${response.status}`);
@@ -352,34 +412,65 @@ async function handleRequest(request) {
     const data = await response.json();
     const orders = data.orders || [];
 
-    const matchingOrder = orders.find(order => {
-      const orderName = order.name ? order.name.replace(/^#/, '') : '';
-      const orderEmail = order.email ? order.email.toLowerCase() : '';
-      return orderName === order_number.toString() && orderEmail === email.toLowerCase();
+    console.log(`Found ${orders.length} orders for email ${email.substring(0, 3)}***`);
+
+    // Clean the order number for comparison (remove # and any whitespace)
+    const cleanOrderNumber = order_number.toString().replace(/[#\s]/g, '').trim();
+
+    // Find exact match by order number (name) and email
+    // Handle both "#1779" and "1779" formats
+    const matchingOrder = orders.find((order) => {
+      if (!order.email || !order.name) return false;
+      
+      // Clean order name (remove # prefix and whitespace)
+      const orderName = order.name.replace(/^#/, '').replace(/\s/g, '').trim();
+      const orderEmail = order.email.toLowerCase().trim();
+      
+      // Compare cleaned values
+      const nameMatch = orderName === cleanOrderNumber;
+      const emailMatch = orderEmail === email.toLowerCase().trim();
+      
+      if (nameMatch && emailMatch) {
+        console.log('Match found:', { orderName, orderEmail, requestedOrder: cleanOrderNumber, requestedEmail: email });
+      }
+      
+      return nameMatch && emailMatch;
     });
 
     if (!matchingOrder) {
-      return new Response(JSON.stringify({ 
-        error: 'Order not found',
-        message: 'No order found with that order number and email address.'
-      }), {
-        status: 404,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
+      // Enhanced error logging for debugging
+      console.error('Order not found:', {
+        requestedOrderNumber: cleanOrderNumber,
+        requestedEmail: email.toLowerCase(),
+        ordersFound: orders.length,
+        orderNumbers: orders.map(o => o.name).slice(0, 5), // Log first 5 order numbers
+        orderEmails: orders.map(o => o.email?.toLowerCase()).slice(0, 5)
       });
+      
+      return new Response(
+        JSON.stringify({
+          error: 'Order not found',
+          message: 'No order found with that order number and email address. Please verify both the order number and email address are correct.',
+        }),
+        {
+          status: 404,
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          },
+        }
+      );
     }
 
     const downloads = [];
-    
+
     if (matchingOrder.fulfillments) {
-      matchingOrder.fulfillments.forEach(fulfillment => {
+      matchingOrder.fulfillments.forEach((fulfillment) => {
         if (fulfillment.tracking_urls && fulfillment.tracking_urls.length > 0) {
           fulfillment.tracking_urls.forEach((url, index) => {
             downloads.push({
               name: fulfillment.tracking_company || `Download ${index + 1}`,
-              url: url
+              url: url,
             });
           });
         }
@@ -387,14 +478,17 @@ async function handleRequest(request) {
     }
 
     if (matchingOrder.line_items) {
-      matchingOrder.line_items.forEach(item => {
+      matchingOrder.line_items.forEach((item) => {
         if (item.properties) {
-          item.properties.forEach(prop => {
-            if (prop.name && (prop.name.toLowerCase().includes('download') || prop.name.toLowerCase().includes('url'))) {
+          item.properties.forEach((prop) => {
+            if (
+              prop.name &&
+              (prop.name.toLowerCase().includes('download') || prop.name.toLowerCase().includes('url'))
+            ) {
               if (prop.value && (prop.value.startsWith('http://') || prop.value.startsWith('https://'))) {
                 downloads.push({
                   name: item.name || 'Download',
-                  url: prop.value
+                  url: prop.value,
                 });
               }
             }
@@ -403,36 +497,43 @@ async function handleRequest(request) {
       });
     }
 
-    return new Response(JSON.stringify({
-      success: true,
-      order: {
-        name: matchingOrder.name,
-        created_at: matchingOrder.created_at,
-        total_price: matchingOrder.total_price,
-        currency: matchingOrder.currency,
-        order_status_url: matchingOrder.order_status_url || null
-      },
-      downloads: downloads,
-      order_status_url: matchingOrder.order_status_url || null
-    }), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
+    return new Response(
+      JSON.stringify({
+        success: true,
+        order: {
+          name: matchingOrder.name,
+          created_at: matchingOrder.created_at,
+          total_price: matchingOrder.total_price,
+          currency: matchingOrder.currency,
+          order_status_url: matchingOrder.order_status_url || null,
+        },
+        downloads: downloads,
+        order_status_url: matchingOrder.order_status_url || null,
+      }),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
       }
-    });
-
+    );
   } catch (error) {
     console.error('Order lookup error:', error);
-    return new Response(JSON.stringify({ 
-      error: 'Internal server error',
-      message: 'An error occurred while processing your request. Please try again later.'
-    }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
+    console.error('Error stack:', error.stack);
+    return new Response(
+      JSON.stringify({
+        error: 'Internal server error',
+        message: 'An error occurred while processing your request. Please try again later.',
+        details: error.message || 'Unknown error',
+      }),
+      {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
       }
-    });
+    );
   }
 }
