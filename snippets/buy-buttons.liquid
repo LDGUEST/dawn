@@ -165,3 +165,23 @@
     <script src="{{ 'pickup-availability.js' | asset_url }}" defer="defer"></script>
   {%- endif -%}
 </div>
+
+{%- if product.handle == 'lettuce-wraps-and-sauce-cookbook-pdf' -%}
+<script>
+function scrollToBundle(event) {
+  event.preventDefault();
+  const bundleSection = document.getElementById('bundle-offer');
+  if (bundleSection) {
+    bundleSection.scrollIntoView({ 
+      behavior: 'smooth',
+      block: 'center'
+    });
+    // Add a subtle highlight effect
+    bundleSection.style.animation = 'highlight-pulse 2s ease-in-out';
+    setTimeout(() => {
+      bundleSection.style.animation = '';
+    }, 2000);
+  }
+}
+</script>
+{%- endif -%}
