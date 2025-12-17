@@ -83,9 +83,16 @@
     <div class="kahnke-product-card" style="border: {{ section.settings.card_border_thickness | default: 0 }}px solid {{ section.settings.card_border_color | default: '#000000' }};">
       <div class="kahnke-product-grid">
         <div class="kahnke-product-images">
-          {% if section.settings.product_grid_image != blank %}
+          {% assign product_image = section.settings.product_grid_image %}
+          {% if product_image == blank and section.settings.buy_button_url contains 'lettuce-wraps-and-sauce-cookbook-pdf' %}
+            {% assign new_product = all_products['lettuce-wraps-and-sauce-cookbook-pdf'] %}
+            {% if new_product.featured_image %}
+              {% assign product_image = new_product.featured_image %}
+            {% endif %}
+          {% endif %}
+          {% if product_image != blank %}
             <div class="kahnke-single-product-image">
-              {{ section.settings.product_grid_image | image_url: width: 600 | image_tag: loading: 'lazy', alt: section.settings.product_title }}
+              {{ product_image | image_url: width: 600 | image_tag: loading: 'lazy', alt: section.settings.product_title }}
             </div>
           {% else %}
             <div class="kahnke-single-product-image kahnke-placeholder">
