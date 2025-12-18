@@ -33,6 +33,7 @@
         "product_title": "50 Lettuce Wrap Recipes Book PDF",
         "product_description": "50 of my favorite lettuce wrap recipes plus 10 bonus sauces & 5 desserts",
         "product_price": "$14.99",
+        "product_sale_price": "$12.99",
         "buy_button_url": "shopify://products/lettuce-wraps-and-sauce-cookbook-pdf",
         "buy_button_text": "Buy Now",
         "product_grid_image": "",

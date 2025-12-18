@@ -104,7 +104,14 @@
         <div class="kahnke-product-details">
           <h2>{{ section.settings.product_title | default: "30 Lettuce Wrap Recipes Book PDF" }}</h2>
           <p class="kahnke-product-description">{{ section.settings.product_description | default: "30 inspirational lettuce wrap recipes to try!" }}</p>
+          {% if section.settings.product_sale_price != blank %}
+          <p class="kahnke-product-price">
+            <span class="kahnke-price-compare">{{ section.settings.product_price | default: "$9.99" }}</span>
+            <span class="kahnke-price-sale">{{ section.settings.product_sale_price }}</span>
+          </p>
+          {% else %}
           <p class="kahnke-product-price">{{ section.settings.product_price | default: "$9.99" }}</p>
+          {% endif %}
           <a href="{{ section.settings.buy_button_url | default: '#' }}" class="kahnke-buy-button">
             {{ section.settings.buy_button_text | default: "Buy now" }}
           </a>

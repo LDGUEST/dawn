@@ -243,6 +243,20 @@ details-modal.header__search {
   margin: 10px 0;
 }
 
+/* Sale styling for homepage product card */
+.kahnke-product-price .kahnke-price-compare {
+  color: #999;
+  text-decoration: line-through;
+  font-weight: 600;
+  font-size: 20px;
+  margin-right: 12px;
+}
+.kahnke-product-price .kahnke-price-sale {
+  color: #d32f2f; /* red */
+  font-weight: 800;
+  font-size: 28px;
+}
+
 .kahnke-buy-button {
   background: var(--kahnke-teal);
   color: var(--kahnke-white);
