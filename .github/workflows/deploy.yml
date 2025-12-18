@@ -20,10 +20,4 @@ jobs:
           password: ${{ secrets.SHOP_PASSWORD_OS2 }}
           theme: live
           allow-live: true
-          files: |
-            templates/index.json
-            sections/custom-landing-page.liquid
-            sections/main-product.liquid
-            sections/header-group.json
-            assets/custom-landing-styles.css
 
