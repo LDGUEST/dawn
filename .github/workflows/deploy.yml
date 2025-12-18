@@ -13,16 +13,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Deploy to Shopify
-        uses: shopify/theme-action@v1
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          store: ${{ secrets.SHOP_STORE_OS2 }}
-          password: ${{ secrets.SHOP_PASSWORD_OS2 }}
-          theme: live
-          allow-live: true
-          only: |
-            templates/index.json
-            sections/custom-landing-page.liquid
-            sections/main-product.liquid
-            assets/custom-landing-styles.css
+          node-version: '18'
+
+      - name: Install Shopify CLI
+        run: npm install -g @shopify/cli@latest
+
+      - name: Deploy to Shopify
+        env:
+          SHOPIFY_CLI_THEME_TOKEN: ${{ secrets.SHOPIFY_CLI_THEME_TOKEN }}
+        run: |
+          shopify theme push \
+            --store=${{ secrets.SHOP_STORE_OS2 }} \
+            --password=${{ secrets.SHOP_PASSWORD_OS2 }} \
+            --theme=live \
+            --allow-live \
+            --only templates/index.json \
+            --only sections/custom-landing-page.liquid \
+            --only sections/main-product.liquid \
+            --only assets/custom-landing-styles.css
 
