@@ -31,5 +31,6 @@ jobs:
             --only templates/index.json \
             --only sections/custom-landing-page.liquid \
             --only sections/main-product.liquid \
+            --only sections/header-group.json \
             --only assets/custom-landing-styles.css
 
