@@ -4,11 +4,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'templates/**'
-      - 'sections/**'
-      - 'assets/**'
-      - '.github/workflows/deploy.yml'
 
 jobs:
   deploy:
