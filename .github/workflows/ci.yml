@@ -4,8 +4,6 @@ jobs:
   lhci:
     name: Lighthouse
     runs-on: ubuntu-latest
-    # Skip if required secrets are not configured
-    if: ${{ secrets.SHOP_STORE_OS2 != '' && secrets.SHOP_PASSWORD_OS2 != '' }}
     continue-on-error: true
     steps:
       - uses: actions/checkout@v4
