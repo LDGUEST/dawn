@@ -111,14 +111,44 @@ The function will be available at: `https://shopify-order-lookup.your-subdomain.
 
 - `400` - Missing or invalid input
 - `404` - Order not found
+- `429` - Rate limit exceeded (see Rate Limiting section)
 - `500` - Server error
+
+**Rate Limit Response** (429):
+```json
+{
+  "error": "Rate limit exceeded",
+  "message": "Too many requests. Please try again later.",
+  "retryAfter": 900
+}
+```
+
+Response headers include:
+- `Retry-After`: Seconds until limit resets
+- `X-RateLimit-Limit`: Maximum requests per window (10)
+- `X-RateLimit-Remaining`: Remaining requests in current window
+- `X-RateLimit-Reset`: ISO timestamp when limit resets
+
+## Rate Limiting
+
+The API implements **in-memory rate limiting** to protect against abuse:
+
+- **Limit**: 10 requests per 15 minutes per IP address
+- **Window**: Sliding 15-minute window
+- **Method**: IP-based tracking using request headers
+- **Platform Support**: Works on Vercel, Netlify, and Cloudflare Workers
+
+Rate limits are enforced per IP address. When exceeded, the API returns a `429 Too Many Requests` response with a `Retry-After` header indicating when the client can retry.
+
+**Note**: In-memory rate limiting resets on serverless function cold starts. For production applications with high traffic, consider implementing persistent rate limiting using Redis or a similar service.
 
 ## Security Notes
 
-- The function validates email format and requires both order number and email
-- CORS is enabled for all origins (you may want to restrict this to your store domain)
-- Rate limiting should be configured at the platform level
-- Never commit `.env` files or API tokens to version control
+- ✅ **Input Validation**: Email format validation and required field checks
+- ✅ **Rate Limiting**: 10 requests per 15 minutes per IP (implemented)
+- ⚠️ **CORS**: Currently enabled for all origins (consider restricting to your store domain)
+- ✅ **API Keys**: Stored in environment variables, never exposed to frontend
+- ✅ **Never commit**: `.env` files or API tokens to version control
 
 ## Troubleshooting
 
