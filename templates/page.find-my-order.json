@@ -23,7 +23,6 @@
     },
     "find_order": {
       "type": "find-order-page",
-      "disabled": true,
       "settings": {
         "heading": "Find Your Order",
         "description": "Enter your order number and email address below to access your order status page and download links.",

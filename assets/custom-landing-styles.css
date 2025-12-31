@@ -243,6 +243,20 @@ details-modal.header__search {
   margin: 10px 0;
 }
 
+/* Sale styling for homepage product card */
+.kahnke-product-price .kahnke-price-compare {
+  color: #999;
+  text-decoration: line-through;
+  font-weight: 600;
+  font-size: 20px;
+  margin-right: 12px;
+}
+.kahnke-product-price .kahnke-price-sale {
+  color: #d32f2f; /* red */
+  font-weight: 800;
+  font-size: 28px;
+}
+
 .kahnke-buy-button {
   background: var(--kahnke-teal);
   color: var(--kahnke-white);
@@ -843,6 +857,868 @@ body.modal-open .email-popup-modal {
 @media (max-width: 360px) {
   .kahnke-brand-text h1 {
     font-size: 20px;
+  }
+}
+
+/* ==========================================
+   PRODUCT UPSELL BUNDLE - IMPROVED DESIGN
+   ONLY displays on NEW cookbook product page
+   ========================================== */
+
+.product-upsell-bundle {
+  margin: 3rem auto;
+  max-width: 700px;
+  padding: 0;
+}
+
+.upsell-container {
+  background: #ffffff;
+  border: 3px solid #005633;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 86, 51, 0.15);
+}
+
+.upsell-header {
+  background: linear-gradient(135deg, #005633 0%, #004428 100%);
+  padding: 2rem;
+  text-align: center;
+  color: white;
+}
+
+.upsell-badge {
+  background: #ff6b6b;
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border-radius: 25px;
+  font-weight: 700;
+  font-size: 1.5rem;
+  display: inline-block;
+  margin-bottom: 1rem;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
+}
+
+.upsell-title {
+  font-size: 3rem;
+  font-weight: 800;
+  color: white;
+  margin: 0 0 0.5rem 0;
+}
+
+.upsell-subtitle {
+  font-size: 1.5rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+  font-weight: 400;
+}
+
+.upsell-content {
+  padding: 2rem;
+}
+
+.upsell-product-card {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #f0f9f4 0%, #e8f5e9 100%);
+  border-radius: 12px;
+  align-items: center;
+}
+
+.upsell-image {
+  width: 160px;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 3px solid #005633;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.upsell-image-placeholder {
+  width: 160px;
+  height: 160px;
+  background: white;
+  border-radius: 12px;
+  border: 3px solid #005633;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.upsell-details {
+  flex: 1;
+}
+
+.upsell-product-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #005633;
+  margin: 0 0 0.75rem 0;
+}
+
+.upsell-description {
+  font-size: 1.25rem;
+  color: #234846;
+  margin: 0 0 1.25rem 0;
+  line-height: 1.5;
+}
+
+.upsell-pricing {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.pricing-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.pricing-row.highlight {
+  padding: 0.75rem;
+  background: white;
+  border-radius: 8px;
+  margin-top: 0.5rem;
+}
+
+.upsell-price-label {
+  font-size: 1.125rem;
+  color: #234846;
+  font-weight: 600;
+}
+
+.upsell-price-original {
+  font-size: 2.5rem;
+  color: #999;
+  text-decoration: line-through;
+  font-weight: 500;
+}
+
+.upsell-price-bundle {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #005633;
+  margin-left: auto;
+}
+
+.upsell-savings {
+  background: #ffeb3b;
+  color: #000;
+  padding: 0.35rem 0.85rem;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 2.5rem;
+  box-shadow: 0 2px 8px rgba(255, 235, 59, 0.4);
+}
+
+.upsell-summary {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  font-size: 1.25rem;
+  color: #234846;
+}
+
+.summary-row.total {
+  font-size: 1.5rem;
+  color: #005633;
+}
+
+.summary-divider {
+  height: 2px;
+  background: #dee2e6;
+  margin: 1rem 0;
+}
+
+.highlight-price {
+  color: #005633;
+  font-weight: 700;
+}
+
+.total-price {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: #005633;
+}
+
+.summary-savings {
+  text-align: center;
+  margin-top: 0.75rem;
+  font-size: 1.125rem;
+  color: #666;
+}
+
+.upsell-button {
+  width: 100%;
+  background: #005633 !important;
+  color: white !important;
+  padding: 1.5rem 2rem;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.65rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  box-shadow: 0 4px 16px rgba(0, 86, 51, 0.3);
+}
+
+.upsell-button:hover {
+  background: #004428 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 86, 51, 0.4);
+}
+
+.upsell-button:active {
+  background: #00331f !important;
+  transform: translateY(0);
+}
+
+.upsell-button:disabled {
+  background: #ccc !important;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.button-icon,
+.button-spinner {
+  flex-shrink: 0;
+}
+
+.button-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.upsell-guarantee {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid #e9ecef;
+}
+
+.guarantee-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #005633;
+  font-weight: 600;
+  font-size: 1.375rem;
+}
+
+.guarantee-item svg {
+  flex-shrink: 0;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .product-upsell-bundle {
+    margin: 2rem 1rem;
+  }
+  
+  .upsell-header {
+    padding: 1.5rem;
+  }
+  
+  .upsell-title {
+    font-size: 2rem;
+  }
+  
+  .upsell-subtitle {
+    font-size: 1.125rem;
+  }
+  
+  .upsell-content {
+    padding: 1.5rem;
+  }
+  
+  .upsell-product-card {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.5rem;
+  }
+  
+  .upsell-image,
+  .upsell-image-placeholder {
+    width: 140px;
+    height: 140px;
+  }
+  
+  .upsell-product-title {
+    font-size: 1.5rem;
+  }
+  
+  .pricing-row {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
+  
+  .pricing-row.highlight {
+    align-items: center;
+  }
+  
+  .upsell-price-bundle {
+    margin-left: 0;
+  }
+  
+  .upsell-button {
+    font-size: 1.375rem;
+    padding: 1.25rem 1.5rem;
+  }
+  
+  .upsell-guarantee {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+  }
+  
+  .guarantee-item {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .upsell-title {
+    font-size: 1.5rem;
+  }
+  
+  .upsell-product-title {
+    font-size: 1.125rem;
+  }
+  
+  .upsell-button {
+    font-size: 1rem;
+  }
+  
+  .summary-row {
+    font-size: 0.95rem;
+  }
+  
+  .total-price {
+    font-size: 1.5rem;
+  }
+}
+
+/* ==========================================
+   SPECIAL OFFER SCROLL BUTTON
+   Appears on new cookbook product page only
+   ========================================== */
+
+/* Improve spacing in product form buttons container */
+.product-form__buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.product-form__submit {
+  margin-bottom: 0 !important;
+}
+
+/* Center purchase buttons on mobile */
+@media screen and (max-width: 749px) {
+  .product-form__buttons {
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .product-form__submit {
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  .special-offer-scroll-button {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+.special-offer-scroll-button {
+  width: 100%;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%) !important;
+  color: white !important;
+  border: 2px solid #ff5252;
+  border-radius: 8px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  letter-spacing: 0;
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+}
+
+.special-offer-scroll-button:hover {
+  background: linear-gradient(135deg, #ff5252 0%, #ff3838 100%) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 107, 107, 0.4);
+}
+
+.special-offer-scroll-button:active {
+  transform: translateY(0);
+}
+
+.special-offer-scroll-button svg {
+  flex-shrink: 0;
+}
+
+/* Highlight animation for bundle section */
+@keyframes highlight-pulse {
+  0%, 100% {
+    box-shadow: 0 8px 24px rgba(0, 86, 51, 0.15);
+  }
+  50% {
+    box-shadow: 0 12px 32px rgba(255, 107, 107, 0.4);
+    transform: scale(1.01);
+  }
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .special-offer-scroll-button {
+    font-size: 1.5rem;
+    padding: 0.875rem 1.25rem;
+    margin-top: 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .special-offer-scroll-button {
+    font-size: 1.375rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+}
+
+/* ==========================================
+   HIDE SHOP PAY BUTTON
+   For: Free products ($0) and new cookbook
+   ========================================== */
+
+product-form[data-hide-shop-pay="true"] .shopify-payment-button,
+product-form[data-hide-shop-pay="true"] .shopify-payment-button__button,
+product-form[data-hide-shop-pay="true"] [data-shopify="payment-button"] {
+  display: none !important;
+}
+
+/* Additional backup selectors */
+[data-hide-shop-pay="true"] .dynamic-checkout__content,
+[data-hide-shop-pay="true"] .additional-checkout-buttons {
+  display: none !important;
+}
+
+/* ==========================================
+   DISABLE PRODUCT IMAGE ZOOM/CLICKING
+   Prevent clicking on product images to zoom
+   ========================================== */
+
+.product__media-toggle,
+.product__media-icon,
+modal-opener[data-modal] {
+  pointer-events: none !important;
+  cursor: default !important;
+}
+
+.product__media-toggle {
+  display: none !important;
+}
+
+/* ==========================================
+   BUNDLE MODAL POPUP - PRE-CHECKOUT
+   ONLY shows on new cookbook product page
+   ========================================== */
+
+.bundle-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(5px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.bundle-modal-container {
+  background: white;
+  border-radius: 20px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  animation: slideUp 0.3s ease;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.bundle-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: transparent;
+  border: none;
+  font-size: 2rem;
+  color: #666;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  z-index: 1;
+}
+
+.bundle-modal-close:hover {
+  background: #f0f0f0;
+  color: #000;
+}
+
+.bundle-modal-header {
+  background: linear-gradient(135deg, #005633 0%, #004428 100%);
+  padding: 2.5rem 2rem;
+  text-align: center;
+  color: white;
+}
+
+.bundle-modal-icon {
+  margin-bottom: 1rem;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.bundle-modal-title {
+  font-size: 3.25rem;
+  font-weight: 800;
+  margin: 0 0 0.5rem 0;
+  color: white;
+}
+
+.bundle-modal-subtitle {
+  font-size: 1.875rem;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 400;
+}
+
+.bundle-modal-body {
+  padding: 2rem;
+}
+
+.bundle-modal-offer {
+  margin-bottom: 2rem;
+}
+
+.bundle-modal-product {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #f0f9f4 0%, #e8f5e9 100%);
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+}
+
+.bundle-modal-image {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #005633;
+  flex-shrink: 0;
+}
+
+.bundle-modal-image-placeholder {
+  width: 100px;
+  height: 100px;
+  background: white;
+  border-radius: 8px;
+  border: 2px solid #005633;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+}
+
+.bundle-modal-details h4 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #005633;
+  margin: 0 0 0.5rem 0;
+}
+
+.bundle-modal-details p {
+  margin: 0.25rem 0;
+  color: #234846;
+  font-size: 1.625rem;
+}
+
+.bundle-modal-savings {
+  color: #ff6b6b !important;
+  font-weight: 700 !important;
+  font-size: 1.5rem !important;
+}
+
+.bundle-modal-summary {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 12px;
+}
+
+.summary-line {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  font-size: 1.5rem;
+  color: #234846;
+}
+
+.summary-line.highlight {
+  color: #005633;
+  font-weight: 600;
+}
+
+.summary-line.total {
+  font-size: 1.875rem;
+  color: #005633;
+}
+
+.summary-divider {
+  height: 2px;
+  background: #dee2e6;
+  margin: 1rem 0;
+}
+
+.bundle-modal-note {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 1.375rem;
+  color: #666;
+}
+
+.bundle-modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.bundle-modal-accept {
+  width: 100%;
+  background: #005633 !important;
+  color: white !important;
+  padding: 1.25rem 2rem;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 0;
+  box-shadow: 0 4px 16px rgba(0, 86, 51, 0.3);
+}
+
+.bundle-modal-accept:hover {
+  background: #004428 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 86, 51, 0.4);
+}
+
+.bundle-modal-accept:disabled {
+  background: #ccc !important;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.bundle-modal-decline {
+  width: 100%;
+  background: transparent;
+  color: #666;
+  padding: 1rem 2rem;
+  border: 2px solid #ddd;
+  border-radius: 12px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.bundle-modal-decline:hover {
+  background: #f8f9fa;
+  border-color: #999;
+  color: #333;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .bundle-modal-container {
+    margin: 1rem;
+    max-height: 85vh;
+  }
+  
+  .bundle-modal-header {
+    padding: 2rem 1.5rem;
+  }
+  
+  .bundle-modal-title {
+    font-size: 2.25rem;
+  }
+  
+  .bundle-modal-subtitle {
+    font-size: 1.5rem;
+  }
+  
+  .bundle-modal-body {
+    padding: 1.5rem;
+  }
+  
+  .bundle-modal-product {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .bundle-modal-details h4 {
+    font-size: 1.75rem;
+  }
+  
+  .bundle-modal-details p {
+    font-size: 1.5rem;
+  }
+  
+  .bundle-modal-savings {
+    font-size: 1.5rem !important;
+  }
+  
+  .summary-line {
+    font-size: 1.5rem;
+  }
+  
+  .summary-line.total {
+    font-size: 1.875rem;
+  }
+  
+  .bundle-modal-note {
+    font-size: 1.375rem;
+  }
+  
+  .bundle-modal-accept {
+    font-size: 1.875rem;
+    padding: 1.25rem 1.75rem;
+  }
+  
+  .bundle-modal-decline {
+    font-size: 1.5rem;
+    padding: 1.125rem 1.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .bundle-modal-title {
+    font-size: 2rem;
+  }
+  
+  .bundle-modal-subtitle {
+    font-size: 1.375rem;
+  }
+  
+  .bundle-modal-details h4 {
+    font-size: 1.625rem;
+  }
+  
+  .bundle-modal-details p {
+    font-size: 1.375rem;
+  }
+  
+  .bundle-modal-savings {
+    font-size: 1.375rem !important;
+  }
+  
+  .summary-line {
+    font-size: 1.375rem;
+  }
+  
+  .summary-line.total {
+    font-size: 1.75rem;
+  }
+  
+  .bundle-modal-note {
+    font-size: 1.25rem;
+  }
+  
+  .bundle-modal-accept {
+    font-size: 1.75rem;
+    padding: 1.125rem 1.5rem;
+  }
+  
+  .bundle-modal-decline {
+    font-size: 1.375rem;
+    padding: 1rem 1.5rem;
+  }
+  
+  .bundle-modal-image,
+  .bundle-modal-image-placeholder {
+    width: 80px;
+    height: 80px;
   }
 }
 

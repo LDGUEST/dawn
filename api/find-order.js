@@ -150,8 +150,18 @@ if (typeof module !== 'undefined' && module.exports) {
   module.exports.default = handler;
 }
 
-// For Cloudflare Workers
-if (typeof addEventListener !== 'undefined') {
+// For Cloudflare Workers (modern API - preferred)
+export default {
+  async fetch(request, env) {
+    // Set environment variables from Cloudflare Workers env
+    globalThis.SHOPIFY_STORE = env.SHOPIFY_STORE;
+    globalThis.SHOPIFY_ADMIN_API_TOKEN = env.SHOPIFY_ADMIN_API_TOKEN;
+    return handleRequest(request);
+  },
+};
+
+// For Cloudflare Workers (legacy API - fallback for older Workers)
+if (typeof addEventListener !== 'undefined' && typeof exports === 'undefined' && typeof globalThis !== 'undefined') {
   addEventListener('fetch', (event) => {
     event.respondWith(handleRequest(event.request));
   });
@@ -232,7 +242,14 @@ async function handler(req, res) {
 
     const { order_number, email } = body || {};
 
-    console.log('Request received:', { order_number, email: email ? email.substring(0, 3) + '***' : null });
+    // Comprehensive logging
+    console.log('🔍 API - Request received:', {
+      order_number,
+      email: email ? email.substring(0, 3) + '***' : null,
+      fullEmail: email, // Log full email for debugging (remove in production)
+      orderNumberType: typeof order_number,
+      emailType: typeof email,
+    });
 
     // Validate input
     if (!order_number || !email) {
@@ -289,21 +306,65 @@ async function handler(req, res) {
     const cleanStore = shopifyStore.replace(/^https?:\/\//, '').replace(/\/$/, '');
     const apiUrl = `https://${cleanStore}/admin/api/2024-01/orders.json`;
 
-    // Query Shopify Admin API
-    const queryParams = new URLSearchParams({
-      email: email,
-      name: order_number,
+    // Clean order number for query
+    const cleanOrderNumber = order_number.toString().replace(/[#\s]/g, '').trim();
+
+    // Try querying by order name first (more reliable for archived orders)
+    // Format: name=#1779 or name=1779
+    let queryParams = new URLSearchParams({
+      name: `#${cleanOrderNumber}`, // Try with # prefix first
       status: 'any',
       limit: '10',
     });
 
-    const response = await fetch(`${apiUrl}?${queryParams.toString()}`, {
+    console.log('Querying Shopify API by order number:', { name: `#${cleanOrderNumber}`, email: email.toLowerCase() });
+
+    let response = await fetch(`${apiUrl}?${queryParams.toString()}`, {
       method: 'GET',
       headers: {
         'X-Shopify-Access-Token': shopifyToken,
         'Content-Type': 'application/json',
       },
     });
+
+    // If that doesn't work, try without # prefix
+    let responseData = await response.json().catch(() => ({ orders: [] }));
+    if (!response.ok || responseData.orders?.length === 0) {
+      queryParams = new URLSearchParams({
+        name: cleanOrderNumber, // Try without # prefix
+        status: 'any',
+        limit: '10',
+      });
+
+      console.log('Retrying without # prefix:', { name: cleanOrderNumber });
+      response = await fetch(`${apiUrl}?${queryParams.toString()}`, {
+        method: 'GET',
+        headers: {
+          'X-Shopify-Access-Token': shopifyToken,
+          'Content-Type': 'application/json',
+        },
+      });
+      responseData = await response.json().catch(() => ({ orders: [] }));
+    }
+
+    // If still no results, fall back to email query
+    if (!response.ok || responseData.orders?.length === 0) {
+      console.log('Falling back to email query');
+      queryParams = new URLSearchParams({
+        email: email.toLowerCase(),
+        status: 'any',
+        limit: '250',
+      });
+
+      response = await fetch(`${apiUrl}?${queryParams.toString()}`, {
+        method: 'GET',
+        headers: {
+          'X-Shopify-Access-Token': shopifyToken,
+          'Content-Type': 'application/json',
+        },
+      });
+      responseData = await response.json().catch(() => ({ orders: [] }));
+    }
 
     if (!response.ok) {
       if (response.status === 401 || response.status === 403) {
@@ -324,19 +385,94 @@ async function handler(req, res) {
     const data = await response.json();
     const orders = data.orders || [];
 
-    // Find exact match by order number (name) and email
-    const matchingOrder = orders.find((order) => {
-      const orderName = order.name ? order.name.replace(/^#/, '') : '';
-      const orderEmail = order.email ? order.email.toLowerCase() : '';
-      return orderName === order_number.toString() && orderEmail === email.toLowerCase();
+    console.log(`Found ${orders.length} orders for email ${email.substring(0, 3)}***`);
+
+    // cleanOrderNumber already defined above at line 151
+    const cleanEmail = email.toLowerCase().trim();
+
+    console.log('🔍 Matching - Looking for:', {
+      cleanOrderNumber,
+      cleanEmail,
+      totalOrdersToCheck: orders.length,
     });
 
+    // Find exact match by order number (name) and email
+    // Handle both "#1779" and "1779" formats
+    let matchAttempts = [];
+    const matchingOrder = orders.find((order, index) => {
+      if (!order.email || !order.name) {
+        matchAttempts.push({ index, reason: 'Missing email or name', orderName: order.name, orderEmail: order.email });
+        return false;
+      }
+
+      // Clean order name (remove # prefix and whitespace)
+      const orderName = order.name.replace(/^#/, '').replace(/\s/g, '').trim();
+      const orderEmail = order.email.toLowerCase().trim();
+
+      // Compare cleaned values
+      const nameMatch = orderName === cleanOrderNumber;
+      const emailMatch = orderEmail === cleanEmail;
+
+      // Log each comparison attempt
+      const attempt = {
+        index,
+        orderName: order.name,
+        cleanedOrderName: orderName,
+        orderEmail: order.email,
+        cleanedOrderEmail: orderEmail,
+        nameMatch,
+        emailMatch,
+        bothMatch: nameMatch && emailMatch,
+      };
+      matchAttempts.push(attempt);
+
+      if (nameMatch && emailMatch) {
+        console.log('✅ Match found!', attempt);
+        return true;
+      }
+
+      // Log near-matches for debugging
+      if (nameMatch && !emailMatch) {
+        console.log('⚠️ Name matches but email differs:', attempt);
+      }
+      if (!nameMatch && emailMatch) {
+        console.log('⚠️ Email matches but name differs:', attempt);
+      }
+
+      return false;
+    });
+
+    // Log all match attempts if no match found
+    if (!matchingOrder && orders.length > 0) {
+      console.log('📋 All match attempts:', matchAttempts.slice(0, 10)); // Log first 10
+    }
+
     if (!matchingOrder) {
+      // Enhanced error logging for debugging
+      console.error('Order not found:', {
+        requestedOrderNumber: cleanOrderNumber,
+        requestedEmail: cleanEmail,
+        ordersFound: orders.length,
+        orderNumbers: orders.map((o) => o.name).slice(0, 5), // Log first 5 order numbers
+        orderEmails: orders.map((o) => o.email?.toLowerCase()).slice(0, 5),
+        matchAttempts: matchAttempts.slice(0, 5),
+      });
+
       res.writeHead(404, { ...corsHeaders, 'Content-Type': 'application/json' });
       res.end(
         JSON.stringify({
           error: 'Order not found',
-          message: 'No order found with that order number and email address.',
+          message: `No order found matching order #${cleanOrderNumber} and email ${email.substring(0, 3)}***. Found ${
+            orders.length
+          } order(s) for this email. Please verify the order number and email address.`,
+          debug: {
+            requestedOrderNumber: cleanOrderNumber,
+            requestedEmail: cleanEmail,
+            ordersFound: orders.length,
+            sampleOrderNumbers: orders.slice(0, 10).map((o) => o.name),
+            sampleOrderEmails: orders.slice(0, 10).map((o) => o.email?.toLowerCase()),
+            matchAttempts: matchAttempts.slice(0, 5),
+          },
         })
       );
       return;
@@ -417,16 +553,14 @@ async function handler(req, res) {
 
 // Cloudflare Workers handler
 async function handleRequest(request) {
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Max-Age': '86400',
-  };
-
   if (request.method === 'OPTIONS') {
     return new Response(null, {
-      headers: corsHeaders,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Max-Age': '86400',
+      },
     });
   }
 
@@ -435,39 +569,23 @@ async function handleRequest(request) {
       status: 405,
       headers: {
         'Content-Type': 'application/json',
-        ...corsHeaders,
+        'Access-Control-Allow-Origin': '*',
       },
     });
-  }
-
-  // Rate limiting check
-  const clientIP = getClientIP(null, request);
-  const rateLimitResult = checkRateLimit(clientIP);
-
-  if (!rateLimitResult.allowed) {
-    return new Response(
-      JSON.stringify({
-        error: 'Rate limit exceeded',
-        message: rateLimitResult.message,
-        retryAfter: rateLimitResult.retryAfter,
-      }),
-      {
-        status: 429,
-        headers: {
-          'Content-Type': 'application/json',
-          ...corsHeaders,
-          'Retry-After': rateLimitResult.retryAfter.toString(),
-          'X-RateLimit-Limit': RATE_LIMIT_CONFIG.maxRequests.toString(),
-          'X-RateLimit-Remaining': '0',
-          'X-RateLimit-Reset': new Date(rateLimitResult.resetTime).toISOString(),
-        },
-      }
-    );
   }
 
   try {
     const body = await request.json();
     const { order_number, email } = body;
+
+    // Comprehensive logging for Cloudflare Workers
+    console.log('🔍 API (Cloudflare) - Request received:', {
+      order_number,
+      email: email ? email.substring(0, 3) + '***' : null,
+      fullEmail: email, // Log full email for debugging
+      orderNumberType: typeof order_number,
+      emailType: typeof email,
+    });
 
     if (!order_number || !email) {
       return new Response(
@@ -502,8 +620,8 @@ async function handleRequest(request) {
       );
     }
 
-    const shopifyStore = SHOPIFY_STORE || SHOPIFY_STORE_URL;
-    const shopifyToken = SHOPIFY_ADMIN_API_TOKEN;
+    const shopifyStore = globalThis.SHOPIFY_STORE || process?.env?.SHOPIFY_STORE;
+    const shopifyToken = globalThis.SHOPIFY_ADMIN_API_TOKEN || process?.env?.SHOPIFY_ADMIN_API_TOKEN;
 
     if (!shopifyStore || !shopifyToken) {
       return new Response(
@@ -524,14 +642,19 @@ async function handleRequest(request) {
     const cleanStore = shopifyStore.replace(/^https?:\/\//, '').replace(/\/$/, '');
     const apiUrl = `https://${cleanStore}/admin/api/2024-01/orders.json`;
 
-    const queryParams = new URLSearchParams({
-      email: email,
-      name: order_number,
+    // Clean order number for query
+    const cleanOrderNum = order_number.toString().replace(/[#\s]/g, '').trim();
+
+    // Try querying by order name first (more reliable for archived orders)
+    let queryParams = new URLSearchParams({
+      name: `#${cleanOrderNum}`, // Try with # prefix first
       status: 'any',
       limit: '10',
     });
 
-    const response = await fetch(`${apiUrl}?${queryParams.toString()}`, {
+    console.log('Querying Shopify API by order number:', { name: `#${cleanOrderNum}`, email: email.toLowerCase() });
+
+    let shopifyResponse = await fetch(`${apiUrl}?${queryParams.toString()}`, {
       method: 'GET',
       headers: {
         'X-Shopify-Access-Token': shopifyToken,
@@ -539,8 +662,47 @@ async function handleRequest(request) {
       },
     });
 
-    if (!response.ok) {
-      if (response.status === 401 || response.status === 403) {
+    // If that doesn't work, try without # prefix
+    let shopifyData = await shopifyResponse.json().catch(() => ({ orders: [] }));
+    if (!shopifyResponse.ok || shopifyData.orders?.length === 0) {
+      queryParams = new URLSearchParams({
+        name: cleanOrderNum, // Try without # prefix
+        status: 'any',
+        limit: '10',
+      });
+
+      console.log('Retrying without # prefix:', { name: cleanOrderNum });
+      shopifyResponse = await fetch(`${apiUrl}?${queryParams.toString()}`, {
+        method: 'GET',
+        headers: {
+          'X-Shopify-Access-Token': shopifyToken,
+          'Content-Type': 'application/json',
+        },
+      });
+      shopifyData = await shopifyResponse.json().catch(() => ({ orders: [] }));
+    }
+
+    // If still no results, fall back to email query
+    if (!shopifyResponse.ok || shopifyData.orders?.length === 0) {
+      console.log('Falling back to email query');
+      queryParams = new URLSearchParams({
+        email: email.toLowerCase(),
+        status: 'any',
+        limit: '250',
+      });
+
+      shopifyResponse = await fetch(`${apiUrl}?${queryParams.toString()}`, {
+        method: 'GET',
+        headers: {
+          'X-Shopify-Access-Token': shopifyToken,
+          'Content-Type': 'application/json',
+        },
+      });
+      shopifyData = await shopifyResponse.json().catch(() => ({ orders: [] }));
+    }
+
+    if (!shopifyResponse.ok) {
+      if (shopifyResponse.status === 401 || shopifyResponse.status === 403) {
         return new Response(
           JSON.stringify({
             error: 'Authentication error',
@@ -556,23 +718,132 @@ async function handleRequest(request) {
         );
       }
 
-      throw new Error(`Shopify API error: ${response.status}`);
+      // Shopify API 404 means no orders found
+      if (shopifyResponse.status === 404) {
+        console.log('⚠️ Shopify API returned 404 - no orders found');
+        return new Response(
+          JSON.stringify({
+            error: 'Order not found',
+            message: `No orders found. Please verify the order number and email address are correct.`,
+            debug: {
+              requestedOrderNumber: cleanOrderNum,
+              requestedEmail: email.toLowerCase().trim(),
+              ordersFound: 0,
+              shopifyApiStatus: 404,
+              note: 'Shopify API returned 404 - order may not exist or app may need read_all_orders scope for archived orders',
+            },
+          }),
+          {
+            status: 404,
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*',
+            },
+          }
+        );
+      }
+
+      throw new Error(`Shopify API error: ${shopifyResponse.status}`);
     }
 
-    const data = await response.json();
-    const orders = data.orders || [];
+    const orders = shopifyData.orders || [];
+    console.log(
+      `Found ${orders.length} orders (queried by ${shopifyData.orders?.length > 0 ? 'order number' : 'email'})`
+    );
 
-    const matchingOrder = orders.find((order) => {
-      const orderName = order.name ? order.name.replace(/^#/, '') : '';
-      const orderEmail = order.email ? order.email.toLowerCase() : '';
-      return orderName === order_number.toString() && orderEmail === email.toLowerCase();
+    // Clean the order number for comparison (remove # and any whitespace)
+    const cleanOrderNumber = cleanOrderNum;
+    const cleanEmail = email.toLowerCase().trim();
+
+    console.log('🔍 Matching (Cloudflare) - Looking for:', {
+      cleanOrderNumber,
+      cleanEmail,
+      totalOrdersToCheck: orders.length,
     });
 
+    // Find exact match by order number (name) and email
+    // Handle both "#1779" and "1779" formats
+    let matchAttempts = [];
+    const matchingOrder = orders.find((order, index) => {
+      if (!order.email || !order.name) {
+        matchAttempts.push({ index, reason: 'Missing email or name', orderName: order.name, orderEmail: order.email });
+        return false;
+      }
+
+      // Clean order name (remove # prefix and whitespace)
+      const orderName = order.name.replace(/^#/, '').replace(/\s/g, '').trim();
+      const orderEmail = order.email.toLowerCase().trim();
+
+      // Compare cleaned values
+      const nameMatch = orderName === cleanOrderNumber;
+      const emailMatch = orderEmail === cleanEmail;
+
+      // Log each comparison attempt
+      const attempt = {
+        index,
+        orderName: order.name,
+        cleanedOrderName: orderName,
+        orderEmail: order.email,
+        cleanedOrderEmail: orderEmail,
+        nameMatch,
+        emailMatch,
+        bothMatch: nameMatch && emailMatch,
+      };
+      matchAttempts.push(attempt);
+
+      if (nameMatch && emailMatch) {
+        console.log('✅ Match found!', attempt);
+        return true;
+      }
+
+      // Log near-matches for debugging
+      if (nameMatch && !emailMatch) {
+        console.log('⚠️ Name matches but email differs:', attempt);
+      }
+      if (!nameMatch && emailMatch) {
+        console.log('⚠️ Email matches but name differs:', attempt);
+      }
+
+      return false;
+    });
+
+    // Log all match attempts if no match found
+    if (!matchingOrder && orders.length > 0) {
+      console.log('📋 All match attempts:', matchAttempts.slice(0, 10)); // Log first 10
+    }
+
     if (!matchingOrder) {
+      // Enhanced error logging for debugging
+      const orderDetails = orders.slice(0, 10).map((o) => ({
+        name: o.name,
+        email: o.email?.toLowerCase(),
+        created: o.created_at,
+      }));
+
+      console.error('❌ API - Order not found (Cloudflare):', {
+        requestedOrderNumber: cleanOrderNumber,
+        requestedEmail: cleanEmail,
+        ordersFound: orders.length,
+        sampleOrders: orderDetails,
+        allOrderNumbers: orders.map((o) => o.name),
+        allOrderEmails: orders.map((o) => o.email?.toLowerCase()),
+        matchAttempts: matchAttempts.slice(0, 5),
+      });
+
       return new Response(
         JSON.stringify({
           error: 'Order not found',
-          message: 'No order found with that order number and email address.',
+          message: `No order found matching order #${cleanOrderNumber} and email ${email.substring(0, 3)}***. Found ${
+            orders.length
+          } order(s) for this email. Please verify the order number and email address.`,
+          debug: {
+            requestedOrderNumber: cleanOrderNumber,
+            requestedEmail: email.toLowerCase().trim(),
+            ordersFound: orders.length,
+            sampleOrderNumbers: orders.slice(0, 10).map((o) => o.name),
+            sampleOrderEmails: orders.slice(0, 10).map((o) => o.email?.toLowerCase()),
+            matchAttempts: matchAttempts.slice(0, 5),
+          },
         }),
         {
           status: 404,
@@ -636,7 +907,7 @@ async function handleRequest(request) {
         status: 200,
         headers: {
           'Content-Type': 'application/json',
-          ...corsHeaders,
+          'Access-Control-Allow-Origin': '*',
           'X-RateLimit-Limit': RATE_LIMIT_CONFIG.maxRequests.toString(),
           'X-RateLimit-Remaining': rateLimitResult.remaining.toString(),
           'X-RateLimit-Reset': new Date(rateLimitResult.resetTime).toISOString(),
@@ -645,10 +916,12 @@ async function handleRequest(request) {
     );
   } catch (error) {
     console.error('Order lookup error:', error);
+    console.error('Error stack:', error.stack);
     return new Response(
       JSON.stringify({
         error: 'Internal server error',
         message: 'An error occurred while processing your request. Please try again later.',
+        details: error.message || 'Unknown error',
       }),
       {
         status: 500,
