@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     # Skip if secrets are not configured
     if: ${{ secrets.SHOP_STORE_OS2 != '' && secrets.SHOP_PASSWORD_OS2 != '' }}
+    continue-on-error: true
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
