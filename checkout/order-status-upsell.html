@@ -1,0 +1,632 @@
+<!--
+  POST-PURCHASE UPSELL FOR SHOPIFY ORDER STATUS PAGE
+  ===================================================
+  
+  This code should be pasted into:
+  Shopify Admin → Settings → Checkout → Order status page → Additional scripts
+  
+  IMPORTANT: Replace the PRODUCT_ID variable below with your actual product ID.
+  To find your product ID: Go to Products → Click on your product → 
+  Look at the URL: /admin/products/PRODUCT_ID
+  
+  HOW IT WORKS:
+  - Displays an upsell offer after order completion
+  - Uses Shopify's Cart API to add products without page reload
+  - Extracts order information from the page DOM
+  - Handles loading states and success/error messages
+  - Mobile responsive design
+  
+  CUSTOMIZATION:
+  - Change PRODUCT_ID (line ~50)
+  - Adjust styling in the <style> section
+  - Modify text content in the HTML section
+-->
+
+<script>
+(function() {
+  'use strict';
+  
+  // ============================================
+  // CONFIGURATION - CUSTOMIZE THESE VALUES
+  // ============================================
+  
+  // PRODUCT CONFIGURATION - REQUIRED
+  // Replace these values with your actual product information
+  const UPSELL_CONFIG = {
+    // Variant ID (REQUIRED) - Find this in your product's variant settings
+    // Format: Just the numeric ID, e.g., "12345678901234"
+    variantId: 'YOUR_VARIANT_ID_HERE',
+    
+    // Product Information (REQUIRED)
+    productTitle: 'Your Product Name',
+    productImage: 'https://your-image-url.jpg', // Full URL to product image
+    productPrice: '29.99', // Price as number or string
+    currencyCode: 'USD', // Currency code (USD, EUR, GBP, etc.)
+    
+    // Display Settings
+    showDelay: 2000, // Delay before showing upsell (milliseconds)
+    quantity: 1, // Quantity to add to cart
+    
+    // Optional: Customize text
+    heading: '🎉 Special Offer Just For You!',
+    subtitle: 'Add this to your order and save time',
+    buttonText: 'Add to Order',
+    declineText: 'No thanks, continue'
+  };
+  
+  // ============================================
+  // PRODUCT DATA FETCHING
+  // ============================================
+  
+  /**
+   * Formats price with currency symbol
+   * @param {string|number} price - The price value
+   * @param {string} currency - Currency code
+   * @returns {string} Formatted price string
+   */
+  function formatPrice(price, currency) {
+    const numPrice = typeof price === 'string' ? parseFloat(price) : price;
+    try {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: currency || 'USD'
+      }).format(numPrice);
+    } catch (e) {
+      // Fallback formatting
+      return `${currency || '$'}${numPrice.toFixed(2)}`;
+    }
+  }
+  
+  // ============================================
+  // SHOPIFY CART API INTEGRATION
+  // ============================================
+  
+  /**
+   * Adds a product to cart using Shopify's Cart API
+   * @param {string} variantId - The variant ID to add
+   * @param {number} quantity - Quantity to add
+   * @returns {Promise<Object>} Cart response
+   */
+  async function addToCart(variantId, quantity) {
+    try {
+      const response = await fetch('/cart/add.js', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: variantId,
+          quantity: quantity
+        })
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.description || 'Failed to add to cart');
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      throw error;
+    }
+  }
+  
+  /**
+   * Redirects to checkout with the added product
+   */
+  function redirectToCheckout() {
+    window.location.href = '/checkout';
+  }
+  
+  // ============================================
+  // UPSELL UI CREATION
+  // ============================================
+  
+  /**
+   * Creates the upsell HTML structure
+   */
+  function createUpsellHTML() {
+    const upsellId = 'post-purchase-upsell';
+    
+    // Check if already exists
+    if (document.getElementById(upsellId)) {
+      return document.getElementById(upsellId);
+    }
+    
+    // Validate configuration
+    if (!UPSELL_CONFIG.variantId || UPSELL_CONFIG.variantId === 'YOUR_VARIANT_ID_HERE') {
+      console.error('Post-purchase upsell: Variant ID not configured');
+      return null;
+    }
+    
+    // Format price
+    const formattedPrice = formatPrice(UPSELL_CONFIG.productPrice, UPSELL_CONFIG.currencyCode);
+    
+    const upsellHTML = `
+      <div id="${upsellId}" class="post-purchase-upsell" style="display: none;">
+        <div class="upsell-container">
+          <div class="upsell-header">
+            <h3 class="upsell-title">${UPSELL_CONFIG.heading}</h3>
+            <p class="upsell-subtitle">${UPSELL_CONFIG.subtitle}</p>
+          </div>
+          
+          <div class="upsell-content">
+            <div class="upsell-image-wrapper">
+              <img src="${UPSELL_CONFIG.productImage}" alt="${UPSELL_CONFIG.productTitle}" class="upsell-image" loading="lazy" onerror="this.src='https://cdn.shopify.com/s/files/1/0533/2089/files/placeholder-images-product-1_large.png'">
+            </div>
+            
+            <div class="upsell-details">
+              <h4 class="upsell-product-title">${UPSELL_CONFIG.productTitle}</h4>
+              <p class="upsell-product-price">${formattedPrice}</p>
+              
+              <button 
+                class="upsell-button" 
+                data-variant-id="${UPSELL_CONFIG.variantId}"
+                aria-label="Add ${UPSELL_CONFIG.productTitle} to order"
+              >
+                <span class="button-text">${UPSELL_CONFIG.buttonText}</span>
+                <span class="button-loader" style="display: none;">
+                  <span class="spinner"></span>
+                </span>
+              </button>
+              
+              <button class="upsell-decline" aria-label="No thanks">${UPSELL_CONFIG.declineText}</button>
+            </div>
+          </div>
+          
+          <div class="upsell-success" style="display: none;">
+            <div class="success-icon">✓</div>
+            <p class="success-message">Added to your order! Redirecting to checkout...</p>
+          </div>
+          
+          <div class="upsell-error" style="display: none;">
+            <p class="error-message"></p>
+            <button class="error-retry">Try Again</button>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    // Insert into page - try multiple selectors for order status page
+    const selectors = [
+      '.os-order-number',
+      '.os-header__heading',
+      '.os-header',
+      '.order-status',
+      'main',
+      'body'
+    ];
+    
+    let inserted = false;
+    for (const selector of selectors) {
+      const target = document.querySelector(selector);
+      if (target) {
+        target.insertAdjacentHTML('afterend', upsellHTML);
+        inserted = true;
+        break;
+      }
+    }
+    
+    if (!inserted) {
+      // Fallback: append to body
+      document.body.insertAdjacentHTML('beforeend', upsellHTML);
+    }
+    
+    return document.getElementById(upsellId);
+  }
+  
+  // ============================================
+  // EVENT HANDLERS
+  // ============================================
+  
+  /**
+   * Handles the "Add to Order" button click
+   */
+  function handleAddToOrder(event) {
+    const button = event.currentTarget;
+    const variantId = button.getAttribute('data-variant-id');
+    
+    if (!variantId || variantId === 'null' || variantId === 'YOUR_VARIANT_ID_HERE') {
+      showError('Product variant not configured. Please contact support.');
+      return;
+    }
+    
+    // Show loading state
+    setButtonLoading(button, true);
+    hideError();
+    
+    // Add to cart
+    addToCart(variantId, UPSELL_CONFIG.quantity)
+      .then((cartItem) => {
+        // Success!
+        showSuccess();
+        
+        // Redirect to checkout after a short delay
+        setTimeout(() => {
+          redirectToCheckout();
+        }, 1500);
+      })
+      .catch((error) => {
+        // Show error
+        const errorMsg = error.message || 'Failed to add product to order. Please try again.';
+        showError(errorMsg);
+        setButtonLoading(button, false);
+      });
+  }
+  
+  /**
+   * Handles the "No thanks" button click
+   */
+  function handleDecline() {
+    const upsell = document.getElementById('post-purchase-upsell');
+    if (upsell) {
+      upsell.style.display = 'none';
+    }
+  }
+  
+  /**
+   * Sets button loading state
+   */
+  function setButtonLoading(button, isLoading) {
+    const buttonText = button.querySelector('.button-text');
+    const buttonLoader = button.querySelector('.button-loader');
+    
+    if (isLoading) {
+      button.disabled = true;
+      buttonText.style.display = 'none';
+      buttonLoader.style.display = 'inline-block';
+    } else {
+      button.disabled = false;
+      buttonText.style.display = 'inline';
+      buttonLoader.style.display = 'none';
+    }
+  }
+  
+  /**
+   * Shows success message
+   */
+  function showSuccess() {
+    const upsell = document.getElementById('post-purchase-upsell');
+    const content = upsell.querySelector('.upsell-content');
+    const success = upsell.querySelector('.upsell-success');
+    
+    if (content) content.style.display = 'none';
+    if (success) success.style.display = 'block';
+  }
+  
+  /**
+   * Shows error message
+   */
+  function showError(message) {
+    const upsell = document.getElementById('post-purchase-upsell');
+    const errorDiv = upsell.querySelector('.upsell-error');
+    const errorMessage = upsell.querySelector('.error-message');
+    
+    if (errorDiv && errorMessage) {
+      errorMessage.textContent = message;
+      errorDiv.style.display = 'block';
+    }
+  }
+  
+  /**
+   * Hides error message
+   */
+  function hideError() {
+    const upsell = document.getElementById('post-purchase-upsell');
+    const errorDiv = upsell?.querySelector('.upsell-error');
+    if (errorDiv) {
+      errorDiv.style.display = 'none';
+    }
+  }
+  
+  // ============================================
+  // INITIALIZATION
+  // ============================================
+  
+  /**
+   * Initializes the upsell feature
+   */
+  function initUpsell() {
+    // Validate configuration
+    if (!UPSELL_CONFIG.variantId || UPSELL_CONFIG.variantId === 'YOUR_VARIANT_ID_HERE') {
+      console.warn('Post-purchase upsell: Variant ID not configured. Please set UPSELL_CONFIG.variantId');
+      return;
+    }
+    
+    // Wait for page to be ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(initUpsell, UPSELL_CONFIG.showDelay);
+      });
+      return;
+    }
+    
+    // Wait for the delay
+    setTimeout(() => {
+      try {
+        // Create and show upsell
+        const upsellElement = createUpsellHTML();
+        
+        if (upsellElement) {
+          // Attach event listeners
+          const addButton = upsellElement.querySelector('.upsell-button');
+          const declineButton = upsellElement.querySelector('.upsell-decline');
+          const retryButton = upsellElement.querySelector('.error-retry');
+          
+          if (addButton) {
+            addButton.addEventListener('click', handleAddToOrder);
+          }
+          
+          if (declineButton) {
+            declineButton.addEventListener('click', handleDecline);
+          }
+          
+          if (retryButton) {
+            retryButton.addEventListener('click', () => {
+              hideError();
+              if (addButton) {
+                handleAddToOrder({ currentTarget: addButton });
+              }
+            });
+          }
+          
+          // Show the upsell with fade-in animation
+          upsellElement.style.display = 'block';
+          setTimeout(() => {
+            upsellElement.classList.add('upsell-visible');
+          }, 10);
+        }
+      } catch (error) {
+        console.error('Error initializing upsell:', error);
+      }
+    }, UPSELL_CONFIG.showDelay);
+  }
+  
+  // Start initialization
+  initUpsell();
+})();
+</script>
+
+<style>
+/* ============================================
+   POST-PURCHASE UPSELL STYLES
+   ============================================ */
+
+.post-purchase-upsell {
+  margin: 2rem auto;
+  max-width: 600px;
+  padding: 0 1rem;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.post-purchase-upsell.upsell-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.upsell-container {
+  background: #ffffff;
+  border: 0.1rem solid rgba(18, 18, 18, 0.08);
+  border-radius: 0;
+  padding: 2rem;
+  box-shadow: 0 0 0 0.1rem rgba(18, 18, 18, 0.08);
+}
+
+.upsell-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.upsell-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #234846;
+  margin: 0 0 0.5rem 0;
+  letter-spacing: 0;
+}
+
+.upsell-subtitle {
+  font-size: 1rem;
+  color: #666;
+  margin: 0;
+}
+
+.upsell-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.upsell-image-wrapper {
+  width: 100%;
+  text-align: center;
+}
+
+.upsell-image {
+  max-width: 200px;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.upsell-details {
+  text-align: center;
+}
+
+.upsell-product-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #234846;
+  margin: 0 0 0.5rem 0;
+}
+
+.upsell-product-price {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #234846;
+  margin: 0 0 1.5rem 0;
+}
+
+.upsell-button {
+  width: 100%;
+  padding: 1rem 2rem;
+  background-color: #005633; /* Brand green - matches theme */
+  color: #ffffff;
+  border: none;
+  border-radius: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  position: relative;
+  min-height: 48px;
+}
+
+.upsell-button:hover:not(:disabled) {
+  background-color: #004428; /* Brand green hover - matches theme */
+}
+
+.upsell-button:active:not(:disabled) {
+  background-color: #00331f; /* Brand green active - matches theme */
+}
+
+.upsell-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.button-loader {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.upsell-decline {
+  margin-top: 1rem;
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0.5rem;
+}
+
+.upsell-decline:hover {
+  color: #234846;
+}
+
+.upsell-success {
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.success-icon {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 1rem;
+  background-color: #005633; /* Brand green - matches theme */
+  color: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.success-message {
+  font-size: 1.1rem;
+  color: #234846; /* Dark green for text - matches theme */
+  margin: 0;
+}
+
+.upsell-error {
+  text-align: center;
+  padding: 1.5rem;
+  background-color: #fff5f5;
+  border: 1px solid #feb2b2;
+  border-radius: 6px;
+  margin-top: 1rem;
+}
+
+.error-message {
+  color: #c53030;
+  margin: 0 0 1rem 0;
+  font-size: 0.95rem;
+}
+
+.error-retry {
+  padding: 0.5rem 1rem;
+  background-color: #005633; /* Brand green - matches theme */
+  color: #ffffff;
+  border: none;
+  border-radius: 0;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.error-retry:hover {
+  background-color: #004428; /* Brand green hover - matches theme */
+}
+
+/* ============================================
+   MOBILE RESPONSIVE STYLES
+   ============================================ */
+
+@media screen and (min-width: 768px) {
+  .upsell-content {
+    flex-direction: row;
+    align-items: center;
+  }
+  
+  .upsell-image-wrapper {
+    flex: 0 0 200px;
+  }
+  
+  .upsell-details {
+    flex: 1;
+    text-align: left;
+  }
+  
+  .upsell-button {
+    max-width: 300px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .upsell-container {
+    padding: 1.5rem;
+  }
+  
+  .upsell-title {
+    font-size: 1.25rem;
+  }
+  
+  .upsell-product-title {
+    font-size: 1.1rem;
+  }
+  
+  .upsell-product-price {
+    font-size: 1.25rem;
+  }
+}
+</style>
