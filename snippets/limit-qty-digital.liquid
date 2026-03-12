@@ -47,11 +47,9 @@
               if (opts && opts.body) {
                 var bodyStr = typeof opts.body === 'string' ? opts.body : '';
                 if (opts.body instanceof FormData) {
-                  /* FormData — check id field; we'll let it through and fix after */
-                  return _originalFetch(url, opts).then(function(resp) {
-                    enforceCartLimit();
-                    return resp;
-                  });
+                  /* FormData — can't parse easily, redirect to cart */
+                  window.location.href = '/cart';
+                  return new Promise(function() {});
                 }
                 var bodyObj = JSON.parse(bodyStr);
                 /* We can't easily map variant ID to handle here,
@@ -64,13 +62,10 @@
             }
 
             if (addingDigital) {
-              /* Redirect to cart instead of adding duplicate */
+              /* Redirect to cart — return a never-resolving promise
+                 so Dawn's JS doesn't process a response and interfere */
               window.location.href = '/cart';
-              /* Return a fake successful response so calling code doesn't error */
-              return Promise.resolve(new Response(JSON.stringify(cart.items[0] || {}), {
-                status: 200,
-                headers: { 'Content-Type': 'application/json' }
-              }));
+              return new Promise(function() {});
             }
 
             return _originalFetch(url, opts);
