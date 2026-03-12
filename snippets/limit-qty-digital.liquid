@@ -1,0 +1,105 @@
+{%- comment -%}
+  Limit quantity to 1 for digital download products.
+  - Hides quantity selector on matching product pages
+  - Intercepts /cart/add.js to prevent duplicate adds
+  - Caps cart quantity to 1 as a fallback on ALL pages
+  Targets: lettuce-wraps-and-sauce-cookbook-pdf
+  ROLLBACK: replace this file with the v1 version (no fetch intercept)
+{%- endcomment -%}
+
+{%- assign digital_handles = 'lettuce-wraps-and-sauce-cookbook-pdf' | split: ',' -%}
+
+{%- if product != blank and digital_handles contains product.handle -%}
+  <style>
+    .product-form__quantity { display: none !important; }
+  </style>
+{%- endif -%}
+
+<script>
+  (function() {
+    var DIGITAL_HANDLES = ['lettuce-wraps-and-sauce-cookbook-pdf'];
+    var MAX_QTY = 1;
+    var _originalFetch = window.fetch;
+
+    /* --- Intercept cart/add.js to block duplicate digital items --- */
+    window.fetch = function(url, opts) {
+      var urlStr = (typeof url === 'string') ? url : (url && url.url ? url.url : '');
+      if (urlStr.indexOf('/cart/add') !== -1) {
+        /* Check current cart first */
+        return _originalFetch('/cart.js')
+          .then(function(r) { return r.json(); })
+          .then(function(cart) {
+            var dominated = false;
+            cart.items.forEach(function(item) {
+              if (DIGITAL_HANDLES.indexOf(item.handle) !== -1) {
+                dominated = true;
+              }
+            });
+
+            if (!dominated) {
+              /* Product not in cart yet — allow the add */
+              return _originalFetch(url, opts);
+            }
+
+            /* Digital product already in cart — parse the add request to see if it's a digital item */
+            var addingDigital = false;
+            try {
+              if (opts && opts.body) {
+                var bodyStr = typeof opts.body === 'string' ? opts.body : '';
+                if (opts.body instanceof FormData) {
+                  /* FormData — check id field; we'll let it through and fix after */
+                  return _originalFetch(url, opts).then(function(resp) {
+                    enforceCartLimit();
+                    return resp;
+                  });
+                }
+                var bodyObj = JSON.parse(bodyStr);
+                /* We can't easily map variant ID to handle here,
+                   so if ANY digital product is already in cart,
+                   block the add and redirect to cart */
+                addingDigital = true;
+              }
+            } catch(e) {
+              addingDigital = true;
+            }
+
+            if (addingDigital) {
+              /* Redirect to cart instead of adding duplicate */
+              window.location.href = '/cart';
+              /* Return a fake successful response so calling code doesn't error */
+              return Promise.resolve(new Response(JSON.stringify(cart.items[0] || {}), {
+                status: 200,
+                headers: { 'Content-Type': 'application/json' }
+              }));
+            }
+
+            return _originalFetch(url, opts);
+          });
+      }
+      return _originalFetch(url, opts);
+    };
+
+    /* --- Fallback: enforce limit on page load (safety net) --- */
+    function enforceCartLimit() {
+      _originalFetch('/cart.js')
+        .then(function(r) { return r.json(); })
+        .then(function(cart) {
+          cart.items.forEach(function(item) {
+            if (DIGITAL_HANDLES.indexOf(item.handle) !== -1 && item.quantity > MAX_QTY) {
+              _originalFetch('/cart/change.js', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: item.key, quantity: MAX_QTY })
+              }).then(function() { location.reload(); });
+            }
+          });
+        });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', enforceCartLimit);
+    } else {
+      enforceCartLimit();
+    }
+  })();
+</script>
